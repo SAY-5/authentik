@@ -19,7 +19,7 @@ import { userTypeToLabel } from "#common/labels";
 import { DefaultUIConfig } from "#common/ui/config";
 import { formatUserDisplayName } from "#common/users";
 
-import { IconEditButton, modalInvoker } from "#elements/dialogs";
+import { IconEditButton } from "#elements/dialogs";
 import { WithBrandConfig } from "#elements/mixins/branding";
 import { CapabilitiesEnum, WithCapabilitiesConfig } from "#elements/mixins/capabilities";
 import { WithSession } from "#elements/mixins/session";

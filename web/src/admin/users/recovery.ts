@@ -2,6 +2,7 @@ import { modalInvoker } from "#elements/dialogs";
 import { LitFC } from "#elements/types";
 
 import { UserPasswordForm } from "#admin/users/UserPasswordForm";
+import { UserPasswordHashForm } from "#admin/users/UserPasswordHashForm";
 import { UserRecoveryLinkForm } from "#admin/users/UserRecoveryLinkForm";
 import { UserResetEmailForm } from "#admin/users/UserResetEmailForm";
 
@@ -59,6 +60,15 @@ export const RecoveryButtons: LitFC<RecoveryButtonsProps> = ({
             })}
         >
             ${msg("Set password")}
+        </button>`,
+        html`<button
+            class="pf-c-button pf-m-secondary ${buttonClasses || ""}"
+            type="button"
+            ${modalInvoker(UserPasswordHashForm, {
+                instancePk: user.pk,
+            })}
+        >
+            ${msg("Set password hash")}
         </button>`,
         ...recoveryModals,
     ];
