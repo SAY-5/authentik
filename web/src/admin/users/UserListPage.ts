@@ -1,6 +1,7 @@
 import "#admin/reports/ExportButton";
 import "#admin/users/UserActiveForm";
 import "#admin/users/ak-user-wizard";
+import "#admin/users/UserBulkPanicButtonForm";
 import "#admin/users/UserBulkRevokeSessionsForm";
 import "#admin/users/UserForm";
 import "#admin/users/UserImpersonateForm";
@@ -15,6 +16,7 @@ import "#elements/forms/ModalForm";
 import "@patternfly/elements/pf-tooltip/pf-tooltip.js";
 
 import { DEFAULT_CONFIG } from "#common/api/config";
+import { PFSize } from "#common/enums";
 import { userTypeToLabel } from "#common/labels";
 import { DefaultUIConfig } from "#common/ui/config";
 import { formatUserDisplayName } from "#common/users";
@@ -194,7 +196,7 @@ export class UserListPage extends WithBrandConfig(
                               </div>
                               <h4 class="pf-c-alert__title">
                                   ${msg(
-                                      str`Warning: You're about to delete the user you're logged in as (${shouldShowWarning.username}). Proceed at your own risk.`,
+                                      str`Warning: You are about to delete user ${shouldShowWarning.username}, but you are currently logged in as this user. Proceed at your own risk.`,
                                   )}
                               </h4>
                           </div>
@@ -203,7 +205,18 @@ export class UserListPage extends WithBrandConfig(
                 <button ?disabled=${disabled} slot="trigger" class="pf-c-button pf-m-danger">
                     ${msg("Delete")}
                 </button>
-            </ak-forms-delete-bulk>`;
+            </ak-forms-delete-bulk>
+            <ak-forms-modal size=${PFSize.Medium}>
+                <span slot="submit">${msg("Trigger Lockdown")}</span>
+                <span slot="header">${msg("Account Lockdown for Selected Users")}</span>
+                <ak-user-bulk-panic-button-form
+                    slot="form"
+                    .users=${this.selectedElements}
+                ></ak-user-bulk-panic-button-form>
+                <button ?disabled=${disabled} slot="trigger" class="pf-c-button pf-m-danger">
+                    ${msg("Account Lockdown")}
+                </button>
+            </ak-forms-modal>`;
     }
 
     protected override renderToolbarAfter(): TemplateResult {
