@@ -1,5 +1,6 @@
 import { modalInvoker } from "#elements/dialogs";
 import { LitFC } from "#elements/types";
+import { getUserDisplayName } from "#elements/user/utils";
 
 import { UserPasswordForm } from "#admin/users/UserPasswordForm";
 import { UserPasswordHashForm } from "#admin/users/UserPasswordHashForm";
@@ -53,7 +54,7 @@ export const RecoveryButtons: LitFC<RecoveryButtonsProps> = ({
             class="pf-c-button pf-m-secondary ${buttonClasses || ""}"
             type="button"
             ${modalInvoker(UserPasswordForm, {
-                headline: msg(str`Update ${user.name || user.username}'s password`),
+                headline: msg(str`Update ${getUserDisplayName(user)}'s password`),
                 username: user.username,
                 email: user.email,
                 instancePk: user.pk,
@@ -65,6 +66,7 @@ export const RecoveryButtons: LitFC<RecoveryButtonsProps> = ({
             class="pf-c-button pf-m-secondary ${buttonClasses || ""}"
             type="button"
             ${modalInvoker(UserPasswordHashForm, {
+                headline: msg(str`Update ${getUserDisplayName(user)}'s password`),
                 instancePk: user.pk,
             })}
         >
