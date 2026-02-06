@@ -3,7 +3,7 @@ from pathlib import Path
 
 from django.http.request import HttpRequest
 
-from authentik.admin.files.backends.base import Backend
+from authentik.admin.files.backends.base import Backend, THEME_VARIABLE
 from authentik.admin.files.usage import FileUsage
 from authentik.lib.config import CONFIG
 
@@ -35,6 +35,20 @@ class StaticBackend(Backend):
             for file_path in STATIC_ASSETS_SOURCES_DIR.iterdir():
                 if file_path.is_file() and (file_path.suffix in STATIC_FILE_EXTENSIONS):
                     yield f"{STATIC_PATH_PREFIX}/authentik/sources/{file_path.name}"
+                    continue
+
+                if not file_path.is_dir():
+                    continue
+
+                for extension in STATIC_FILE_EXTENSIONS:
+                    light_variant = file_path / f"light{extension}"
+                    dark_variant = file_path / f"dark{extension}"
+                    if light_variant.exists() and dark_variant.exists():
+                        yield (
+                            f"{STATIC_PATH_PREFIX}/authentik/sources/"
+                            f"{file_path.name}/{THEME_VARIABLE}{extension}"
+                        )
+                        break
 
         # List other static assets
         for dir in STATIC_ASSETS_DIRS:

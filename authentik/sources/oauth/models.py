@@ -15,6 +15,7 @@ from authentik.core.models import (
     PropertyMapping,
     Source,
     UserSourceConnection,
+    _get_default_source_icon_themed_urls,
 )
 from authentik.core.types import UILoginButton, UserSettingSerializer
 
@@ -112,23 +113,23 @@ class OAuthSource(NonCreatableType, Source):
         return self.source_type().get_base_group_properties(source=self, **kwargs)
 
     @property
-    def icon_url(self) -> str | None:
-        # When listing source types, this property might be retrieved from an abstract
-        # model. In that case we can't check self.provider_type or self.icon_url
-        # and as such we attempt to find the correct provider type based on the mode name
-        if self.Meta.abstract:
-            from authentik.sources.oauth.types.registry import registry
+    def icon_themed_urls(self) -> dict[str, str] | None:
+        """Get themed URLs for source icon.
 
-            provider_type = registry.find_type(
-                self._meta.model_name.replace(OAuthSource._meta.model_name, "")
-            )
-            return provider_type().icon_url()
-        icon = super().icon_url
-        if not icon:
-            provider_type = self.source_type
-            provider = provider_type()
-            icon = provider.icon_url()
-        return icon
+        OAuth source types are abstract models so the DB always stores OAuthSource
+        instances.  We resolve the built-in icon from the provider_type field instead
+        of the class-level default_icon_name (which only exists on the abstract
+        subclasses used by the TypeCreate wizard).
+        """
+        urls = super().icon_themed_urls
+        if urls:
+            return urls
+        try:
+            if self.provider_type:
+                return _get_default_source_icon_themed_urls(self.provider_type)
+        except AttributeError:
+            pass
+        return None
 
     def ui_login_button(self, request: HttpRequest) -> UILoginButton:
         provider_type = self.source_type
@@ -136,7 +137,7 @@ class OAuthSource(NonCreatableType, Source):
         return UILoginButton(
             name=self.name,
             challenge=provider.login_challenge(self, request),
-            icon_url=self.get_icon_url(request, use_cache=False) or self.icon_url,
+            icon_url=self.icon_dynamic_url,
             promoted=self.promoted,
         )
 
@@ -150,6 +151,7 @@ class OAuthSource(NonCreatableType, Source):
                     kwargs={"source_slug": self.slug},
                 ),
                 "icon_url": self.icon_url,
+                "icon_themed_urls": self.icon_themed_urls,
             }
         )
 
@@ -164,6 +166,8 @@ class OAuthSource(NonCreatableType, Source):
 class GitHubOAuthSource(CreatableType, OAuthSource):
     """Social Login using GitHub.com or a GitHub-Enterprise Instance."""
 
+    default_icon_name = "github"
+
     class Meta:
         abstract = True
         verbose_name = _("GitHub OAuth Source")
@@ -172,6 +176,8 @@ class GitHubOAuthSource(CreatableType, OAuthSource):
 
 class GitLabOAuthSource(CreatableType, OAuthSource):
     """Social Login using GitLab.com or a GitLab Instance."""
+
+    default_icon_name = "gitlab"
 
     class Meta:
         abstract = True
@@ -182,6 +188,8 @@ class GitLabOAuthSource(CreatableType, OAuthSource):
 class TwitchOAuthSource(CreatableType, OAuthSource):
     """Social Login using Twitch."""
 
+    default_icon_name = "twitch"
+
     class Meta:
         abstract = True
         verbose_name = _("Twitch OAuth Source")
@@ -190,6 +198,8 @@ class TwitchOAuthSource(CreatableType, OAuthSource):
 
 class MailcowOAuthSource(CreatableType, OAuthSource):
     """Social Login using Mailcow."""
+
+    default_icon_name = "mailcow"
 
     class Meta:
         abstract = True
@@ -200,6 +210,8 @@ class MailcowOAuthSource(CreatableType, OAuthSource):
 class TwitterOAuthSource(CreatableType, OAuthSource):
     """Social Login using Twitter.com"""
 
+    default_icon_name = "twitter"
+
     class Meta:
         abstract = True
         verbose_name = _("Twitter OAuth Source")
@@ -208,6 +220,8 @@ class TwitterOAuthSource(CreatableType, OAuthSource):
 
 class FacebookOAuthSource(CreatableType, OAuthSource):
     """Social Login using Facebook.com."""
+
+    default_icon_name = "facebook"
 
     class Meta:
         abstract = True
@@ -218,6 +232,8 @@ class FacebookOAuthSource(CreatableType, OAuthSource):
 class DiscordOAuthSource(CreatableType, OAuthSource):
     """Social Login using Discord."""
 
+    default_icon_name = "discord"
+
     class Meta:
         abstract = True
         verbose_name = _("Discord OAuth Source")
@@ -226,6 +242,8 @@ class DiscordOAuthSource(CreatableType, OAuthSource):
 
 class SlackOAuthSource(CreatableType, OAuthSource):
     """Social Login using Slack."""
+
+    default_icon_name = "slack"
 
     class Meta:
         abstract = True
@@ -236,6 +254,8 @@ class SlackOAuthSource(CreatableType, OAuthSource):
 class PatreonOAuthSource(CreatableType, OAuthSource):
     """Social Login using Patreon."""
 
+    default_icon_name = "patreon"
+
     class Meta:
         abstract = True
         verbose_name = _("Patreon OAuth Source")
@@ -245,6 +265,8 @@ class PatreonOAuthSource(CreatableType, OAuthSource):
 class GoogleOAuthSource(CreatableType, OAuthSource):
     """Social Login using Google or Google Workspace (GSuite)."""
 
+    default_icon_name = "google"
+
     class Meta:
         abstract = True
         verbose_name = _("Google OAuth Source")
@@ -253,6 +275,8 @@ class GoogleOAuthSource(CreatableType, OAuthSource):
 
 class AzureADOAuthSource(CreatableType, OAuthSource):
     """(Deprecated) Social Login using Azure AD."""
+
+    default_icon_name = "azuread"
 
     class Meta:
         abstract = True
@@ -265,6 +289,8 @@ class AzureADOAuthSource(CreatableType, OAuthSource):
 class EntraIDOAuthSource(CreatableType, OAuthSource):
     """Social Login using Entra ID."""
 
+    default_icon_name = "entraid"
+
     class Meta:
         abstract = True
         verbose_name = _("Entra ID OAuth Source")
@@ -273,6 +299,8 @@ class EntraIDOAuthSource(CreatableType, OAuthSource):
 
 class OpenIDConnectOAuthSource(CreatableType, OAuthSource):
     """Login using a Generic OpenID-Connect compliant provider."""
+
+    default_icon_name = "openidconnect"
 
     class Meta:
         abstract = True
@@ -283,6 +311,8 @@ class OpenIDConnectOAuthSource(CreatableType, OAuthSource):
 class AppleOAuthSource(CreatableType, OAuthSource):
     """Social Login using Apple."""
 
+    default_icon_name = "apple"
+
     class Meta:
         abstract = True
         verbose_name = _("Apple OAuth Source")
@@ -291,6 +321,8 @@ class AppleOAuthSource(CreatableType, OAuthSource):
 
 class OktaOAuthSource(CreatableType, OAuthSource):
     """Social Login using Okta."""
+
+    default_icon_name = "okta"
 
     class Meta:
         abstract = True
@@ -301,6 +333,8 @@ class OktaOAuthSource(CreatableType, OAuthSource):
 class RedditOAuthSource(CreatableType, OAuthSource):
     """Social Login using reddit.com."""
 
+    default_icon_name = "reddit"
+
     class Meta:
         abstract = True
         verbose_name = _("Reddit OAuth Source")
@@ -309,6 +343,8 @@ class RedditOAuthSource(CreatableType, OAuthSource):
 
 class WeChatOAuthSource(CreatableType, OAuthSource):
     """Social Login using WeChat."""
+
+    default_icon_name = "wechat"
 
     class Meta:
         abstract = True

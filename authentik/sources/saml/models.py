@@ -4,7 +4,6 @@ from typing import Any
 
 from django.db import models
 from django.http import HttpRequest
-from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from lxml.etree import _Element  # nosec
@@ -266,12 +265,7 @@ class SAMLSource(Source):
             reverse(f"authentik_sources_saml:{view}", kwargs={"source_slug": self.slug})
         )
 
-    @property
-    def icon_url(self) -> str:
-        icon = super().icon_url
-        if not icon:
-            return static("authentik/sources/saml.png")
-        return icon
+    default_icon_name = "saml"
 
     def ui_login_button(self, request: HttpRequest) -> UILoginButton:
         return UILoginButton(
@@ -284,7 +278,7 @@ class SAMLSource(Source):
                 }
             ),
             name=self.name,
-            icon_url=self.get_icon_url(request, use_cache=False) or self.icon_url,
+            icon_url=self.icon_dynamic_url,
             promoted=self.promoted,
         )
 
@@ -298,6 +292,7 @@ class SAMLSource(Source):
                     kwargs={"source_slug": self.slug},
                 ),
                 "icon_url": self.icon_url,
+                "icon_themed_urls": self.icon_themed_urls,
             }
         )
 

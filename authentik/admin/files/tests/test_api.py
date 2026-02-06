@@ -219,6 +219,31 @@ class TestFileAPI(FileTestFileBackendMixin, TestCase):
 
         manager.delete_file(file_name)
 
+    def test_list_files_includes_themed_urls_for_static_themed_icons(self):
+        """Test listing static themed icons exposes a %(theme)s placeholder entry."""
+        response = self.client.get(
+            reverse(
+                "authentik_api:files",
+                query={
+                    "search": "github/%(theme)s.svg",
+                },
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            {
+                "name": "/static/authentik/sources/github/%(theme)s.svg",
+                "url": "http://testserver/static/authentik/sources/github/%(theme)s.svg",
+                "mime_type": "image/svg+xml",
+                "themed_urls": {
+                    "light": "http://testserver/static/authentik/sources/github/light.svg",
+                    "dark": "http://testserver/static/authentik/sources/github/dark.svg",
+                },
+            },
+            response.data,
+        )
+
     def test_list_files_includes_themed_urls_dict(self):
         """Test listing files includes themed_urls as dict for themed files"""
         manager = FileManager(FileUsage.MEDIA)

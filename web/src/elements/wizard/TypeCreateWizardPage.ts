@@ -4,12 +4,13 @@ import "#elements/Alert";
 import { WithLicenseSummary } from "#elements/mixins/license";
 import { SlottedTemplateResult } from "#elements/types";
 import { ifPresent } from "#elements/utils/attributes";
+import { renderDynamicIcon } from "#elements/utils/images";
 import { WizardPage } from "#elements/wizard/WizardPage";
 
 import { TypeCreate } from "@goauthentik/api";
 
 import { msg, str } from "@lit/localize";
-import { css, CSSResult, html } from "lit";
+import { css, CSSResult, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { guard } from "lit/directives/guard.js";
@@ -57,8 +58,9 @@ export class TypeCreateWizardPage extends WithLicenseSummary(WizardPage) {
                 max-height: 2em;
                 min-height: 2em;
             }
-            :host([theme="dark"]) .pf-c-card__header-main img {
-                filter: invert(1);
+            .pf-c-card__header-main .font-awesome {
+                font-size: 2em;
+                line-height: 1;
             }
 
             :host([theme="dark"]) .pf-c-card {
@@ -114,9 +116,14 @@ export class TypeCreateWizardPage extends WithLicenseSummary(WizardPage) {
 
         return this.types.map((type, idx) => {
             const disabled = !!(type.requiresEnterprise && !this.hasEnterpriseLicense);
-
             const selected = this.selectedType === type;
             const inputID = `${type.component}-${type.modelName}`;
+            const icon = renderDynamicIcon({
+                urls: type.iconUrl,
+                theme: this.activeTheme,
+                alt: msg(str`${type.name} Icon`),
+                ariaHidden: true,
+            });
 
             return html`<div
                 class=${classMap({
@@ -139,21 +146,15 @@ export class TypeCreateWizardPage extends WithLicenseSummary(WizardPage) {
                 @click=${() => {
                     if (disabled) return;
 
-                    this.selectedType = type;
-                    this.#selectDispatch(type);
-                }}
+                        this.selectedType = type;
+                        this.#selectDispatch(type);
+                    }}
             >
-                ${type.iconUrl
+                ${icon !== nothing
                     ? html`<div role="presentation" class="pf-c-card__header">
-                          <div role="presentation" class="pf-c-card__header-main">
-                              <img
-                                  aria-hidden="true"
-                                  src=${type.iconUrl}
-                                  alt=${msg(str`${type.name} Icon`)}
-                              />
-                          </div>
+                          <div role="presentation" class="pf-c-card__header-main">${icon}</div>
                       </div>`
-                    : null}
+                    : nothing}
                 <div role="heading" aria-level="2" class="pf-c-card__title">${type.name}</div>
                 <div class="pf-c-card__body" id=${`${inputID}-description`}>
                     ${type.description}
@@ -162,7 +163,7 @@ export class TypeCreateWizardPage extends WithLicenseSummary(WizardPage) {
                     ? html`<div class="pf-c-card__footer">
                           <ak-license-notice></ak-license-notice>
                       </div> `
-                    : null}
+                    : nothing}
             </div>`;
         });
     }

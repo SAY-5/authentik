@@ -5,7 +5,6 @@ from urllib.parse import urlencode
 
 from django.db import models
 from django.http import HttpRequest
-from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from rest_framework.serializers import BaseSerializer, Serializer
@@ -42,12 +41,7 @@ class TelegramSource(Source):
     def component(self) -> str:
         return "ak-source-telegram-form"
 
-    @property
-    def icon_url(self) -> str | None:
-        icon = super().icon_url
-        if not icon:
-            icon = static("authentik/sources/telegram.svg")
-        return icon
+    default_icon_name = "telegram"
 
     @property
     def serializer(self) -> type[BaseSerializer]:
@@ -66,7 +60,7 @@ class TelegramSource(Source):
                 }
             ),
             name=self.name,
-            icon_url=self.get_icon_url(request, use_cache=False) or self.icon_url,
+            icon_url=self.icon_dynamic_url,
             promoted=self.promoted,
         )
 
@@ -75,7 +69,7 @@ class TelegramSource(Source):
             data={
                 "title": self.name,
                 "component": "ak-user-settings-source-telegram",
-                "icon_url": self.icon_url,
+                "icon_url": self.icon_dynamic_url,
                 "configure_url": urlencode(
                     {
                         "bot_username": self.bot_username,

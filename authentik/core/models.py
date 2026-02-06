@@ -14,10 +14,12 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import AbstractUser, Permission
 from django.contrib.auth.models import UserManager as DjangoUserManager
 from django.contrib.sessions.base_session import AbstractBaseSession
+from django.contrib.staticfiles import finders
 from django.core.validators import validate_slug
 from django.db import models
 from django.db.models import Manager, Q, QuerySet, options
 from django.http import HttpRequest
+from django.templatetags.static import static
 from django.utils.functional import cached_property
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
@@ -58,6 +60,27 @@ USER_PATH_SYSTEM_PREFIX = "goauthentik.io"
 _USER_ATTR_PREFIX = f"{USER_PATH_SYSTEM_PREFIX}/user"
 USER_ATTRIBUTE_DEBUG = f"{_USER_ATTR_PREFIX}/debug"
 USER_ATTRIBUTE_GENERATED = f"{_USER_ATTR_PREFIX}/generated"
+
+
+def _get_default_source_icon_themed_urls(icon_name: str) -> dict[str, str] | None:
+    themed_paths = {
+        "light": f"authentik/sources/{icon_name}/light.svg",
+        "dark": f"authentik/sources/{icon_name}/dark.svg",
+    }
+    if all(finders.find(path) for path in themed_paths.values()):
+        return {theme: static(path) for theme, path in themed_paths.items()}
+
+    for extension in ("svg", "png"):
+        legacy_path = f"authentik/sources/{icon_name}.{extension}"
+        if finders.find(legacy_path):
+            legacy_url = static(legacy_path)
+            return {
+                "light": legacy_url,
+                "dark": legacy_url,
+            }
+    return None
+
+
 USER_ATTRIBUTE_EXPIRES = f"{_USER_ATTR_PREFIX}/expires"
 USER_ATTRIBUTE_DELETE_ON_LOGOUT = f"{_USER_ATTR_PREFIX}/delete-on-logout"
 USER_ATTRIBUTE_SOURCES = f"{_USER_ATTR_PREFIX}/sources"
@@ -951,34 +974,46 @@ class Source(ManagedModel, SerializerModel, PolicyBindingModel):
 
     objects = InheritanceManager()
 
-    def get_icon_url(self, request=None, use_cache: bool = True) -> str | None:
-        """Get the URL to the source icon."""
-        if not self.icon:
-            return None
-        return get_file_manager(FileUsage.MEDIA).file_url(self.icon, request, use_cache=use_cache)
+    default_icon_name: str | None = None
+    """Source type name used to resolve built-in themed icons (e.g. "discord")."""
 
     @property
     def icon_url(self) -> str | None:
-        """Get the URL to the source icon"""
-        return self.get_icon_url()
-
-    def get_icon_themed_urls(
-        self,
-        request=None,
-        use_cache: bool = True,
-    ) -> dict[str, str] | None:
-        """Get themed URLs for icon if it contains %(theme)s."""
-        if not self.icon:
-            return None
-        return get_file_manager(FileUsage.MEDIA).themed_urls(
-            self.icon,
-            request,
-            use_cache=use_cache,
-        )
+        """Get the URL to the source icon."""
+        manager = get_file_manager(FileUsage.MEDIA)
+        custom_icon = None
+        try:
+            custom_icon = self.icon
+        except AttributeError:
+            # Abstract type instances (created via __new__) don't have field state.
+            custom_icon = None
+        if custom_icon:
+            return manager.file_url(custom_icon)
+        if self.default_icon_name:
+            return _get_default_source_icon_url(self.default_icon_name)
+        return None
 
     @property
     def icon_themed_urls(self) -> dict[str, str] | None:
-        return self.get_icon_themed_urls()
+        """Get themed URLs for source icon."""
+        manager = get_file_manager(FileUsage.MEDIA)
+        # If the user set a custom icon, check if it supports themes.
+        custom_icon = None
+        try:
+            custom_icon = self.icon
+        except AttributeError:
+            # Abstract type instances (created via __new__) don't have field state.
+            custom_icon = None
+        if custom_icon:
+            return manager.themed_urls(custom_icon)
+        # Fall back to built-in default icons.
+        if self.default_icon_name:
+            return _get_default_source_icon_themed_urls(self.default_icon_name)
+        return None
+
+    @property
+    def icon_dynamic_url(self) -> dict[str, str] | None:
+        return _build_dynamic_url_map(self.icon_url, self.icon_themed_urls)
 
     def get_user_path(self) -> str:
         """Get user path, fallback to default for formatting errors"""

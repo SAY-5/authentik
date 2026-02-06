@@ -37,6 +37,7 @@ class TestStaticBackend(TestCase):
         """Test list_files includes expected files"""
         files = list(self.backend.list_files())
 
+        self.assertIn("/static/authentik/sources/github/%(theme)s.svg", files)
         self.assertIn("/static/authentik/sources/ldap.png", files)
         self.assertIn("/static/authentik/sources/openidconnect.svg", files)
         self.assertIn("/static/authentik/sources/saml.png", files)
