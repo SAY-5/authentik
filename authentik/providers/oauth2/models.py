@@ -191,18 +191,6 @@ class ScopeMapping(PropertyMapping):
         verbose_name_plural = _("Scope Mappings")
 
 
-def default_grant_types() -> list[GrantType]:
-    return [
-        GrantType.AUTHORIZATION_CODE,
-        GrantType.HYBRID,
-        GrantType.IMPLICIT,
-        GrantType.CLIENT_CREDENTIALS,
-        GrantType.PASSWORD,
-        GrantType.DEVICE_CODE,
-        GrantType.REFRESH_TOKEN,
-    ]
-
-
 class OAuth2Provider(WebfingerProvider, Provider):
     """OAuth2 Provider for generic OAuth and OpenID Connect Applications."""
 
@@ -216,9 +204,7 @@ class OAuth2Provider(WebfingerProvider, Provider):
             "of their credentials. Public clients are incapable"
         ),
     )
-    grant_types = ArrayField(
-        models.TextField(choices=GrantType.choices), default=default_grant_types
-    )
+    grant_types = ArrayField(models.TextField(choices=GrantType.choices), default=list)
     client_id = models.CharField(
         max_length=255,
         unique=True,

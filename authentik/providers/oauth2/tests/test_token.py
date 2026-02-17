@@ -21,6 +21,7 @@ from authentik.providers.oauth2.errors import TokenError
 from authentik.providers.oauth2.models import (
     AccessToken,
     AuthorizationCode,
+    GrantType,
     OAuth2Provider,
     RedirectURI,
     RedirectURIMatchingMode,
@@ -44,9 +45,9 @@ class TestToken(OAuthTestCase):
         provider = OAuth2Provider.objects.create(
             name=generate_id(),
             authorization_flow=create_test_flow(),
+            grant_types=[],
             redirect_uris=[RedirectURI(RedirectURIMatchingMode.STRICT, "http://TestServer")],
             signing_key=self.keypair,
-            grant_types=[],
         )
         header = b64encode(f"{provider.client_id}:{provider.client_secret}".encode()).decode()
         user = create_test_admin_user()
@@ -71,6 +72,7 @@ class TestToken(OAuthTestCase):
         provider = OAuth2Provider.objects.create(
             name=generate_id(),
             authorization_flow=create_test_flow(),
+            grant_types=[GrantType.AUTHORIZATION_CODE],
             redirect_uris=[RedirectURI(RedirectURIMatchingMode.STRICT, "http://TestServer")],
             signing_key=self.keypair,
         )
@@ -98,6 +100,7 @@ class TestToken(OAuthTestCase):
         provider = OAuth2Provider.objects.create(
             name=generate_id(),
             authorization_flow=create_test_flow(),
+            grant_types=[GrantType.REFRESH_TOKEN],
             redirect_uris=[RedirectURI(RedirectURIMatchingMode.STRICT, "http://testserver")],
             signing_key=self.keypair,
         )
@@ -119,6 +122,7 @@ class TestToken(OAuthTestCase):
         provider = OAuth2Provider.objects.create(
             name=generate_id(),
             authorization_flow=create_test_flow(),
+            grant_types=[GrantType.REFRESH_TOKEN],
             redirect_uris=[RedirectURI(RedirectURIMatchingMode.STRICT, "http://local.invalid")],
             signing_key=self.keypair,
         )
@@ -147,6 +151,7 @@ class TestToken(OAuthTestCase):
         provider = OAuth2Provider.objects.create(
             name=generate_id(),
             authorization_flow=create_test_flow(),
+            grant_types=[GrantType.AUTHORIZATION_CODE],
             redirect_uris=[RedirectURI(RedirectURIMatchingMode.STRICT, "http://local.invalid")],
             signing_key=self.keypair,
         )
@@ -187,6 +192,7 @@ class TestToken(OAuthTestCase):
         provider = OAuth2Provider.objects.create(
             name=generate_id(),
             authorization_flow=create_test_flow(),
+            grant_types=[GrantType.AUTHORIZATION_CODE],
             redirect_uris=[RedirectURI(RedirectURIMatchingMode.STRICT, "http://local.invalid")],
             signing_key=self.keypair,
             encryption_key=self.keypair,
@@ -218,6 +224,7 @@ class TestToken(OAuthTestCase):
         provider = OAuth2Provider.objects.create(
             name=generate_id(),
             authorization_flow=create_test_flow(),
+            grant_types=[GrantType.REFRESH_TOKEN],
             redirect_uris=[RedirectURI(RedirectURIMatchingMode.STRICT, "http://local.invalid")],
             signing_key=self.keypair,
         )
@@ -281,6 +288,7 @@ class TestToken(OAuthTestCase):
         provider = OAuth2Provider.objects.create(
             name=generate_id(),
             authorization_flow=create_test_flow(),
+            grant_types=[GrantType.REFRESH_TOKEN],
             redirect_uris=[RedirectURI(RedirectURIMatchingMode.STRICT, "http://local.invalid")],
             signing_key=self.keypair,
         )
@@ -340,6 +348,7 @@ class TestToken(OAuthTestCase):
         provider = OAuth2Provider.objects.create(
             name=generate_id(),
             authorization_flow=create_test_flow(),
+            grant_types=[GrantType.REFRESH_TOKEN],
             redirect_uris=[RedirectURI(RedirectURIMatchingMode.STRICT, "http://testserver")],
             signing_key=self.keypair,
         )
@@ -410,6 +419,7 @@ class TestToken(OAuthTestCase):
         provider = OAuth2Provider.objects.create(
             name=generate_id(),
             authorization_flow=create_test_flow(),
+            grant_types=[GrantType.REFRESH_TOKEN],
             redirect_uris=[RedirectURI(RedirectURIMatchingMode.STRICT, "http://local.invalid")],
             signing_key=self.keypair,
             refresh_token_threshold="hours=1",  # nosec
@@ -480,6 +490,7 @@ class TestToken(OAuthTestCase):
         provider = OAuth2Provider.objects.create(
             name=generate_id(),
             authorization_flow=create_test_flow(),
+            grant_types=[GrantType.AUTHORIZATION_CODE],
             redirect_uris=[RedirectURI(RedirectURIMatchingMode.STRICT, "http://local.invalid")],
             signing_key=self.keypair,
             include_claims_in_id_token=True,

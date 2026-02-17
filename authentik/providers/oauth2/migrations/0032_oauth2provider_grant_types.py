@@ -5,6 +5,20 @@ import django.contrib.postgres.fields
 from django.db import migrations, models
 
 
+def migrate_default_grant_types():
+    from authentik.providers.oauth2.models import GrantType
+
+    return [
+        GrantType.AUTHORIZATION_CODE,
+        GrantType.HYBRID,
+        GrantType.IMPLICIT,
+        GrantType.CLIENT_CREDENTIALS,
+        GrantType.PASSWORD,
+        GrantType.DEVICE_CODE,
+        GrantType.REFRESH_TOKEN,
+    ]
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -30,7 +44,26 @@ class Migration(migrations.Migration):
                         ("urn:ietf:params:oauth:grant-type:device_code", "Device Code"),
                     ]
                 ),
-                default=authentik.providers.oauth2.models.default_grant_types,
+                default=migrate_default_grant_types,
+                size=None,
+            ),
+        ),
+        migrations.AlterField(
+            model_name="oauth2provider",
+            name="grant_types",
+            field=django.contrib.postgres.fields.ArrayField(
+                base_field=models.TextField(
+                    choices=[
+                        ("authorization_code", "Authorization Code"),
+                        ("implicit", "Implicit"),
+                        ("hybrid", "Hybrid"),
+                        ("refresh_token", "Refresh Token"),
+                        ("client_credentials", "Client Credentials"),
+                        ("password", "Password"),
+                        ("urn:ietf:params:oauth:grant-type:device_code", "Device Code"),
+                    ]
+                ),
+                default=list,
                 size=None,
             ),
         ),
