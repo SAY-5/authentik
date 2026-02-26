@@ -4,18 +4,18 @@ ENV NODE_ENV=production
 
 WORKDIR /work
 
-# TODO: Use setup-corepack.mjs
 RUN --mount=type=bind,target=/work/package.json,src=./package.json \
     --mount=type=bind,target=/work/package-lock.json,src=./package-lock.json \
-    npm install --force -g corepack@latest && \
-    corepack install -g npm@11.11.0+sha512.f36811c4aae1fde639527368ae44c571d050006a608d67a191f195a801a52637a312d259186254aa3a3799b05335b7390539cf28656d18f0591a1125ba35f973 && \
-    corepack enable
+    --mount=type=bind,target=/work/website/package.json,src=./website/package.json \
+    --mount=type=bind,target=/work/website/package-lock.json,src=./website/package-lock.json \
+    --mount=type=bind,target=/work/packages/logger-js/,src=./packages/logger-js/ \
+    --mount=type=bind,target=/work/scripts/node/,src=./scripts/node/ \
+    node ./scripts/node/setup-corepack.mjs --force && \
+    node ./scripts/node/lint-runtime.mjs ./website
 
 WORKDIR /work/website
 
-RUN --mount=type=bind,target=/work/package.json,src=./package.json \
-    --mount=type=bind,target=/work/package-lock.json,src=./package-lock.json \
-    --mount=type=bind,target=/work/packages/tsconfig/,src=./packages/tsconfig/ \
+RUN --mount=type=bind,target=/work/packages/tsconfig/,src=./packages/tsconfig/ \
     --mount=type=bind,target=/work/packages/eslint-config/,src=./packages/eslint-config/ \
     --mount=type=bind,target=/work/packages/prettier-config/,src=./packages/prettier-config/ \
     --mount=type=bind,target=/work/website/package.json,src=./website/package.json \
@@ -34,7 +34,7 @@ COPY ./schema.yml /work/
 COPY ./lifecycle/container/compose.yml /work/lifecycle/container/
 COPY ./SECURITY.md /work/
 
-RUN corepack npm run build
+RUN corepack npm run build -w docs
 
 FROM docker.io/library/nginx:1.29-trixie@sha256:7150b3a39203cb5bee612ff4a9d18774f8c7caf6399d6e8985e97e28eb751c18
 
