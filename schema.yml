@@ -4409,7 +4409,11 @@ paths:
   /core/users/{id}/account_lockdown/:
     post:
       operationId: core_users_account_lockdown_create
-      description: Trigger account lockdown for a user
+      description: |-
+        Trigger account lockdown for a user.
+
+        When targeting yourself, this is a self-service lockdown that only requires
+        authentication. When targeting another user, admin permissions are required.
       parameters:
       - in: path
         name: id
@@ -4433,7 +4437,7 @@ paths:
         '400':
           description: Account lockdown feature is disabled or invalid target
         '403':
-          $ref: '#/components/responses/GenericErrorResponse'
+          description: Permission denied (when targeting another user)
   /core/users/{id}/impersonate/:
     post:
       operationId: core_users_impersonate_create
