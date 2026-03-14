@@ -43,7 +43,7 @@ export class BrandForm extends ModelForm<Brand, string> {
     public static override verboseNamePlural = msg("Brands");
 
     @state()
-    protected lockdownFlowAuthentication?: AuthenticationEnum | null;
+    protected lockdownFlowAuthentication?: string | null;
 
     async loadInstance(pk: string): Promise<Brand> {
         const brand = await new CoreApi(DEFAULT_CONFIG).coreBrandsRetrieve({

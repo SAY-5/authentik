@@ -16,7 +16,6 @@ import "@patternfly/elements/pf-tooltip/pf-tooltip.js";
 
 import { DEFAULT_CONFIG } from "#common/api/config";
 import { PFSize } from "#common/enums";
-import { parseAPIResponseError } from "#common/errors/network";
 import { userTypeToLabel } from "#common/labels";
 import { DefaultUIConfig } from "#common/ui/config";
 import { formatUserDisplayName } from "#common/users";
@@ -207,31 +206,7 @@ export class UserListPage extends WithLicenseSummary(
                 <button ?disabled=${disabled} slot="trigger" class="pf-c-button pf-m-danger">
                     ${msg("Delete")}
                 </button>
-            </ak-forms-delete-bulk>
-            ${this.hasEnterpriseLicense
-                ? html`<button
-                      class="pf-c-button pf-m-danger"
-                      ?disabled=${disabled}
-                      @click=${async () => {
-                          try {
-                              const response = await new CoreApi(
-                                  DEFAULT_CONFIG,
-                              ).coreUsersAccountLockdownBulkCreate({
-                                  userBulkAccountLockdownRequest: {
-                                      users: this.selectedElements.map((u) => u.pk),
-                                  },
-                              });
-                              if (response.flowUrl) {
-                                  window.location.assign(response.flowUrl);
-                              }
-                          } catch (error) {
-                              parseAPIResponseError(error).then(showAPIErrorMessage);
-                          }
-                      }}
-                  >
-                      ${msg("Account Lockdown")}
-                  </button>`
-                : nothing}`;
+            </ak-forms-delete-bulk>`;
     }
 
     protected override renderToolbarAfter(): TemplateResult {
