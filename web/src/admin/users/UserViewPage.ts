@@ -34,8 +34,8 @@ import { userTypeToLabel } from "#common/labels";
 import { formatUserDisplayName } from "#common/users";
 
 import { AKElement } from "#elements/Base";
-import { WithBrandConfig } from "#elements/mixins/branding";
 import { showAPIErrorMessage } from "#elements/messages/MessageContainer";
+import { WithBrandConfig } from "#elements/mixins/branding";
 import { WithCapabilitiesConfig } from "#elements/mixins/capabilities";
 import { WithLicenseSummary } from "#elements/mixins/license";
 import { WithSession } from "#elements/mixins/session";
