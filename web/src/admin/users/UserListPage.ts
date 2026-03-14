@@ -206,7 +206,7 @@ export class UserListPage extends WithLicenseSummary(
                     ${msg("Delete")}
                 </button>
             </ak-forms-delete-bulk>
-                    ${this.hasEnterpriseLicense
+            ${this.hasEnterpriseLicense
                 ? html`<button
                       class="pf-c-button pf-m-danger"
                       ?disabled=${disabled}
