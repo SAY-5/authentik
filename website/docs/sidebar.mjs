@@ -62,7 +62,7 @@ const items = [
 
         //#region Installation and Configuration
         type: "category",
-        label: "Installation and Configuration ",
+        label: "Installation and Configuration",
         collapsed: true,
         link: {
             type: "doc",
@@ -689,8 +689,16 @@ const items = [
                     id: "sys-mgmt/events/index",
                 },
                 items: [
-                    "sys-mgmt/events/notifications",
-                    "sys-mgmt/events/notification_rule_expression_policies",
+                    {
+                        type: "category",
+                        label: "Notification Rules",
+                        collapsed: true,
+                        link: {
+                            id: "sys-mgmt/events/notifications",
+                            type: "doc",
+                        },
+                        items: ["sys-mgmt/events/notification_rule_expression_policies"],
+                    },
                     "sys-mgmt/events/transports",
                     "sys-mgmt/events/logging-events",
                     "sys-mgmt/events/event-actions",
