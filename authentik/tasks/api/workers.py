@@ -1,6 +1,4 @@
-from datetime import timedelta
-
-from django.utils.timezone import now
+from django.utils.timezone import now, timedelta
 from drf_spectacular.utils import extend_schema, inline_serializer
 from packaging.version import parse
 from rest_framework.fields import BooleanField, CharField
