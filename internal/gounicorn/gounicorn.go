@@ -59,7 +59,7 @@ func New(healthcheck func() bool) *GoUnicorn {
 
 func (g *GoUnicorn) initCmd() {
 	command := "./manage.py"
-	args := []string{"dev_server"}
+	args := []string{"dev_server", "--noreload"}
 	if !config.Get().Debug {
 		pidFile, err := os.CreateTemp("", "authentik-gunicorn.*.pid")
 		if err != nil {

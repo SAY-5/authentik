@@ -12,7 +12,7 @@ monitoring_set = Signal()
 class MetricsView(View):
     """View for metrics monitoring_set signal, accessed by the authentik router"""
 
-    def post(self, request: HttpRequest) -> HttpResponse:
+    def get(self, request: HttpRequest) -> HttpResponse:
         """Check for HTTP-Basic auth"""
         monitoring_set.send_robust(self)
         return HttpResponse(status=204)
