@@ -53,6 +53,7 @@ func RunMetricsUnix(router *mux.Router) {
 	socketPath := path.Join(os.TempDir(), MetricsSocketName)
 	_ = os.Remove(socketPath)
 	l := log.WithField("logger", "authentik.outpost.metrics").WithField("listen", socketPath)
+	_ = os.Remove(socketPath)
 	ln, err := unix.Listen(socketPath)
 	if err != nil {
 		l.WithError(err).Warning("failed to listen")
