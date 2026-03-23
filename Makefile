@@ -120,7 +120,7 @@ run-server:  ## Run the authentik server, without auto reloading
 	$(UV) run ak server
 
 run-server-watch:  ## Run the authentik server, with auto reloading
-	$(UV) run watchexec --on-busy-update=restart --stop-signal=SIGINT --exts rs,go --no-meta --notify -- ak server
+	$(UV) run watchexec --on-busy-update=restart --stop-signal=SIGINT --exts py,rs,go --no-meta --notify -- ak server
 
 run-worker:  ## Run the authentik worker, without auto reloading
 	$(UV) run ak worker
