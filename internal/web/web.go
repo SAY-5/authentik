@@ -65,12 +65,19 @@ func NewWebServer() *WebServer {
 	tmp := os.TempDir()
 	socketPath := path.Join(tmp, CoreSocketName)
 
-	upstreamClient := &http.Client{
-		Transport: &http.Transport{
-			DialContext: func(_ context.Context, _, _ string) (net.Conn, error) {
-				return net.Dial("unix", socketPath)
+	// create http client to talk to backend, normal client if we're in debug more
+	// and a client that connects to our socket when in non debug mode
+	var upstreamClient *http.Client
+	if config.Get().Debug {
+		upstreamClient = http.DefaultClient
+	} else {
+		upstreamClient = &http.Client{
+			Transport: &http.Transport{
+				DialContext: func(_ context.Context, _, _ string) (net.Conn, error) {
+					return net.Dial("unix", socketPath)
+				},
 			},
-		},
+		}
 	}
 
 	u, _ := url.Parse("http://localhost:8000")
