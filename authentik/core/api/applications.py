@@ -255,9 +255,10 @@ class ApplicationViewSet(UsedByMixin, ModelViewSet):
         ],
         responses={
             200: ApplicationSerializer(many=True),
-        }
+        },
+        operation_id="core_applications_accessible_list",
     )
-    @action(methods=["GET"], detail=False)
+    @action(methods=["GET"], detail=False, url_path="@accessible")
     def accessible(self, request: Request) -> Response:
         """Get applications accessible for user"""
         should_cache = request.query_params.get("search", "") == ""

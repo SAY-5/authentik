@@ -2965,7 +2965,7 @@ paths:
           $ref: '#/components/responses/ValidationErrorResponse'
         '403':
           $ref: '#/components/responses/GenericErrorResponse'
-  /core/applications/accessible/:
+  /core/applications/@accessible/:
     get:
       operationId: core_applications_accessible_list
       description: Get applications accessible for user
