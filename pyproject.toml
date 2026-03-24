@@ -81,7 +81,7 @@ dev = [
   "black==26.3.1",
   "bpython==0.26",
   "colorama==0.4.6",
-  "constructs==10.5.1",
+  "constructs==10.6.0",
   "coverage[toml]==7.13.5",
   "daphne==4.2.1",
   "debugpy==1.8.20",
@@ -107,7 +107,7 @@ dev = [
   "types-docker==7.1.0.20260322",
   "types-jwcrypto==1.5.0.20251102",
   "types-ldap3==2.9.13.20260319",
-  "types-requests==2.32.4.20260107",
+  "types-requests==2.32.4.20260324",
   "types-zxcvbn==4.5.0.20250809",
 ]
 
