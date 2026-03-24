@@ -47,6 +47,7 @@ def enterprise_test(
                 ),
             ):
                 if create_key:
+                    License.objects.all().delete()
                     License.objects.create(key=generate_id())
                 return func(*args, **kwargs)
 
