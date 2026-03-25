@@ -1,9 +1,11 @@
 [workspace]
-members = [".", "website/scripts/docsmg"]
+members = [".", "packages/client-rust", "website/scripts/docsmg"]
 resolver = "3"
 
 [workspace.package]
+version = "2026.5.0-rc1"
 authors = ["authentik Team <hello@goauthentik.io>"]
+description = "Making authentication simple."
 edition = "2024"
 readme = "README.md"
 homepage = "https://goauthentik.io"
@@ -12,27 +14,27 @@ license-file = "LICENSE"
 publish = false
 
 [workspace.dependencies]
-arc-swap = "1.8.2"
-argh = "0.1.19"
-aws-lc-rs = { version = "1.16.2", features = ["fips"] }
-axum = { version = "0.8.8", features = ["http2", "macros", "ws"] }
-axum-server = { version = "0.8.0", features = ["tls-rustls-no-provider"] }
-clap = { version = "4.6.0", features = ["derive", "env"] }
-color-eyre = "0.6.5"
-colored = "3.1.1"
-config = { version = "0.15.22", default-features = false, features = [
+arc-swap = "= 1.8.2"
+argh = "= 0.1.19"
+aws-lc-rs = { version = "= 1.16.2", features = ["fips"] }
+axum = { version = "= 0.8.8", features = ["http2", "macros", "ws"] }
+axum-server = { version = "= 0.8.0", features = ["tls-rustls-no-provider"] }
+clap = { version = "= 4.6.0", features = ["derive", "env"] }
+color-eyre = "= 0.6.5"
+colored = "= 3.1.1"
+config = { version = "= 0.15.22", default-features = false, features = [
   "yaml",
   "async",
 ] }
 console-subscriber = "0.5.0"
-dotenvy = "0.15.7"
-durstr = "0.5.1"
-eyre = "0.6.12"
-glob = "0.3.3"
-http-body-util = "0.1.3"
-hyper-unix-socket = "0.3.0"
-hyper-util = "0.1.20"
-tracing-subscriber = { version = "0.3.23", features = [
+dotenvy = "= 0.15.7"
+durstr = "= 0.5.1"
+eyre = "= 0.6.12"
+glob = "= 0.3.3"
+http-body-util = "= 0.1.3"
+hyper-unix-socket = "= 0.3.0"
+hyper-util = "= 0.1.20"
+tracing-subscriber = { version = "= 0.3.23", features = [
   "env-filter",
   "json",
   "local-time",
@@ -40,14 +42,29 @@ tracing-subscriber = { version = "0.3.23", features = [
 ] }
 # See https://github.com/mladedav/json-subscriber/pull/23
 json-subscriber = { git = "https://github.com/mladedav/json-subscriber.git", rev = "ebed80ed06a843a4b68af34494f72de35b3239d2" }
-metrics = "0.24.3"
-metrics-exporter-prometheus = { version = "0.18.1", default-features = false }
-nix = { version = "0.31.2", features = ["hostname", "signal"] }
-notify = "8.2.0"
-pyo3 = "0.28.2"
-regex = "1.12.3"
-rustls = { version = "0.23.37", features = ["fips"] }
-sentry = { version = "0.47.0", default-features = false, features = [
+metrics = "= 0.24.3"
+metrics-exporter-prometheus = { version = "= 0.18.1", default-features = false }
+nix = { version = "= 0.31.2", features = ["hostname", "signal"] }
+notify = "= 8.2.0"
+pyo3 = "= 0.28.2"
+regex = "= 1.12.3"
+reqwest = { version = "= 0.13.2", features = [
+  "form",
+  "json",
+  "multipart",
+  "query",
+  "rustls",
+  "stream",
+] }
+reqwest-middleware = { version = "= 0.5.1", features = [
+  "form",
+  "json",
+  "multipart",
+  "query",
+  "rustls",
+] }
+rustls = { version = "= 0.23.37", features = ["fips"] }
+sentry = { version = "= 0.47.0", default-features = false, features = [
   "backtrace",
   "contexts",
   "debug-images",
@@ -57,9 +74,13 @@ sentry = { version = "0.47.0", default-features = false, features = [
   "tower",
   "tracing",
 ] }
-serde = { version = "1.0.228", features = ["derive"] }
-serde_json = "1.0.149"
-sqlx = { version = "0.8.6", default-features = false, features = [
+serde = { version = "= 1.0.228", features = ["derive"] }
+serde_json = "= 1.0.149"
+serde_repr = "= 0.1.20"
+serde_with = { version = "= 3.18.0", default-features = false, features = [
+  "base64",
+] }
+sqlx = { version = "= 0.8.6", default-features = false, features = [
   "runtime-tokio",
   "tls-rustls-aws-lc-rs",
   "postgres",
@@ -70,16 +91,16 @@ sqlx = { version = "0.8.6", default-features = false, features = [
   "ipnet",
   "json",
 ] }
-time = { version = "0.3.47", features = ["macros"] }
-tokio = { version = "1.50.0", features = ["full"] }
-tokio-util = "0.7.18"
-tower = "0.5.3"
-tower-http = { version = "0.6.8", features = ["timeout"] }
-tracing = "0.1.44"
-tracing-error = "0.2.1"
-url = "2.5.8"
-uuid = { version = "1.22.0", features = ["v4"] }
-which = "8.0.2"
+time = { version = "= 0.3.47", features = ["macros"] }
+tokio = { version = "= 1.50.0", features = ["full"] }
+tokio-util = { version = "= 0.7.18", features = ["full"] }
+tower = "= 0.5.3"
+tower-http = { version = "= 0.6.8", features = ["timeout"] }
+tracing = "= 0.1.44"
+tracing-error = "= 0.2.1"
+url = "= 2.5.8"
+uuid = { version = "= 1.22.0", features = ["serde", "v4"] }
+which = "= 8.0.2"
 
 [profile.dev.package.backtrace]
 opt-level = 3
