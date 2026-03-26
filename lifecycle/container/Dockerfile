@@ -9,6 +9,10 @@ ENV NODE_ENV=production
 
 WORKDIR /work/web
 
+# These files need to be copied and cannot be mounted as `npm ci` will build the client's typescript
+COPY ./packages /work/packages
+COPY ./web/packages /work/web/packages
+
 RUN --mount=type=bind,target=/work/web/package.json,src=./web/package.json \
     --mount=type=bind,target=/work/web/package-lock.json,src=./web/package-lock.json \
     --mount=type=bind,target=/work/web/packages/sfe/package.json,src=./web/packages/sfe/package.json \
@@ -20,7 +24,6 @@ COPY ./package.json /work
 COPY ./web /work/web/
 # TODO: Update this after moving website to docs
 COPY ./website /work/website/
-COPY ./gen-ts-api /work/web/node_modules/@goauthentik/api
 
 RUN npm run build && \
     npm run build:sfe

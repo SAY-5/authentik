@@ -62,16 +62,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - name: Setup authentik env
         uses: ./.github/actions/setup
         with:
-          dependencies: "system,python,runtime,rust-nightly"
+          dependencies: "system,python,go,node,runtime,rust-nightly"
       - name: generate schema
         run: make migrate gen-build
       - name: generate API clients
-        run: make gen-client-go gen-client-rust
+        run: make gen-clients
       - name: ensure schema is up-to-date
-        run: git diff --exit-code -- schema.yml blueprints/schema.json packages/client-go packages/client-rust
+        run: git diff --exit-code -- schema.yml blueprints/schema.json packages/client-go packages/client-rust packages/client-ts
   test-migrations:
     runs-on: ubuntu-latest
     steps:
@@ -244,7 +246,6 @@ jobs:
         working-directory: web
         run: |
           npm ci
-          make -C .. gen-client-ts
           npm run build
           npm run build:sfe
       - name: run e2e
@@ -287,7 +288,6 @@ jobs:
         working-directory: web
         run: |
           npm ci
-          make -C .. gen-client-ts
           npm run build
           npm run build:sfe
       - name: run conformance

@@ -9,7 +9,7 @@ dependencies = [
   "argon2-cffi==25.1.0",
   "cachetools==7.0.5",
   "channels==4.3.2",
-  "cryptography==46.0.5",
+  "cryptography==46.0.6",
   "dacite==1.9.2",
   "deepmerge==2.0",
   "defusedxml==0.7.1",
@@ -181,7 +181,6 @@ max-returns = 10
 
 [tool.mypy]
 plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main", "pydantic.mypy"]
-exclude = ['^gen-py-api/']
 
 [[tool.mypy.overrides]]
 module = ["django_tenants.*", "dramatiq.*", "pglock.*"]
