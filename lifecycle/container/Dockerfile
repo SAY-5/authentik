@@ -38,7 +38,6 @@ WORKDIR /go/src/goauthentik.io
 
 RUN --mount=type=bind,target=/go/src/goauthentik.io/go.mod,src=./go.mod \
     --mount=type=bind,target=/go/src/goauthentik.io/go.sum,src=./go.sum \
-    --mount=type=bind,target=/go/src/goauthentik.io/gen-go-api,src=./gen-go-api \
     --mount=type=cache,target=/go/pkg/mod \
     go mod download
 
@@ -50,9 +49,9 @@ COPY --from=node-builder /work/web/security.txt /go/src/goauthentik.io/web/secur
 COPY ./internal /go/src/goauthentik.io/internal
 COPY ./go.mod /go/src/goauthentik.io/go.mod
 COPY ./go.sum /go/src/goauthentik.io/go.sum
+COPY ./packages/client-go /go/src/goauthentik.io/packages/client-go
 
 RUN --mount=type=cache,sharing=locked,target=/go/pkg/mod \
-    --mount=type=bind,target=/go/src/goauthentik.io/gen-go-api,src=./gen-go-api \
     --mount=type=cache,id=go-build-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/root/.cache/go-build \
     CGO_ENABLED=1 GOFIPS140=latest go build -o /go/authentik-server ./cmd/server
 
