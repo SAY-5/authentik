@@ -99,7 +99,7 @@ tower-http = { version = "= 0.6.8", features = ["timeout"] }
 tracing = "= 0.1.44"
 tracing-error = "= 0.2.1"
 url = "= 2.5.8"
-uuid = { version = "= 1.22.0", features = ["serde", "v4"] }
+uuid = { version = "= 1.23.0", features = ["serde", "v4"] }
 which = "= 8.0.2"
 
 [profile.dev.package.backtrace]
