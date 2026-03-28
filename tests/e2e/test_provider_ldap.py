@@ -1,24 +1,50 @@
 """LDAP and Outpost e2e tests"""
 
 from dataclasses import asdict
+from pathlib import Path
+from tempfile import gettempdir
+from unittest.mock import MagicMock, patch
 
-from ldap3 import ALL, ALL_ATTRIBUTES, ALL_OPERATIONAL_ATTRIBUTES, SUBTREE, Connection, Server
+from ldap3 import (
+    ALL,
+    ALL_ATTRIBUTES,
+    ALL_OPERATIONAL_ATTRIBUTES,
+    EXTERNAL,
+    SASL,
+    SUBTREE,
+    Connection,
+    Server,
+    Tls,
+)
 from ldap3.core.exceptions import LDAPInvalidCredentialsResult
 
 from authentik.blueprints.tests import apply_blueprint, reconcile_app
 from authentik.core.models import Application, User
-from authentik.core.tests.utils import create_test_user
+from authentik.core.tests.utils import create_test_cert, create_test_flow, create_test_user
+from authentik.endpoints.models import StageMode
+from authentik.enterprise.stages.mtls.models import MutualTLSStage
 from authentik.events.models import Event, EventAction
-from authentik.flows.models import Flow
+from authentik.flows.models import Flow, FlowDesignation, FlowStageBinding
 from authentik.lib.generators import generate_id
 from authentik.outposts.apps import MANAGED_OUTPOST
 from authentik.outposts.models import Outpost, OutpostConfig, OutpostType
 from authentik.providers.ldap.models import APIAccessMode, LDAPProvider
-from tests.e2e.utils import SeleniumTestCase, retry
+from authentik.stages.user_login.models import UserLoginStage
+from tests.e2e.utils import E2ETestCase, retry
 
 
-class TestProviderLDAP(SeleniumTestCase):
+class TestProviderLDAP(E2ETestCase):
     """LDAP and Outpost e2e tests"""
+
+    def setUp(self):
+        super().setUp()
+        self.kp = create_test_cert()
+        self.cert = Path(gettempdir()) / generate_id()
+        with open(self.cert, "w") as _cert:
+            _cert.write(self.kp.certificate_data)
+        self.key = Path(gettempdir()) / generate_id()
+        with open(self.key, "w") as _key:
+            _key.write(self.kp.key_data)
 
     def start_ldap(self, outpost: Outpost):
         """Start ldap container based on outpost created"""
@@ -33,15 +59,17 @@ class TestProviderLDAP(SeleniumTestCase):
             },
         )
 
-    def _prepare(self) -> User:
+    def _prepare(self, **kwargs) -> User:
         """prepare user, provider, app and container"""
         self.user.attributes["extraAttribute"] = "bar"
         self.user.save()
 
-        ldap: LDAPProvider = LDAPProvider.objects.create(
-            name=generate_id(),
-            authorization_flow=Flow.objects.get(slug="default-authentication-flow"),
-            search_mode=APIAccessMode.CACHED,
+        kwargs.setdefault(
+            "authorization_flow", Flow.objects.get(slug="default-authentication-flow")
+        )
+
+        ldap = LDAPProvider.objects.create(
+            name=generate_id(), search_mode=APIAccessMode.CACHED, **kwargs
         )
         self.user.assign_perms_to_managed_role(
             "authentik_providers_ldap.search_full_directory", ldap
@@ -74,7 +102,7 @@ class TestProviderLDAP(SeleniumTestCase):
             password=self.user.username,
         )
         _connection.bind()
-        self.assertTrue(
+        self.assertIsNotNone(
             Event.objects.filter(
                 action=EventAction.LOGIN,
                 user={
@@ -82,7 +110,7 @@ class TestProviderLDAP(SeleniumTestCase):
                     "email": self.user.email,
                     "username": self.user.username,
                 },
-            )
+            ).first()
         )
 
     @retry()
@@ -101,7 +129,7 @@ class TestProviderLDAP(SeleniumTestCase):
             password=self.user.username,
         )
         _connection.bind()
-        self.assertTrue(
+        self.assertIsNotNone(
             Event.objects.filter(
                 action=EventAction.LOGIN,
                 user={
@@ -109,7 +137,7 @@ class TestProviderLDAP(SeleniumTestCase):
                     "email": self.user.email,
                     "username": self.user.username,
                 },
-            )
+            ).first()
         )
 
     @retry()
@@ -129,7 +157,7 @@ class TestProviderLDAP(SeleniumTestCase):
         )
         _connection.start_tls()
         _connection.bind()
-        self.assertTrue(
+        self.assertIsNotNone(
             Event.objects.filter(
                 action=EventAction.LOGIN,
                 user={
@@ -137,7 +165,70 @@ class TestProviderLDAP(SeleniumTestCase):
                     "email": self.user.email,
                     "username": self.user.username,
                 },
-            )
+            ).first()
+        )
+
+    @retry()
+    @apply_blueprint(
+        "default/flow-default-authentication-flow.yaml",
+        "default/flow-default-invalidation-flow.yaml",
+    )
+    def test_ldap_bind_success_starttls_sasl(self):
+        """Test SASL bind with ssl"""
+        # Create flow with MTLS Stage
+        flow = create_test_flow(FlowDesignation.AUTHENTICATION)
+        mtls_stage = MutualTLSStage.objects.create(
+            name=generate_id(),
+            mode=StageMode.REQUIRED,
+        )
+        mtls_stage.certificate_authorities.add(self.kp)
+        login_stage = UserLoginStage.objects.create(
+            name=generate_id(),
+        )
+        FlowStageBinding.objects.create(target=flow, stage=mtls_stage, order=0)
+        FlowStageBinding.objects.create(target=flow, stage=login_stage, order=1)
+
+        self._prepare(authorization_flow=flow, certificate=self.kp)
+
+        tls = Tls(
+            local_private_key_file=self.key,
+            local_certificate_file=self.cert,
+        )
+        server = Server("ldap://localhost:3389", tls=tls)
+        _connection = Connection(
+            server,
+            version=3,
+            raise_exceptions=True,
+            authentication=SASL,
+            sasl_mechanism=EXTERNAL,
+            sasl_credentials=f"dn:cn={self.user.username},ou=users,DC=ldap,DC=goauthentik,DC=io",
+        )
+        _connection.start_tls()
+        with (
+            patch(
+                "authentik.enterprise.stages.mtls.stage.MTLSStageView.validate_cert",
+                MagicMock(return_value=self.kp.certificate),
+            ),
+            patch(
+                "authentik.enterprise.stages.mtls.stage.MTLSStageView.check_if_user",
+                MagicMock(return_value=self.user),
+            ) as check_if_user,
+        ):
+            _connection.bind()
+            check_if_user.assert_called_once_with(self.kp.certificate)
+        event = Event.objects.filter(
+            action=EventAction.LOGIN,
+            user={
+                "pk": self.user.pk,
+                "email": self.user.email,
+                "username": self.user.username,
+            },
+        ).first()
+        self.assertIsNotNone(event)
+        self.assertEqual(event.context["auth_method"], "mtls")
+        self.assertEqual(
+            event.context["auth_method_args"]["certificate"]["fingerprint_sha256"],
+            self.kp.fingerprint_sha256,
         )
 
     @retry()
@@ -157,7 +248,7 @@ class TestProviderLDAP(SeleniumTestCase):
         )
         with self.assertRaises(LDAPInvalidCredentialsResult):
             _connection.bind()
-        self.assertTrue(
+        self.assertIsNotNone(
             Event.objects.filter(
                 action=EventAction.LOGIN_FAILED,
                 user={
@@ -165,7 +256,7 @@ class TestProviderLDAP(SeleniumTestCase):
                     "email": self.user.email,
                     "username": self.user.username,
                 },
-            ).exists(),
+            ).first(),
         )
 
     @retry()
@@ -190,7 +281,7 @@ class TestProviderLDAP(SeleniumTestCase):
             password=self.user.username,
         )
         _connection.bind()
-        self.assertTrue(
+        self.assertIsNotNone(
             Event.objects.filter(
                 action=EventAction.LOGIN,
                 user={
@@ -198,7 +289,7 @@ class TestProviderLDAP(SeleniumTestCase):
                     "email": self.user.email,
                     "username": self.user.username,
                 },
-            )
+            ).first()
         )
 
         embedded_account = Outpost.objects.filter(managed=MANAGED_OUTPOST).first().user
@@ -336,7 +427,7 @@ class TestProviderLDAP(SeleniumTestCase):
             password=user.username,
         )
         _connection.bind()
-        self.assertTrue(
+        self.assertIsNotNone(
             Event.objects.filter(
                 action=EventAction.LOGIN,
                 user={
@@ -344,7 +435,7 @@ class TestProviderLDAP(SeleniumTestCase):
                     "email": user.email,
                     "username": user.username,
                 },
-            )
+            ).first()
         )
 
         _connection.search(
@@ -450,7 +541,7 @@ class TestProviderLDAP(SeleniumTestCase):
             password=self.user.username,
         )
         _connection.bind()
-        self.assertTrue(
+        self.assertIsNotNone(
             Event.objects.filter(
                 action=EventAction.LOGIN,
                 user={
@@ -458,7 +549,7 @@ class TestProviderLDAP(SeleniumTestCase):
                     "email": self.user.email,
                     "username": self.user.username,
                 },
-            )
+            ).first()
         )
 
         embedded_account = Outpost.objects.filter(managed=MANAGED_OUTPOST).first().user
