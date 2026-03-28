@@ -2,6 +2,8 @@ package direct
 
 import (
 	"context"
+	"encoding/pem"
+	"net/url"
 
 	"beryju.io/ldap"
 	"github.com/getsentry/sentry-go"
@@ -21,9 +23,16 @@ func (db *DirectBinder) Bind(username string, req *bind.Request) (ldap.LDAPResul
 	})
 	fe.DelegateClientIP(req.RemoteAddr())
 	fe.Params.Add("goauthentik.io/outpost/ldap", "true")
+	if req.TLS != nil && len(req.TLS.PeerCertificates) > 0 {
+		pem := pem.EncodeToMemory(&pem.Block{
+			Type:  "CERTIFICATE",
+			Bytes: req.TLS.PeerCertificates[0].Raw,
+		})
+		fe.AddHeader(flow.HeaderAuthentikOutpostCertificate, url.QueryEscape(string(pem)))
+	}
 
 	fe.Answers[flow.StageIdentification] = username
-	fe.SetSecrets(req.BindPW, db.si.GetMFASupport())
+	fe.SetSecrets(req.Password, db.si.GetMFASupport())
 
 	passed, err := fe.Execute()
 	flags := flags.UserFlags{

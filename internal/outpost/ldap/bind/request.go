@@ -5,6 +5,7 @@ import (
 	"net"
 	"strings"
 
+	"beryju.io/ldap"
 	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
@@ -12,18 +13,17 @@ import (
 )
 
 type Request struct {
-	BindDN string
-	BindPW string
-	id     string
-	conn   net.Conn
-	log    *log.Entry
-	ctx    context.Context
+	ldap.BindRequest
+	id   string
+	conn net.Conn
+	log  *log.Entry
+	ctx  context.Context
 }
 
-func NewRequest(bindDN string, bindPW string, conn net.Conn) (*Request, *sentry.Span) {
+func NewRequest(req ldap.BindRequest, conn net.Conn) (*Request, *sentry.Span) {
 	span := sentry.StartSpan(context.TODO(), "authentik.providers.ldap.bind",
 		sentry.WithTransactionName("authentik.providers.ldap.bind"))
-	span.Description = bindDN
+	span.Description = req.BindDN
 	rid := uuid.New().String()
 	span.SetTag("request_uid", rid)
 	hub := sentry.GetHubFromContext(span.Context())
@@ -31,19 +31,18 @@ func NewRequest(bindDN string, bindPW string, conn net.Conn) (*Request, *sentry.
 		hub = sentry.CurrentHub()
 	}
 	hub.Scope().SetUser(sentry.User{
-		Username:  bindDN,
-		ID:        bindDN,
+		Username:  req.BindDN,
+		ID:        req.BindDN,
 		IPAddress: utils.GetIP(conn.RemoteAddr()),
 	})
 
-	bindDN = strings.ToLower(bindDN)
+	bindDN := strings.ToLower(req.BindDN)
 	return &Request{
-		BindDN: bindDN,
-		BindPW: bindPW,
-		conn:   conn,
-		log:    log.WithField("bindDN", bindDN).WithField("requestId", rid).WithField("client", utils.GetIP(conn.RemoteAddr())),
-		id:     rid,
-		ctx:    span.Context(),
+		BindRequest: req,
+		conn:        conn,
+		log:         log.WithField("bindDN", bindDN).WithField("requestId", rid).WithField("client", utils.GetIP(conn.RemoteAddr())),
+		id:          rid,
+		ctx:         span.Context(),
 	}, span
 }
 
