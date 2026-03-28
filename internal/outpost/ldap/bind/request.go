@@ -21,9 +21,12 @@ type Request struct {
 }
 
 func NewRequest(req ldap.BindRequest, conn net.Conn) (*Request, *sentry.Span) {
+	bindDN := strings.ToLower(req.BindDN)
+	req.BindDN = bindDN
+
 	span := sentry.StartSpan(context.TODO(), "authentik.providers.ldap.bind",
 		sentry.WithTransactionName("authentik.providers.ldap.bind"))
-	span.Description = req.BindDN
+	span.Description = bindDN
 	rid := uuid.New().String()
 	span.SetTag("request_uid", rid)
 	hub := sentry.GetHubFromContext(span.Context())
@@ -31,12 +34,11 @@ func NewRequest(req ldap.BindRequest, conn net.Conn) (*Request, *sentry.Span) {
 		hub = sentry.CurrentHub()
 	}
 	hub.Scope().SetUser(sentry.User{
-		Username:  req.BindDN,
-		ID:        req.BindDN,
+		Username:  bindDN,
+		ID:        bindDN,
 		IPAddress: utils.GetIP(conn.RemoteAddr()),
 	})
 
-	bindDN := strings.ToLower(req.BindDN)
 	return &Request{
 		BindRequest: req,
 		conn:        conn,
