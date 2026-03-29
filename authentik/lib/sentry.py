@@ -7,7 +7,6 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured, SuspiciousOperation, ValidationError
 from django.db import DatabaseError, InternalError, OperationalError, ProgrammingError
 from django.http.response import Http404
-from docker.errors import DockerException
 from dramatiq.errors import Retry
 from h11 import LocalProtocolError
 from psycopg.errors import Error
