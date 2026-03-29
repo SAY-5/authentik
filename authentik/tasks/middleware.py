@@ -26,7 +26,6 @@ from dramatiq.broker import Broker
 from dramatiq.message import Message
 from dramatiq.middleware import Middleware
 from psycopg.errors import Error
-from setproctitle import setthreadtitle
 from structlog.stdlib import get_logger
 
 from authentik import authentik_full_version
@@ -36,7 +35,6 @@ from authentik.lib.sentry import should_ignore_exception
 from authentik.lib.utils.reflection import class_to_path
 from authentik.root.monitoring import monitoring_set
 from authentik.root.signals import post_startup, pre_startup, startup
-from authentik.tasks import TASK_WORKER
 from authentik.tasks.models import Task, TaskLog, TaskStatus, WorkerStatus
 from authentik.tenants.models import Tenant
 from authentik.tenants.utils import get_current_tenant
@@ -252,7 +250,6 @@ class WorkerHealthcheckMiddleware(Middleware):
 
     @staticmethod
     def run(addr: str, port: int):
-        setthreadtitle("authentik Worker Healthcheck server")
         try:
             server = HTTPServer((addr, port), _healthcheck_handler)
             thread = cast(HTTPServerThread, current_thread())
@@ -281,7 +278,6 @@ class WorkerStatusMiddleware(Middleware):
 
     @staticmethod
     def run(event: TEvent):
-        setthreadtitle("authentik Worker status")
         with transaction.atomic():
             hostname = socket.gethostname()
             WorkerStatus.objects.filter(hostname=hostname).delete()
