@@ -7,6 +7,6 @@ class TaskWorkerFlag:
         self._set = True
 
     def __bool__(self):
-        return self._sef
+        return self._set
 
 TASK_WORKER = TaskWorkerFlag()
