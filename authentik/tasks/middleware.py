@@ -36,7 +36,7 @@ from authentik.lib.sentry import should_ignore_exception
 from authentik.lib.utils.reflection import class_to_path
 from authentik.root.monitoring import monitoring_set
 from authentik.root.signals import post_startup, pre_startup, startup
-from authentik.tasks import _enable_task_worker
+from authentik.tasks import TASK_WORKER
 from authentik.tasks.models import Task, TaskLog, TaskStatus, WorkerStatus
 from authentik.tenants.models import Tenant
 from authentik.tenants.utils import get_current_tenant
@@ -345,9 +345,3 @@ class MetricsMiddleware(BaseMetricsMiddleware):
             server.shutdown()
         LOGGER.debug("Stopping MetricsMiddleware")
         self.thread.join()
-
-
-class FlagMiddleware(Middleware):
-
-    def before_worker_boot(self, broker, worker):
-        _enable_task_worker()

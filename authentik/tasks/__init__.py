@@ -1,7 +1,12 @@
-TASK_WORKER = False
 
+class TaskWorkerFlag:
 
-def _enable_task_worker():
-    # TODO: do this better
-    global TASK_WORKER
-    TASK_WORKER = True
+    _set = False
+
+    def enable(self):
+        self._set = True
+
+    def __bool__(self):
+        return self._sef
+
+TASK_WORKER = TaskWorkerFlag()

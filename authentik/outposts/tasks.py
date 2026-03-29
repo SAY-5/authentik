@@ -62,7 +62,7 @@ def hash_session_key(session_key: str) -> str:
     return sha256(session_key.encode("ascii")).hexdigest()
 
 
-def controller_for_outpost(outpost: "Outpost") -> type["BaseController"] | None:
+def controller_for_outpost(outpost: Outpost) -> type[BaseController] | None:
     """Get a controller for the outpost, when a service connection is defined"""
     if not outpost.service_connection:
         return None
