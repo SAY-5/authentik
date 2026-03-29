@@ -1,10 +1,8 @@
+from authentik.root.setup import setup
 from authentik.tasks import TASK_WORKER
 
-TASK_WORKER.enable()
-
-from authentik.root.setup import setup  # noqa: E402
-
 setup()
+TASK_WORKER.enable()
 
 import django  # noqa: E402
 
