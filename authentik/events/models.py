@@ -6,7 +6,7 @@ from difflib import get_close_matches
 from functools import lru_cache
 from inspect import currentframe
 from typing import Any
-from uuid import uuid4
+from uuid import uuid7
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -137,7 +137,7 @@ class EventAction(models.TextChoices):
 class Event(SerializerModel, ExpiringModel):
     """An individual Audit/Metrics/Notification/Error Event"""
 
-    event_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    event_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
     user = models.JSONField(default=dict)
     action = models.TextField(choices=EventAction.choices)
     app = models.TextField()
@@ -336,7 +336,7 @@ class TransportMode(models.TextChoices):
 class NotificationTransport(TasksModel, SerializerModel):
     """Action which is executed when a Rule matches"""
 
-    uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
 
     name = models.TextField(unique=True)
     mode = models.TextField(choices=TransportMode.choices, default=TransportMode.LOCAL)
@@ -605,7 +605,7 @@ class NotificationSeverity(models.TextChoices):
 class Notification(SerializerModel):
     """Event Notification"""
 
-    uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
     severity = models.TextField(choices=NotificationSeverity.choices)
     body = models.TextField()
     hyperlink = models.TextField(blank=True, null=True, max_length=4096)

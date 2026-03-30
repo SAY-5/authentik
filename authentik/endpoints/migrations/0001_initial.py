@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "connector_uuid",
-                    models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False),
+                    models.UUIDField(default=uuid.uuid7, primary_key=True, serialize=False),
                 ),
                 ("name", models.TextField()),
                 ("enabled", models.BooleanField(default=True)),
@@ -55,7 +55,7 @@ class Migration(migrations.Migration):
                 ("expiring", models.BooleanField(default=True)),
                 (
                     "device_uuid",
-                    models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False),
+                    models.UUIDField(default=uuid.uuid7, primary_key=True, serialize=False),
                 ),
                 ("name", models.TextField()),
                 ("identifier", models.TextField(unique=True)),
@@ -88,7 +88,7 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "device_connection_uuid",
-                    models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False),
+                    models.UUIDField(default=uuid.uuid7, primary_key=True, serialize=False),
                 ),
                 (
                     "connector",
@@ -188,7 +188,7 @@ class Migration(migrations.Migration):
                 ("expiring", models.BooleanField(default=True)),
                 (
                     "snapshot_id",
-                    models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False),
+                    models.UUIDField(default=uuid.uuid7, primary_key=True, serialize=False),
                 ),
                 ("data", models.JSONField(default=dict)),
                 ("created", models.DateTimeField(auto_now_add=True)),

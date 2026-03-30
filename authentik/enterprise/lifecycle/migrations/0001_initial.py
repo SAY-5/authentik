@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="LifecycleRule",
             fields=[
-                ("id", models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False)),
+                ("id", models.UUIDField(default=uuid.uuid7, primary_key=True, serialize=False)),
                 ("name", models.TextField(unique=True)),
                 ("object_id", models.TextField(default=None, null=True)),
                 (
@@ -72,7 +72,7 @@ class Migration(migrations.Migration):
                         verbose_name="Managed by authentik",
                     ),
                 ),
-                ("id", models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False)),
+                ("id", models.UUIDField(default=uuid.uuid7, primary_key=True, serialize=False)),
                 ("object_id", models.TextField()),
                 (
                     "state",
@@ -107,7 +107,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Review",
             fields=[
-                ("id", models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False)),
+                ("id", models.UUIDField(default=uuid.uuid7, primary_key=True, serialize=False)),
                 ("timestamp", models.DateTimeField(auto_now_add=True)),
                 ("note", models.TextField(null=True)),
                 (

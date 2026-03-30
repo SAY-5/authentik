@@ -1,7 +1,7 @@
 """Microsoft Entra sync provider"""
 
 from typing import Any, Self
-from uuid import uuid4
+from uuid import uuid7
 
 from azure.identity.aio import ClientSecretCredential
 from django.db import models
@@ -26,7 +26,7 @@ from authentik.lib.sync.outgoing.models import OutgoingSyncDeleteAction, Outgoin
 class MicrosoftEntraProviderUser(InternallyManagedMixin, SerializerModel):
     """Mapping of a user and provider to a Microsoft user ID"""
 
-    id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid7)
     microsoft_id = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     provider = models.ForeignKey("MicrosoftEntraProvider", on_delete=models.CASCADE)
@@ -52,7 +52,7 @@ class MicrosoftEntraProviderUser(InternallyManagedMixin, SerializerModel):
 class MicrosoftEntraProviderGroup(InternallyManagedMixin, SerializerModel):
     """Mapping of a group and provider to a Microsoft group ID"""
 
-    id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid7)
     microsoft_id = models.TextField()
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     provider = models.ForeignKey("MicrosoftEntraProvider", on_delete=models.CASCADE)

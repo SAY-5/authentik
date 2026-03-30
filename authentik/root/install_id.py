@@ -1,7 +1,7 @@
 """install ID"""
 
 from functools import lru_cache
-from uuid import uuid4
+from uuid import uuid7
 
 from psycopg import connect
 
@@ -23,7 +23,7 @@ def get_install_id() -> str:
     from django.db import connection
 
     if settings.TEST:
-        return str(uuid4())
+        return str(uuid7())
     with connection.cursor() as cursor:
         cursor.execute(QUERY)
         return cursor.fetchone()[0]

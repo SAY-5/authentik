@@ -1,7 +1,7 @@
 """Test SCIM Group"""
 
 from json import dumps
-from uuid import uuid4
+from uuid import uuid7
 
 from django.urls import reverse
 from rest_framework.test import APITestCase
@@ -45,7 +45,7 @@ class TestSCIMGroups(APITestCase):
         SCIMSourceGroup.objects.create(
             source=self.source,
             group=group,
-            id=str(uuid4()),
+            id=str(uuid7()),
         )
         response = self.client.get(
             reverse(
@@ -152,7 +152,7 @@ class TestSCIMGroups(APITestCase):
         """Test group create (duplicate)"""
         group = Group.objects.create(name=generate_id())
         existing = SCIMSourceGroup.objects.create(
-            source=self.source, group=group, external_id=uuid4()
+            source=self.source, group=group, external_id=uuid7()
         )
         ext_id = generate_id()
         response = self.client.post(
@@ -183,7 +183,7 @@ class TestSCIMGroups(APITestCase):
         """Test group update"""
         group = Group.objects.create(name=generate_id())
         existing = SCIMSourceGroup.objects.create(
-            source=self.source, group=group, external_id=uuid4()
+            source=self.source, group=group, external_id=uuid7()
         )
         ext_id = generate_id()
         response = self.client.put(
@@ -207,7 +207,7 @@ class TestSCIMGroups(APITestCase):
                 "authentik_sources_scim:v2-groups",
                 kwargs={
                     "source_slug": self.source.slug,
-                    "group_id": str(uuid4()),
+                    "group_id": str(uuid7()),
                 },
             ),
             data=dumps({"displayName": generate_id(), "externalId": ext_id, "id": ""}),
@@ -230,7 +230,7 @@ class TestSCIMGroups(APITestCase):
         connection = SCIMSourceGroup.objects.create(
             source=self.source,
             group=group,
-            external_id=uuid4(),
+            external_id=uuid7(),
             attributes={"displayName": group.name, "members": []},
         )
         response = self.client.patch(
@@ -264,7 +264,7 @@ class TestSCIMGroups(APITestCase):
         connection = SCIMSourceGroup.objects.create(
             source=self.source,
             group=group,
-            external_id=uuid4(),
+            external_id=uuid7(),
             attributes={"displayName": group.name, "members": [{"value": str(other_user.uuid)}]},
         )
         response = self.client.patch(
@@ -310,7 +310,7 @@ class TestSCIMGroups(APITestCase):
         connection = SCIMSourceGroup.objects.create(
             source=self.source,
             group=group,
-            external_id=uuid4(),
+            external_id=uuid7(),
             attributes={"displayName": group.name, "members": []},
         )
         response = self.client.patch(
@@ -346,7 +346,7 @@ class TestSCIMGroups(APITestCase):
     def test_group_delete(self):
         """Test group delete"""
         group = Group.objects.create(name=generate_id())
-        SCIMSourceGroup.objects.create(source=self.source, group=group, external_id=uuid4())
+        SCIMSourceGroup.objects.create(source=self.source, group=group, external_id=uuid7())
         response = self.client.delete(
             reverse(
                 "authentik_sources_scim:v2-groups",

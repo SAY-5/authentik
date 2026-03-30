@@ -1,7 +1,7 @@
 """Google workspace sync provider"""
 
 from typing import Any, Self
-from uuid import uuid4
+from uuid import uuid7
 
 from django.db import models
 from django.db.models import QuerySet
@@ -35,7 +35,7 @@ def default_scopes() -> list[str]:
 class GoogleWorkspaceProviderUser(InternallyManagedMixin, SerializerModel):
     """Mapping of a user and provider to a Google user ID"""
 
-    id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid7)
     google_id = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     provider = models.ForeignKey("GoogleWorkspaceProvider", on_delete=models.CASCADE)
@@ -61,7 +61,7 @@ class GoogleWorkspaceProviderUser(InternallyManagedMixin, SerializerModel):
 class GoogleWorkspaceProviderGroup(InternallyManagedMixin, SerializerModel):
     """Mapping of a group and provider to a Google group ID"""
 
-    id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid7)
     google_id = models.TextField()
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     provider = models.ForeignKey("GoogleWorkspaceProvider", on_delete=models.CASCADE)

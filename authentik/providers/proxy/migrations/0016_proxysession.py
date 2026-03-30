@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             fields=[
                 ("expires", models.DateTimeField(default=None, null=True)),
                 ("expiring", models.BooleanField(default=True)),
-                ("uuid", models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False)),
+                ("uuid", models.UUIDField(default=uuid.uuid7, primary_key=True, serialize=False)),
                 ("session_key", models.TextField(db_index=True, unique=True)),
                 ("user_id", models.UUIDField(blank=True, db_index=True, null=True)),
                 ("session_data", models.JSONField(blank=True, default=dict)),

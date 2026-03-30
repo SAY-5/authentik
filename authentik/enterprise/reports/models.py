@@ -1,6 +1,6 @@
 import csv
 import io
-from uuid import uuid4
+from uuid import uuid7
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -20,7 +20,7 @@ from authentik.tenants.utils import get_current_tenant
 
 
 class DataExport(SerializerModel):
-    id = models.UUIDField(primary_key=True, default=uuid4)
+    id = models.UUIDField(primary_key=True, default=uuid7)
     requested_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     requested_on = models.DateTimeField(auto_now_add=True)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)

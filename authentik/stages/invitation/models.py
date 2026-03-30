@@ -1,6 +1,6 @@
 """invitation stage models"""
 
-from uuid import uuid4
+from uuid import uuid7
 
 from django.core.validators import validate_slug
 from django.db import models
@@ -50,7 +50,7 @@ class InvitationStage(Stage):
 class Invitation(SerializerModel, ExpiringModel):
     """Single-use invitation link"""
 
-    invite_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    invite_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
 
     name = models.TextField(validators=[validate_slug])
 

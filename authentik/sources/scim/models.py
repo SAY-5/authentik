@@ -1,7 +1,7 @@
 """SCIM Source"""
 
 from typing import Any
-from uuid import uuid4
+from uuid import uuid7
 
 from django.db import models
 from django.templatetags.static import static
@@ -104,7 +104,7 @@ class SCIMSourcePropertyMapping(PropertyMapping):
 class SCIMSourceUser(InternallyManagedMixin, SerializerModel):
     """Mapping of a user and source to a SCIM user ID"""
 
-    id = models.TextField(primary_key=True, default=uuid4)
+    id = models.TextField(primary_key=True, default=uuid7)
     external_id = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     source = models.ForeignKey(SCIMSource, on_delete=models.CASCADE)
@@ -130,7 +130,7 @@ class SCIMSourceUser(InternallyManagedMixin, SerializerModel):
 class SCIMSourceGroup(InternallyManagedMixin, SerializerModel):
     """Mapping of a group and source to a SCIM user ID"""
 
-    id = models.TextField(primary_key=True, default=uuid4)
+    id = models.TextField(primary_key=True, default=uuid7)
     external_id = models.TextField()
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     source = models.ForeignKey(SCIMSource, on_delete=models.CASCADE)

@@ -4,7 +4,7 @@ from collections.abc import Iterable
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from typing import Any
-from uuid import uuid4
+from uuid import uuid7
 
 from dacite.core import from_dict
 from django.contrib.auth.models import Permission
@@ -119,7 +119,7 @@ class OutpostServiceConnectionState:
 class OutpostServiceConnection(ScheduledModel, models.Model):
     """Connection details for an Outpost Controller, like Docker or Kubernetes"""
 
-    uuid = models.UUIDField(default=uuid4, editable=False, primary_key=True)
+    uuid = models.UUIDField(default=uuid7, editable=False, primary_key=True)
     name = models.TextField(unique=True)
 
     local = models.BooleanField(
@@ -262,7 +262,7 @@ class KubernetesServiceConnection(SerializerModel, OutpostServiceConnection):
 class Outpost(ScheduledModel, SerializerModel, ManagedModel):
     """Outpost instance which manages a service user and token"""
 
-    uuid = models.UUIDField(default=uuid4, editable=False, primary_key=True)
+    uuid = models.UUIDField(default=uuid7, editable=False, primary_key=True)
     name = models.TextField(unique=True)
 
     type = models.TextField(choices=OutpostType.choices, default=OutpostType.PROXY)

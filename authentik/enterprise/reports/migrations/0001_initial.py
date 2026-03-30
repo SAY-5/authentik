@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="DataExport",
             fields=[
-                ("id", models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False)),
+                ("id", models.UUIDField(default=uuid.uuid7, primary_key=True, serialize=False)),
                 ("requested_on", models.DateTimeField(auto_now_add=True)),
                 ("query_params", models.JSONField()),
                 ("file", authentik.admin.files.fields.FileField(blank=True)),

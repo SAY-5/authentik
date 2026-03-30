@@ -6,5 +6,5 @@ import uuid
 def get_random_id() -> str:
     """Random hex id"""
     # It is very important that these random IDs NOT start with a number.
-    random_id = "_" + uuid.uuid4().hex
+    random_id = "_" + uuid.uuid7().hex
     return random_id

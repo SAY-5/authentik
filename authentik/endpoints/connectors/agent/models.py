@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING
-from uuid import uuid4
+from uuid import uuid7
 
 from django.db import models
 from django.templatetags.static import static
@@ -105,7 +105,7 @@ class AgentDeviceUserBinding(DeviceUserBinding):
 class DeviceToken(InternallyManagedMixin, ExpiringModel):
     """Per-device token used for authentication."""
 
-    token_uuid = models.UUIDField(primary_key=True, default=uuid4)
+    token_uuid = models.UUIDField(primary_key=True, default=uuid7)
     device = models.ForeignKey(AgentDeviceConnection, on_delete=models.CASCADE)
     key = models.TextField(default=generate_key)
 
@@ -121,7 +121,7 @@ class EnrollmentToken(ExpiringModel, SerializerModel):
     """Token used during enrollment, a device will receive
     a device token for further authentication"""
 
-    token_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    token_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
     name = models.TextField()
     key = models.TextField(default=default_token_key)
     connector = models.ForeignKey(AgentConnector, on_delete=models.CASCADE)
@@ -150,7 +150,7 @@ class EnrollmentToken(ExpiringModel, SerializerModel):
 
 class DeviceAuthenticationToken(InternallyManagedMixin, ExpiringModel):
 
-    identifier = models.UUIDField(default=uuid4, primary_key=True)
+    identifier = models.UUIDField(default=uuid7, primary_key=True)
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
     device_token = models.ForeignKey(DeviceToken, on_delete=models.CASCADE)
     connector = models.ForeignKey(AgentConnector, on_delete=models.CASCADE)

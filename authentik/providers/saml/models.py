@@ -1,6 +1,6 @@
 """authentik SAML Provider Models"""
 
-from uuid import uuid4
+from uuid import uuid7
 
 from django.db import models
 from django.templatetags.static import static
@@ -307,7 +307,7 @@ class SAMLProviderImportModel(CreatableType, Provider):
 class SAMLSession(InternallyManagedMixin, SerializerModel, ExpiringModel):
     """Track active SAML sessions for Single Logout support"""
 
-    saml_session_id = models.UUIDField(default=uuid4, primary_key=True)
+    saml_session_id = models.UUIDField(default=uuid7, primary_key=True)
     provider = models.ForeignKey(SAMLProvider, on_delete=models.CASCADE)
     user = models.ForeignKey(User, verbose_name=_("User"), on_delete=models.CASCADE)
     session = models.ForeignKey(

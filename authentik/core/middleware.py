@@ -3,7 +3,7 @@
 from collections.abc import Callable
 from contextvars import ContextVar
 from functools import partial
-from uuid import uuid4
+from uuid import uuid7
 
 from django.contrib.auth import logout
 from django.contrib.auth.models import AnonymousUser
@@ -104,7 +104,7 @@ class RequestIDMiddleware:
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         if not hasattr(request, "request_id"):
-            request_id = uuid4().hex
+            request_id = uuid7().hex
             request.request_id = request_id
             CTX_REQUEST_ID.set(request_id)
             CTX_HOST.set(request.get_host())

@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 (
                     "license_uuid",
                     models.UUIDField(
-                        default=uuid.uuid4, editable=False, primary_key=True, serialize=False
+                        default=uuid.uuid7, editable=False, primary_key=True, serialize=False
                     ),
                 ),
                 ("key", models.TextField(unique=True)),
@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                 (
                     "usage_uuid",
                     models.UUIDField(
-                        default=uuid.uuid4, editable=False, primary_key=True, serialize=False
+                        default=uuid.uuid7, editable=False, primary_key=True, serialize=False
                     ),
                 ),
                 ("user_count", models.BigIntegerField()),

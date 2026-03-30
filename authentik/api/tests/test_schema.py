@@ -2,7 +2,7 @@
 
 from pathlib import Path
 from tempfile import gettempdir
-from uuid import uuid4
+from uuid import uuid7
 
 from django.core.management import call_command
 from django.urls import reverse
@@ -32,8 +32,8 @@ class TestSchemaGeneration(APITestCase):
     def test_build_schema(self):
         """Test schema build command"""
         tmp = Path(gettempdir())
-        blueprint_file = tmp / f"{str(uuid4())}.json"
-        api_file = tmp / f"{str(uuid4())}.yml"
+        blueprint_file = tmp / f"{str(uuid7())}.json"
+        api_file = tmp / f"{str(uuid7())}.yml"
         with (
             CONFIG.patch("debug", True),
             CONFIG.patch("tenants.enabled", True),

@@ -1,7 +1,7 @@
 """authentik consent stage"""
 
 from hmac import compare_digest
-from uuid import uuid4
+from uuid import uuid7
 
 from django.http import HttpRequest, HttpResponse
 from django.utils.timezone import now
@@ -64,7 +64,7 @@ class ConsentStageView(ChallengeStageView):
     response_class = ConsentChallengeResponse
 
     def get_challenge(self) -> Challenge:
-        token = str(uuid4())
+        token = str(uuid7())
         self.executor.plan.context[PLAN_CONTEXT_CONSENT_TOKEN] = token
         data = {
             "permissions": self.executor.plan.context.get(PLAN_CONTEXT_CONSENT_PERMISSIONS, []),

@@ -7,7 +7,7 @@ from contextlib import AbstractAsyncContextManager
 from datetime import UTC, datetime, timedelta
 from re import Pattern
 from typing import Any, cast
-from uuid import uuid4
+from uuid import uuid7
 
 import msgpack
 from channels.layers import BaseChannelLayer
@@ -214,7 +214,7 @@ class PostgresChannelLoopLayer(BaseChannelLayer):
                         expires=sql.Identifier("expires"),
                     ),
                     (
-                        uuid4(),
+                        uuid7(),
                         channel,
                         self.channel_layer.serialize(message),
                         now() + timedelta(seconds=self.expiry),
@@ -226,7 +226,7 @@ class PostgresChannelLoopLayer(BaseChannelLayer):
         Returns a new channel name that can be used by something in our
         process as a specific channel.
         """
-        channel = f"{self.prefix}.{prefix}.{uuid4().hex}"
+        channel = f"{self.prefix}.{prefix}.{uuid7().hex}"
         await self._subscribe_to_channel(channel)
         return channel
 
@@ -325,7 +325,7 @@ class PostgresChannelLoopLayer(BaseChannelLayer):
                         expires=sql.Identifier("expires"),
                     ),
                     (
-                        uuid4(),
+                        uuid7(),
                         group_key,
                         channel,
                         now() + timedelta(seconds=self.group_expiry),
@@ -385,7 +385,7 @@ class PostgresChannelLoopLayer(BaseChannelLayer):
                 )
                 channels = [row[0] for row in await cursor.fetchall()]
             messages = [
-                (uuid4(), channel, serialized_message, now() + timedelta(seconds=self.expiry))
+                (uuid7(), channel, serialized_message, now() + timedelta(seconds=self.expiry))
                 for channel in channels
             ]
             async with conn.cursor() as cursor:
@@ -429,7 +429,7 @@ class PostgresChannelLoopLayer(BaseChannelLayer):
             )
             channels = [row[0] for row in cursor.fetchall()]
         messages = [
-            (uuid4(), channel, serialized_message, now() + timedelta(seconds=self.expiry))
+            (uuid7(), channel, serialized_message, now() + timedelta(seconds=self.expiry))
             for channel in channels
         ]
         with connections[self.using].cursor() as cursor:

@@ -78,12 +78,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="scimsourcegroup",
             name="id",
-            field=models.TextField(default=uuid.uuid4, primary_key=True, serialize=False),
+            field=models.TextField(default=uuid.uuid7, primary_key=True, serialize=False),
         ),
         migrations.AlterField(
             model_name="scimsourceuser",
             name="id",
-            field=models.TextField(default=uuid.uuid4, primary_key=True, serialize=False),
+            field=models.TextField(default=uuid.uuid7, primary_key=True, serialize=False),
         ),
         migrations.AddField(
             model_name="scimsourcegroup",

@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 (
                     "policy_uuid",
                     models.UUIDField(
-                        default=uuid.uuid4,
+                        default=uuid.uuid7,
                         editable=False,
                         primary_key=True,
                         serialize=False,
@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
                 (
                     "policy_binding_uuid",
                     models.UUIDField(
-                        default=uuid.uuid4,
+                        default=uuid.uuid7,
                         editable=False,
                         primary_key=True,
                         serialize=False,
@@ -69,7 +69,7 @@ class Migration(migrations.Migration):
                 (
                     "pbm_uuid",
                     models.UUIDField(
-                        default=uuid.uuid4,
+                        default=uuid.uuid7,
                         editable=False,
                         primary_key=True,
                         serialize=False,

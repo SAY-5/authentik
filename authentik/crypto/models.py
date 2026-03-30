@@ -5,7 +5,7 @@ from binascii import hexlify
 from hashlib import md5, sha512
 from ssl import PEM_FOOTER, PEM_HEADER
 from textwrap import wrap
-from uuid import uuid4
+from uuid import uuid7
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
@@ -85,7 +85,7 @@ class CertificateKeyPair(SerializerModel, ManagedModel, CreatedUpdatedModel):
     """CertificateKeyPair that can be used for signing or encrypting if `key_data`
     is set, otherwise it can be used to verify remote data."""
 
-    kp_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    kp_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
 
     name = models.TextField(unique=True)
     certificate_data = models.TextField(help_text=_("PEM-encoded Certificate data"))

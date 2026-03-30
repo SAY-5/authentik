@@ -65,7 +65,7 @@ class Migration(migrations.Migration):
                     models.BooleanField(default=True, help_text="Is this device ready for use?"),
                 ),
                 ("last_used", models.DateTimeField(null=True)),
-                ("uuid", models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False)),
+                ("uuid", models.UUIDField(default=uuid.uuid7, primary_key=True, serialize=False)),
                 (
                     "host_identifier",
                     models.TextField(

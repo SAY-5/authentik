@@ -3,7 +3,7 @@
 from base64 import b64decode, b64encode
 from pickle import dumps, loads  # nosec
 from typing import TYPE_CHECKING
-from uuid import uuid4
+from uuid import uuid7
 
 from django.core.validators import validate_slug
 from django.db import models
@@ -83,7 +83,7 @@ class Stage(SerializerModel):
     """Stage is an instance of a component used in a flow. This can verify the user,
     enroll the user or offer a way of recovery"""
 
-    stage_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    stage_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
 
     name = models.TextField(unique=True)
 
@@ -138,7 +138,7 @@ class Flow(SerializerModel, PolicyBindingModel):
     a user. Additionally, policies can be applied, to specify which users
     have access to this flow."""
 
-    flow_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    flow_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
 
     name = models.TextField()
     slug = models.TextField(
@@ -233,7 +233,7 @@ class FlowStageBinding(SerializerModel, PolicyBindingModel):
     each flow-stage Binding. Additionally, policies can be specified, which determine if
     this Binding applies to the current user"""
 
-    fsb_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    fsb_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
 
     target = models.ForeignKey("Flow", on_delete=models.CASCADE)
     stage = InheritanceForeignKey(Stage, on_delete=models.CASCADE)

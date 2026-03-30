@@ -1,6 +1,6 @@
 """RBAC models"""
 
-from uuid import uuid4
+from uuid import uuid7
 
 from django.contrib.auth.management import _get_all_permissions
 from django.contrib.auth.models import Permission
@@ -36,7 +36,7 @@ class Role(SerializerModel, ManagedModel):
     """RBAC role, which can have different permissions (both global and per-object) attached
     to it."""
 
-    uuid = models.UUIDField(default=uuid4, editable=False, unique=True, primary_key=True)
+    uuid = models.UUIDField(default=uuid7, editable=False, unique=True, primary_key=True)
     name = models.TextField(unique=True)
 
     @property

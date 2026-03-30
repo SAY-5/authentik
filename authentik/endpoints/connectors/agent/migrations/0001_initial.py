@@ -121,7 +121,7 @@ class Migration(migrations.Migration):
                 ("expiring", models.BooleanField(default=True)),
                 (
                     "token_uuid",
-                    models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False),
+                    models.UUIDField(default=uuid.uuid7, primary_key=True, serialize=False),
                 ),
                 ("key", models.TextField(default=authentik.lib.generators.generate_key)),
                 (
@@ -151,7 +151,7 @@ class Migration(migrations.Migration):
                 (
                     "token_uuid",
                     models.UUIDField(
-                        default=uuid.uuid4, editable=False, primary_key=True, serialize=False
+                        default=uuid.uuid7, editable=False, primary_key=True, serialize=False
                     ),
                 ),
                 ("name", models.TextField()),

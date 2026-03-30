@@ -1,5 +1,5 @@
 from datetime import timedelta
-from uuid import uuid4
+from uuid import uuid7
 
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -21,7 +21,7 @@ from authentik.lib.utils.time import timedelta_from_string, timedelta_string_val
 
 
 class LifecycleRule(SerializerModel):
-    id = models.UUIDField(primary_key=True, default=uuid4)
+    id = models.UUIDField(primary_key=True, default=uuid7)
     name = models.TextField(unique=True)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.TextField(null=True, default=None)
@@ -183,7 +183,7 @@ class ReviewState(models.TextChoices):
 
 
 class LifecycleIteration(SerializerModel, ManagedModel):
-    id = models.UUIDField(primary_key=True, default=uuid4)
+    id = models.UUIDField(primary_key=True, default=uuid7)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.TextField(null=False)
     object = GenericForeignKey("content_type", "object_id")
@@ -275,7 +275,7 @@ class LifecycleIteration(SerializerModel, ManagedModel):
 
 
 class Review(SerializerModel):
-    id = models.UUIDField(primary_key=True, default=uuid4)
+    id = models.UUIDField(primary_key=True, default=uuid7)
     iteration = models.ForeignKey(LifecycleIteration, on_delete=models.CASCADE)
 
     reviewer = models.ForeignKey("authentik_core.User", on_delete=models.CASCADE)

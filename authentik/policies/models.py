@@ -1,6 +1,6 @@
 """Policy base models"""
 
-from uuid import uuid4
+from uuid import uuid7
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -27,7 +27,7 @@ class PolicyEngineMode(models.TextChoices):
 class PolicyBindingModel(models.Model):
     """Base Model for objects that have policies applied to them."""
 
-    pbm_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    pbm_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
 
     policies = models.ManyToManyField(
         "Policy", through="PolicyBinding", related_name="bindings", blank=True
@@ -62,7 +62,7 @@ class BoundPolicyQuerySet(models.QuerySet):
 class PolicyBinding(SerializerModel):
     """Relationship between a Policy and a PolicyBindingModel."""
 
-    policy_binding_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    policy_binding_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
 
     enabled = models.BooleanField(default=True)
 
@@ -174,7 +174,7 @@ class Policy(SerializerModel, CreatedUpdatedModel):
     """Policies which specify if a user is authorized to use an Application. Can be overridden by
     other types to add other fields, more logic, etc."""
 
-    policy_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    policy_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
 
     name = models.TextField(unique=True)
 

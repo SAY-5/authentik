@@ -1,7 +1,7 @@
 """SCIM Provider models"""
 
 from typing import Any, Self
-from uuid import uuid4
+from uuid import uuid7
 
 from django.db import models
 from django.db.models import QuerySet
@@ -27,7 +27,7 @@ LOGGER = get_logger()
 class SCIMProviderUser(InternallyManagedMixin, SerializerModel):
     """Mapping of a user and provider to a SCIM user ID"""
 
-    id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid7)
     scim_id = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     provider = models.ForeignKey("SCIMProvider", on_delete=models.CASCADE)
@@ -49,7 +49,7 @@ class SCIMProviderUser(InternallyManagedMixin, SerializerModel):
 class SCIMProviderGroup(InternallyManagedMixin, SerializerModel):
     """Mapping of a group and provider to a SCIM user ID"""
 
-    id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid7)
     scim_id = models.TextField()
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     provider = models.ForeignKey("SCIMProvider", on_delete=models.CASCADE)

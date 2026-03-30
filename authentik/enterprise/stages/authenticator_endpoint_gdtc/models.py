@@ -1,6 +1,6 @@
 """Endpoint stage"""
 
-from uuid import uuid4
+from uuid import uuid7
 
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -66,7 +66,7 @@ class AuthenticatorEndpointGDTCStage(DeprecatedMixin, ConfigurableStage, Friendl
 class EndpointDevice(InternallyManagedMixin, SerializerModel, Device):
     """Endpoint Device for a single user"""
 
-    uuid = models.UUIDField(primary_key=True, default=uuid4)
+    uuid = models.UUIDField(primary_key=True, default=uuid7)
     host_identifier = models.TextField(
         unique=True,
         help_text="A unique identifier for the endpoint device, usually the device serial number",

@@ -1,7 +1,7 @@
 """RAC Models"""
 
 from typing import Any
-from uuid import uuid4
+from uuid import uuid7
 
 from deepmerge import always_merger
 from django.db import models
@@ -148,7 +148,7 @@ class RACPropertyMapping(PropertyMapping):
 class ConnectionToken(InternallyManagedMixin, ExpiringModel):
     """Token for a single connection to a specified endpoint"""
 
-    connection_token_uuid = models.UUIDField(default=uuid4, primary_key=True)
+    connection_token_uuid = models.UUIDField(default=uuid7, primary_key=True)
     provider = models.ForeignKey(RACProvider, on_delete=models.CASCADE)
     endpoint = models.ForeignKey(Endpoint, on_delete=models.CASCADE)
     token = models.TextField(default=default_token_key)

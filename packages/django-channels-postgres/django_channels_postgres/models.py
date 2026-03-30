@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from uuid import uuid4
+from uuid import uuid7
 
 import pgtrigger
 from django.db import models
@@ -25,7 +25,7 @@ class GroupChannel(models.Model):
     Groups are used to send messages to multiple channels.
     """
 
-    id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid7)
     group_key = models.TextField(db_index=True)
     channel = models.TextField(db_index=True)
     expires = models.DateTimeField(db_index=True, default=_default_group_expiry)
@@ -54,7 +54,7 @@ class Message(models.Model):
     E.g for user to user private messages.
     """
 
-    id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid7)
     channel = models.TextField(db_index=True)
     message = models.BinaryField()
     expires = models.DateTimeField(db_index=True, default=_default_message_expiry)

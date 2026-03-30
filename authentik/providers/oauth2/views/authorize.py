@@ -7,7 +7,7 @@ from re import error as RegexError
 from re import fullmatch
 from typing import Any
 from urllib.parse import parse_qs, quote, urlencode, urlparse, urlsplit, urlunparse, urlunsplit
-from uuid import uuid4
+from uuid import uuid7
 
 from django.conf import settings
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
@@ -324,7 +324,7 @@ class OAuthAuthorizationParams:
             user=request.user,
             provider=self.provider,
             auth_time=auth_event.created if auth_event else now,
-            code=uuid4().hex,
+            code=uuid7().hex,
             expires=now + timedelta_from_string(self.provider.access_code_validity),
             scope=self.scope,
             nonce=self.nonce,

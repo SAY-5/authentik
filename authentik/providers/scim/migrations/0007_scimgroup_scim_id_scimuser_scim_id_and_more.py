@@ -17,13 +17,13 @@ def fix_scim_user_group_pk(apps: Apps, schema_editor: BaseDatabaseSchemaEditor):
     for user in progress_bar(SCIMUser.objects.using(db_alias).all()):
         SCIMUser.objects.using(db_alias).filter(
             pk=user.pk, user=user.user_id, provider=user.provider_id
-        ).update(scim_id=user.pk, id=uuid.uuid4())
+        ).update(scim_id=user.pk, id=uuid.uuid7())
 
     print("\nFixing primary key for SCIM groups, this might take a couple of minutes...")
     for group in progress_bar(SCIMGroup.objects.using(db_alias).all()):
         SCIMGroup.objects.using(db_alias).filter(
             pk=group.pk, group=group.group_id, provider=group.provider_id
-        ).update(scim_id=group.pk, id=uuid.uuid4())
+        ).update(scim_id=group.pk, id=uuid.uuid7())
 
 
 class Migration(migrations.Migration):
@@ -53,14 +53,14 @@ class Migration(migrations.Migration):
             model_name="scimgroup",
             name="id",
             field=models.UUIDField(
-                default=uuid.uuid4, editable=False, primary_key=True, serialize=False
+                default=uuid.uuid7, editable=False, primary_key=True, serialize=False
             ),
         ),
         migrations.AlterField(
             model_name="scimuser",
             name="id",
             field=models.UUIDField(
-                default=uuid.uuid4, editable=False, primary_key=True, serialize=False
+                default=uuid.uuid7, editable=False, primary_key=True, serialize=False
             ),
         ),
         migrations.AlterField(model_name="scimuser", name="scim_id", field=models.TextField()),

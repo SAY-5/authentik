@@ -1,6 +1,6 @@
 """Flow Stage API Views"""
 
-from uuid import uuid4
+from uuid import uuid7
 
 from django.urls.base import reverse
 from drf_spectacular.utils import extend_schema
@@ -31,7 +31,7 @@ class StageSerializer(ModelSerializer, MetaNameSerializer):
 
     def to_representation(self, instance: Stage):
         if isinstance(instance, Stage) and instance.is_in_memory:
-            instance.stage_uuid = uuid4()
+            instance.stage_uuid = uuid7()
         return super().to_representation(instance)
 
     def get_component(self, obj: Stage) -> str:

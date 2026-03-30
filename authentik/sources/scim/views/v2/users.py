@@ -1,6 +1,6 @@
 """SCIM User Views"""
 
-from uuid import uuid4
+from uuid import uuid7
 
 from django.db.models import Q
 from django.db.transaction import atomic
@@ -104,7 +104,7 @@ class UsersView(SCIMObjectView):
 
         if not connection:
             connection, _ = SCIMSourceUser.objects.update_or_create(
-                external_id=data.get("externalId") or str(uuid4()),
+                external_id=data.get("externalId") or str(uuid7()),
                 source=self.source,
                 user=user,
                 defaults={

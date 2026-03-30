@@ -1,6 +1,6 @@
 from datetime import datetime
 from functools import cached_property
-from uuid import uuid4
+from uuid import uuid7
 
 from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
@@ -105,7 +105,7 @@ class SSFProvider(TasksModel, BackchannelProvider):
 class Stream(models.Model):
     """SSF Stream"""
 
-    uuid = models.UUIDField(default=uuid4, primary_key=True, editable=False)
+    uuid = models.UUIDField(default=uuid7, primary_key=True, editable=False)
     provider = models.ForeignKey(SSFProvider, on_delete=models.CASCADE)
 
     delivery_method = models.TextField(choices=DeliveryMethods.choices)
@@ -126,7 +126,7 @@ class Stream(models.Model):
         return "SSF Stream"
 
     def prepare_event_payload(self, type: EventTypes, event_data: dict, **kwargs) -> dict:
-        jti = uuid4()
+        jti = uuid7()
         _now = now()
         return {
             "uuid": jti,
@@ -156,7 +156,7 @@ class Stream(models.Model):
 class StreamEvent(InternallyManagedMixin, CreatedUpdatedModel, ExpiringModel):
     """Single stream event to be sent"""
 
-    uuid = models.UUIDField(default=uuid4, primary_key=True, editable=False)
+    uuid = models.UUIDField(default=uuid7, primary_key=True, editable=False)
 
     stream = models.ForeignKey(Stream, on_delete=models.CASCADE)
     status = models.TextField(choices=SSFEventStatus.choices)

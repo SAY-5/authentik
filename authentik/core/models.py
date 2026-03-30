@@ -6,7 +6,7 @@ from datetime import datetime
 from enum import StrEnum
 from hashlib import sha256
 from typing import Any, Self
-from uuid import uuid4
+from uuid import uuid7
 
 import pgtrigger
 from deepmerge import always_merger
@@ -180,7 +180,7 @@ class GroupQuerySet(QuerySet):
 class Group(SerializerModel, AttributesMixin):
     """Group model which supports a hierarchy and has attributes"""
 
-    group_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    group_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
 
     name = models.TextField(verbose_name=_("name"), unique=True)
     is_superuser = models.BooleanField(
@@ -261,7 +261,7 @@ class Group(SerializerModel, AttributesMixin):
 
 
 class GroupParentageNode(models.Model):
-    uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
 
     child = models.ForeignKey(Group, related_name="parent_nodes", on_delete=models.CASCADE)
     parent = models.ForeignKey(Group, related_name="child_nodes", on_delete=models.CASCADE)
@@ -363,7 +363,7 @@ class User(SerializerModel, AttributesMixin, AbstractUser):
     # (This knowingly violates the Liskov substitution principle. It is better to fail loudly.)
     user_permissions = None
 
-    uuid = models.UUIDField(default=uuid4, editable=False, unique=True)
+    uuid = models.UUIDField(default=uuid7, editable=False, unique=True)
     name = models.TextField(help_text=_("User's display name."))
     path = models.TextField(default="users")
     type = models.TextField(choices=UserTypes.choices, default=UserTypes.INTERNAL)
@@ -1173,7 +1173,7 @@ class TokenIntents(models.TextChoices):
 class Token(SerializerModel, ManagedModel, ExpiringModel):
     """Token used to authenticate the User for API Access or confirm another Stage like Email."""
 
-    token_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    token_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
     identifier = models.SlugField(max_length=255, unique=True)
     key = models.TextField(default=default_token_key)
     intent = models.TextField(
@@ -1231,7 +1231,7 @@ class Token(SerializerModel, ManagedModel, ExpiringModel):
 class PropertyMapping(SerializerModel, ManagedModel):
     """User-defined key -> x mapping which can be used by providers to expose extra data."""
 
-    pm_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    pm_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
     name = models.TextField(unique=True)
     expression = models.TextField()
 
@@ -1317,7 +1317,7 @@ class AuthenticatedSession(SerializerModel):
     session = models.OneToOneField(Session, on_delete=models.CASCADE, primary_key=True)
     # We use the session as primary key, but we need the API to be able to reference
     # this object uniquely without exposing the session key
-    uuid = models.UUIDField(default=uuid4, unique=True)
+    uuid = models.UUIDField(default=uuid7, unique=True)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 

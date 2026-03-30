@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 (
                     "reputation_uuid",
                     models.UUIDField(
-                        default=uuid.uuid4, primary_key=True, serialize=False, unique=True
+                        default=uuid.uuid7, primary_key=True, serialize=False, unique=True
                     ),
                 ),
                 ("identifier", models.TextField()),

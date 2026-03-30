@@ -1,7 +1,7 @@
 """blueprint models"""
 
 from pathlib import Path
-from uuid import uuid4
+from uuid import uuid7
 
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import ArrayField
@@ -57,7 +57,7 @@ class BlueprintInstance(SerializerModel, ManagedModel, CreatedUpdatedModel):
     """Instance of a single blueprint. Can be parameterized via context attribute when
     blueprint in `path` has inputs."""
 
-    instance_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    instance_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
 
     name = models.TextField(unique=True)
     metadata = models.JSONField(default=dict)

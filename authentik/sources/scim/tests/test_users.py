@@ -1,7 +1,7 @@
 """Test SCIM User"""
 
 from json import dumps
-from uuid import uuid4
+from uuid import uuid7
 
 from django.urls import reverse
 from rest_framework.test import APITestCase
@@ -40,7 +40,7 @@ class TestSCIMUsers(APITestCase):
         SCIMSourceUser.objects.create(
             source=self.source,
             user=user,
-            id=str(uuid4()),
+            id=str(uuid7()),
         )
         response = self.client.get(
             reverse(
@@ -186,7 +186,7 @@ class TestSCIMUsers(APITestCase):
     def test_user_update(self):
         """Test user update"""
         user = create_test_user()
-        existing = SCIMSourceUser.objects.create(source=self.source, user=user, external_id=uuid4())
+        existing = SCIMSourceUser.objects.create(source=self.source, user=user, external_id=uuid7())
         ext_id = generate_id()
         response = self.client.put(
             reverse(
@@ -220,7 +220,7 @@ class TestSCIMUsers(APITestCase):
         existing = SCIMSourceUser.objects.create(
             source=self.source,
             user=user,
-            external_id=uuid4(),
+            external_id=uuid7(),
             attributes={
                 "userName": generate_id(),
             },
@@ -258,7 +258,7 @@ class TestSCIMUsers(APITestCase):
     def test_user_delete(self):
         """Test user delete"""
         user = create_test_user()
-        SCIMSourceUser.objects.create(source=self.source, user=user, external_id=uuid4())
+        SCIMSourceUser.objects.create(source=self.source, user=user, external_id=uuid7())
         response = self.client.delete(
             reverse(
                 "authentik_sources_scim:v2-users",

@@ -61,7 +61,7 @@ class Migration(migrations.Migration):
                 ("expiring", models.BooleanField(default=True)),
                 (
                     "saml_session_id",
-                    models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False),
+                    models.UUIDField(default=uuid.uuid7, primary_key=True, serialize=False),
                 ),
                 ("session_index", models.TextField(help_text="SAML SessionIndex for this session")),
                 ("name_id", models.TextField(help_text="SAML NameID value for this session")),

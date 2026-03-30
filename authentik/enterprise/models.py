@@ -2,7 +2,7 @@
 
 from datetime import timedelta
 from typing import TYPE_CHECKING
-from uuid import uuid4
+from uuid import uuid7
 
 from django.contrib.postgres.indexes import HashIndex
 from django.db import models
@@ -31,7 +31,7 @@ THRESHOLD_READ_ONLY_WEEKS = 6
 class License(SerializerModel):
     """An authentik enterprise license"""
 
-    license_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    license_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
     key = models.TextField()
 
     name = models.TextField()
@@ -86,7 +86,7 @@ class LicenseUsage(InternallyManagedMixin, ExpiringModel):
 
     expires = models.DateTimeField(default=usage_expiry)
 
-    usage_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    usage_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
 
     internal_user_count = models.BigIntegerField()
     external_user_count = models.BigIntegerField()

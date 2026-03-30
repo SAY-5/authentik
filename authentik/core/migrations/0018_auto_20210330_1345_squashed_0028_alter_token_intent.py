@@ -127,7 +127,7 @@ class Migration(migrations.Migration):
                     models.DateTimeField(default=authentik.core.models.default_token_duration),
                 ),
                 ("expiring", models.BooleanField(default=True)),
-                ("uuid", models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False)),
+                ("uuid", models.UUIDField(default=uuid.uuid7, primary_key=True, serialize=False)),
                 ("session_key", models.CharField(max_length=40)),
                 ("last_ip", models.TextField()),
                 ("last_user_agent", models.TextField(blank=True)),

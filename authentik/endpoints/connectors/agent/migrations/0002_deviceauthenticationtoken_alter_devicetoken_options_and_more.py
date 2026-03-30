@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ("expiring", models.BooleanField(default=True)),
                 (
                     "identifier",
-                    models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False),
+                    models.UUIDField(default=uuid.uuid7, primary_key=True, serialize=False),
                 ),
                 ("token", models.TextField()),
             ],

@@ -1,7 +1,7 @@
 """Tenant models"""
 
 import re
-from uuid import uuid4
+from uuid import uuid7
 
 from django.apps import apps
 from django.conf import settings
@@ -44,7 +44,7 @@ def _validate_schema_name(name):
 class Tenant(InternallyManagedMixin, TenantMixin, SerializerModel):
     """Tenant"""
 
-    tenant_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    tenant_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
     schema_name = models.CharField(
         max_length=63, unique=True, db_index=True, validators=[_validate_schema_name]
     )

@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 (
                     "prompt_uuid",
                     models.UUIDField(
-                        default=uuid.uuid4,
+                        default=uuid.uuid7,
                         editable=False,
                         primary_key=True,
                         serialize=False,

@@ -146,7 +146,7 @@ class Migration(migrations.Migration):
                 ("expiring", models.BooleanField(default=True)),
                 (
                     "connection_token_uuid",
-                    models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False),
+                    models.UUIDField(default=uuid.uuid7, primary_key=True, serialize=False),
                 ),
                 ("token", models.TextField(default=authentik.core.models.default_token_key)),
                 ("settings", models.JSONField(default=dict)),

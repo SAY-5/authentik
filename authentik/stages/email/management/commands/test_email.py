@@ -1,6 +1,6 @@
 """Send a test-email with global settings"""
 
-from uuid import uuid4
+from uuid import uuid7
 
 from django.core.management.base import no_translations
 
@@ -25,7 +25,7 @@ class Command(TenantCommand):
             stage = stages.first()
         else:
             stage = EmailStage.objects.create(
-                name=f"temp-global-stage-{uuid4()}", use_global_settings=True
+                name=f"temp-global-stage-{uuid7()}", use_global_settings=True
             )
             delete_stage = True
         message = TemplateEmailMessage(

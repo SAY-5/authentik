@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
                 (
                     "tenant_uuid",
                     models.UUIDField(
-                        default=uuid.uuid4, editable=False, primary_key=True, serialize=False
+                        default=uuid.uuid7, editable=False, primary_key=True, serialize=False
                     ),
                 ),
                 (

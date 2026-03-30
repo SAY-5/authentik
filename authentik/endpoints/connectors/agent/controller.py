@@ -1,5 +1,5 @@
 from plistlib import PlistFormat, dumps
-from uuid import uuid4
+from uuid import uuid7
 from xml.etree.ElementTree import Element, SubElement, tostring  # nosec
 
 from django.http import HttpRequest
@@ -100,7 +100,7 @@ class AgentConnectorController(BaseController[AgentConnector]):
                         "PayloadDisplayName": "authentik Platform",
                         "PayloadIdentifier": f"io.goauthentik.platform.{token_uuid}",
                         "PayloadType": "io.goauthentik.platform",
-                        "PayloadUUID": str(uuid4()),
+                        "PayloadUUID": str(uuid7()),
                         "PayloadVersion": 1,
                         "RegistrationToken": token.key,
                         "URL": request.build_absolute_uri(reverse("authentik_core:root-redirect")),
@@ -110,7 +110,7 @@ class AgentConnectorController(BaseController[AgentConnector]):
                         "PayloadDisplayName": "Associated Domains",
                         "PayloadIdentifier": f"com.apple.associated-domains.{token_uuid}",
                         "PayloadType": "com.apple.associated-domains",
-                        "PayloadUUID": str(uuid4()),
+                        "PayloadUUID": str(uuid7()),
                         "PayloadVersion": 1,
                         "Configuration": [
                             {
@@ -125,7 +125,7 @@ class AgentConnectorController(BaseController[AgentConnector]):
                         "PayloadDisplayName": "Platform Single Sign-On",
                         "PayloadIdentifier": f"com.apple.extensiblesso.{token_uuid}",
                         "PayloadType": "com.apple.extensiblesso",
-                        "PayloadUUID": str(uuid4()),
+                        "PayloadUUID": str(uuid7()),
                         "PayloadVersion": 1,
                         "ExtensionIdentifier": "io.goauthentik.platform.psso",
                         "TeamIdentifier": "232G855Y8N",

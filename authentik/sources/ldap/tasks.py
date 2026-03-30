@@ -1,6 +1,6 @@
 """LDAP Sync tasks"""
 
-from uuid import uuid4
+from uuid import uuid7
 
 from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
@@ -118,7 +118,7 @@ def ldap_sync_paginator(
     sync_inst: BaseLDAPSynchronizer = sync(source, task)
     messages = []
     for page in sync_inst.get_objects():
-        page_uid = str(uuid4())
+        page_uid = str(uuid7())
         page_cache_key = CACHE_KEY_PREFIX + page_uid
         cache.set(page_cache_key, page, 60 * 60 * CONFIG.get_int("ldap.task_timeout_hours"))
         page_sync = ldap_sync_page.message_with_options(

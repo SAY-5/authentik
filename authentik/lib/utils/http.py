@@ -1,6 +1,6 @@
 """http helpers"""
 
-from uuid import uuid4
+from uuid import uuid7
 
 from requests.sessions import PreparedRequest, Session
 from structlog.stdlib import get_logger
@@ -53,7 +53,7 @@ class DebugSession(TimeoutSession):
     """requests session which logs http requests and responses"""
 
     def send(self, req: PreparedRequest, *args, **kwargs):
-        request_id = str(uuid4())
+        request_id = str(uuid7())
         LOGGER.debug(
             "HTTP request sent",
             uid=request_id,

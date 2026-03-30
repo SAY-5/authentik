@@ -1,5 +1,5 @@
 # flake8: noqa
-from uuid import uuid4
+from uuid import uuid7
 
 from authentik.lib.config import CONFIG
 from lifecycle.migrate import BaseMigration
@@ -29,7 +29,7 @@ class Migration(BaseMigration):
                 )
             else:
                 # Otherwise assume a new install, generate an install ID based on a UUID
-                install_id = str(uuid4())
+                install_id = str(uuid7())
                 self.cur.execute("INSERT INTO authentik_install_id (id) VALUES (%s)", (install_id,))
 
     def run(self):

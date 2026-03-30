@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.UUIDField(
-                        default=uuid.uuid4, editable=False, primary_key=True, serialize=False
+                        default=uuid.uuid7, editable=False, primary_key=True, serialize=False
                     ),
                 ),
                 ("group_key", models.TextField(db_index=True)),
@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.UUIDField(
-                        default=uuid.uuid4, editable=False, primary_key=True, serialize=False
+                        default=uuid.uuid7, editable=False, primary_key=True, serialize=False
                     ),
                 ),
                 ("channel", models.TextField(db_index=True)),

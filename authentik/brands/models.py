@@ -1,6 +1,6 @@
 """brand models"""
 
-from uuid import uuid4
+from uuid import uuid7
 
 from django.db import models
 from django.http import HttpRequest
@@ -21,7 +21,7 @@ LOGGER = get_logger()
 class Brand(SerializerModel):
     """Single brand"""
 
-    brand_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid4)
+    brand_uuid = models.UUIDField(primary_key=True, editable=False, default=uuid7)
     domain = models.TextField(
         help_text=_(
             "Domain that activates this brand. Can be a superset, i.e. `a.b` for `aa.b` and `ba.b`"

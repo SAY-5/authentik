@@ -1,6 +1,6 @@
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
-from uuid import uuid4
+from uuid import uuid7
 
 from django.core.cache import cache
 from django.db import models
@@ -29,7 +29,7 @@ DEVICE_FACTS_CACHE_TIMEOUT = 3600
 
 
 class Device(InternallyManagedMixin, ExpiringModel, AttributesMixin, PolicyBindingModel):
-    device_uuid = models.UUIDField(default=uuid4, primary_key=True)
+    device_uuid = models.UUIDField(default=uuid7, primary_key=True)
 
     name = models.TextField(unique=True)
     identifier = models.TextField(unique=True)
@@ -87,7 +87,7 @@ class DeviceUserBinding(PolicyBinding):
 
 
 class DeviceConnection(InternallyManagedMixin, SerializerModel):
-    device_connection_uuid = models.UUIDField(default=uuid4, primary_key=True)
+    device_connection_uuid = models.UUIDField(default=uuid7, primary_key=True)
     device = models.ForeignKey("Device", on_delete=models.CASCADE)
     connector = models.ForeignKey("Connector", on_delete=models.CASCADE)
 
@@ -116,7 +116,7 @@ class DeviceConnection(InternallyManagedMixin, SerializerModel):
 
 
 class DeviceFactSnapshot(InternallyManagedMixin, ExpiringModel, SerializerModel):
-    snapshot_id = models.UUIDField(primary_key=True, default=uuid4)
+    snapshot_id = models.UUIDField(primary_key=True, default=uuid7)
     connection = models.ForeignKey(DeviceConnection, on_delete=models.CASCADE)
     data = models.JSONField(default=dict)
     created = models.DateTimeField(auto_now_add=True)
@@ -136,7 +136,7 @@ class DeviceFactSnapshot(InternallyManagedMixin, ExpiringModel, SerializerModel)
 
 
 class Connector(ScheduledModel, SerializerModel):
-    connector_uuid = models.UUIDField(default=uuid4, primary_key=True)
+    connector_uuid = models.UUIDField(default=uuid7, primary_key=True)
 
     name = models.TextField()
     enabled = models.BooleanField(default=True)

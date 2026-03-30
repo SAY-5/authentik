@@ -1,6 +1,6 @@
 from collections.abc import Iterable
 from typing import Self
-from uuid import UUID, uuid4
+from uuid import UUID, uuid7
 
 import pgtrigger
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
@@ -146,7 +146,7 @@ class Task(InternallyManagedMixin, SerializerModel, TaskBase):
 
 
 class TaskLog(InternallyManagedMixin, models.Model):
-    id = models.UUIDField(default=uuid4, primary_key=True, editable=False)
+    id = models.UUIDField(default=uuid7, primary_key=True, editable=False)
 
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="tasklogs")
     event = models.TextField()
@@ -221,7 +221,7 @@ class TasksModel(models.Model):
 
 
 class WorkerStatus(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid4)
+    id = models.UUIDField(primary_key=True, default=uuid7)
     hostname = models.TextField()
     version = models.TextField()
     last_seen = models.DateTimeField(auto_now_add=True)

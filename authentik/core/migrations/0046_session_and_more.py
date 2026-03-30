@@ -100,7 +100,7 @@ class Migration(migrations.Migration):
                         to="authentik_core.session",
                     ),
                 ),
-                ("uuid", models.UUIDField(default=uuid.uuid4, unique=True)),
+                ("uuid", models.UUIDField(default=uuid.uuid7, unique=True)),
                 (
                     "user",
                     models.ForeignKey(

@@ -1,7 +1,7 @@
 """Source stage logic"""
 
 from typing import Any
-from uuid import uuid4
+from uuid import uuid7
 
 from django.http import HttpRequest, HttpResponse
 from django.utils.text import slugify
@@ -65,7 +65,7 @@ class SourceStageView(ChallengeStageView):
         if pending_user.is_anonymous or not pending_user.pk:
             pending_user = get_anonymous_user()
         current_stage: SourceStage = self.executor.current_stage
-        identifier = slugify(f"ak-source-stage-{current_stage.name}-{str(uuid4())}")
+        identifier = slugify(f"ak-source-stage-{current_stage.name}-{str(uuid7())}")
         # Don't check for validity here, we only care if the token exists
         tokens = FlowToken.objects.filter(identifier=identifier)
         valid_delta = timedelta_from_string(current_stage.resume_timeout)

@@ -1,6 +1,6 @@
 from collections.abc import Generator
 from itertools import batched
-from uuid import uuid4
+from uuid import uuid7
 
 from ldap3 import SUBTREE
 
@@ -24,7 +24,7 @@ class UserLDAPForwardDeletion(BaseLDAPSynchronizer):
             self._task.info("User syncing is disabled for this Source")
             return iter(())
 
-        uuid = uuid4()
+        uuid = uuid7()
         users = self._source.connection().extend.standard.paged_search(
             search_base=self.base_dn_users,
             search_filter=self._source.user_object_filter,

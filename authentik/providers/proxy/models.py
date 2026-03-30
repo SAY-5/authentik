@@ -4,7 +4,7 @@ import string
 from collections.abc import Iterable
 from random import SystemRandom
 from urllib.parse import urljoin
-from uuid import uuid4
+from uuid import uuid7
 
 from django.db import models
 from django.templatetags.static import static
@@ -30,7 +30,7 @@ OUTPOST_CALLBACK_SIGNATURE = "X-authentik-auth-callback"
 class ProxySession(InternallyManagedMixin, ExpiringModel):
     """Session storage for proxyv2 outposts using PostgreSQL"""
 
-    uuid = models.UUIDField(default=uuid4, primary_key=True)
+    uuid = models.UUIDField(default=uuid7, primary_key=True)
     session_key = models.TextField(unique=True, db_index=True)
     user_id = models.UUIDField(null=True, blank=True, db_index=True)
 

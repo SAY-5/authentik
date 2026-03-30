@@ -95,7 +95,7 @@ class Migration(migrations.Migration):
                 (
                     "event_uuid",
                     models.UUIDField(
-                        default=uuid.uuid4, editable=False, primary_key=True, serialize=False
+                        default=uuid.uuid7, editable=False, primary_key=True, serialize=False
                     ),
                 ),
                 (
@@ -159,7 +159,7 @@ class Migration(migrations.Migration):
                 (
                     "uuid",
                     models.UUIDField(
-                        default=uuid.uuid4, editable=False, primary_key=True, serialize=False
+                        default=uuid.uuid7, editable=False, primary_key=True, serialize=False
                     ),
                 ),
                 ("name", models.TextField(unique=True)),
@@ -242,7 +242,7 @@ class Migration(migrations.Migration):
                 (
                     "uuid",
                     models.UUIDField(
-                        default=uuid.uuid4, editable=False, primary_key=True, serialize=False
+                        default=uuid.uuid7, editable=False, primary_key=True, serialize=False
                     ),
                 ),
                 (

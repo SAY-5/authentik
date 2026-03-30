@@ -2,7 +2,7 @@ import pickle  # nosec
 from datetime import datetime, timedelta
 from enum import StrEnum, auto
 from typing import Any
-from uuid import uuid4
+from uuid import uuid7
 
 import pgtrigger
 from cron_converter import Cron
@@ -39,7 +39,7 @@ class TaskState(models.TextChoices):
 
 
 class TaskBase(models.Model):
-    message_id = models.UUIDField(primary_key=True, default=uuid4)
+    message_id = models.UUIDField(primary_key=True, default=uuid7)
     queue_name = models.TextField(default="default", help_text=_("Queue name"))
 
     actor_name = models.TextField(help_text=_("Dramatiq actor name"))
@@ -101,7 +101,7 @@ def validate_crontab(value: str) -> None:
 
 
 class ScheduleBase(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid7, editable=False)
 
     actor_name = models.TextField(editable=False, help_text=_("Dramatiq actor to call"))
     args = models.BinaryField(editable=False, help_text=_("Args to send to the actor"))

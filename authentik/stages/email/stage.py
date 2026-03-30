@@ -3,7 +3,7 @@
 import math
 from datetime import UTC, datetime, timedelta
 from hashlib import sha256
-from uuid import uuid4
+from uuid import uuid7
 
 from django.contrib import messages
 from django.core.cache import cache
@@ -82,7 +82,7 @@ class EmailStageView(ChallengeStageView):
         valid_delta = timedelta_from_string(current_stage.token_expiry) + timedelta(
             minutes=1
         )  # + 1 because django timesince always rounds down
-        identifier = slugify(f"ak-email-stage-{current_stage.name}-{str(uuid4())}")
+        identifier = slugify(f"ak-email-stage-{current_stage.name}-{str(uuid7())}")
         # Don't check for validity here, we only care if the token exists
         tokens = FlowToken.objects.filter(identifier=identifier)
         if not tokens.exists():

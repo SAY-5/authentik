@@ -1,7 +1,7 @@
 """authentik reputation request policy"""
 
 from datetime import timedelta
-from uuid import uuid4
+from uuid import uuid7
 
 from django.db import models
 from django.db.models import Sum
@@ -71,7 +71,7 @@ class ReputationPolicy(Policy):
 class Reputation(InternallyManagedMixin, ExpiringModel, SerializerModel):
     """Reputation for user and or IP."""
 
-    reputation_uuid = models.UUIDField(primary_key=True, unique=True, default=uuid4)
+    reputation_uuid = models.UUIDField(primary_key=True, unique=True, default=uuid7)
 
     identifier = models.TextField()
     ip = models.GenericIPAddressField()

@@ -99,7 +99,7 @@ class CertificateBuilder:
             )
             .not_valid_before(datetime.datetime.today() - one_day)
             .not_valid_after(datetime.datetime.today() + datetime.timedelta(days=validity_days))
-            .serial_number(int(uuid.uuid4()))
+            .serial_number(int(uuid.uuid7()))
             .public_key(self.__public_key)
         )
         if alt_names:

@@ -99,7 +99,7 @@ class Migration(migrations.Migration):
                         default=django.utils.timezone.now, verbose_name="date joined"
                     ),
                 ),
-                ("uuid", models.UUIDField(default=uuid.uuid4, editable=False)),
+                ("uuid", models.UUIDField(default=uuid.uuid7, editable=False)),
                 ("name", models.TextField(help_text="User's display name.")),
                 ("password_change_date", models.DateTimeField(auto_now_add=True)),
                 (
@@ -121,7 +121,7 @@ class Migration(migrations.Migration):
                 (
                     "pm_uuid",
                     models.UUIDField(
-                        default=uuid.uuid4,
+                        default=uuid.uuid7,
                         editable=False,
                         primary_key=True,
                         serialize=False,
@@ -203,7 +203,7 @@ class Migration(migrations.Migration):
                 (
                     "token_uuid",
                     models.UUIDField(
-                        default=uuid.uuid4,
+                        default=uuid.uuid7,
                         editable=False,
                         primary_key=True,
                         serialize=False,
@@ -255,7 +255,7 @@ class Migration(migrations.Migration):
                 (
                     "group_uuid",
                     models.UUIDField(
-                        default=uuid.uuid4,
+                        default=uuid.uuid7,
                         editable=False,
                         primary_key=True,
                         serialize=False,

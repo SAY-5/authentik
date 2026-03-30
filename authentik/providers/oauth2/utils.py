@@ -254,7 +254,7 @@ def create_logout_token(
         "aud": provider.client_id,
         "iat": int(_now.timestamp()),
         "exp": int((_now + timedelta_from_string(provider.access_token_validity)).timestamp()),
-        "jti": str(uuid.uuid4()),
+        "jti": str(uuid.uuid7()),
         "events": {
             "http://schemas.openid.net/event/backchannel-logout": {},
         },

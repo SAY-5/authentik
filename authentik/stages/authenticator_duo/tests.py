@@ -1,7 +1,7 @@
 """Test duo stage"""
 
 from unittest.mock import MagicMock, patch
-from uuid import uuid4
+from uuid import uuid7
 
 from django.test.client import RequestFactory
 from django.urls import reverse
@@ -44,7 +44,7 @@ class AuthenticatorDuoStageTests(FlowTestCase):
             reverse(
                 "authentik_api:authenticatorduostage-enrollment-status",
                 kwargs={
-                    "pk": str(uuid4()),
+                    "pk": str(uuid7()),
                 },
             )
         )

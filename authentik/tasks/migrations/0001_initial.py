@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="WorkerStatus",
             fields=[
-                ("id", models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False)),
+                ("id", models.UUIDField(default=uuid.uuid7, primary_key=True, serialize=False)),
                 ("hostname", models.TextField()),
                 ("version", models.TextField()),
                 ("last_seen", models.DateTimeField(auto_now_add=True)),
@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "message_id",
-                    models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False),
+                    models.UUIDField(default=uuid.uuid7, primary_key=True, serialize=False),
                 ),
                 ("queue_name", models.TextField(default="default", help_text="Queue name")),
                 ("actor_name", models.TextField(help_text="Dramatiq actor name")),

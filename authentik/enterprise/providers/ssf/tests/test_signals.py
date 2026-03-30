@@ -1,4 +1,4 @@
-from uuid import uuid4
+from uuid import uuid7
 
 from django.urls import reverse
 from rest_framework.test import APITestCase
@@ -102,7 +102,7 @@ class TestSignals(APITestCase):
             name=generate_id(),
             credential_id=generate_id(),
             public_key=generate_id(),
-            aaguid=str(uuid4()),
+            aaguid=str(uuid7()),
         )
 
         stream = Stream.objects.filter(provider=self.provider).first()
@@ -130,7 +130,7 @@ class TestSignals(APITestCase):
             name=generate_id(),
             credential_id=generate_id(),
             public_key=generate_id(),
-            aaguid=str(uuid4()),
+            aaguid=str(uuid7()),
         )
         dev.delete()
 
