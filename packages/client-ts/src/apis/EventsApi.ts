@@ -17,7 +17,9 @@ import * as runtime from '../runtime';
 import type {
   DataExport,
   Event,
+  EventActions,
   EventRequest,
+  EventStats,
   EventTopPerUser,
   EventVolume,
   GenericError,
@@ -36,6 +38,8 @@ import type {
   PatchedNotificationRequest,
   PatchedNotificationRuleRequest,
   PatchedNotificationTransportRequest,
+  SeverityEnum,
+  TransportModeEnum,
   TypeCreate,
   UsedBy,
   ValidationError,
@@ -45,8 +49,12 @@ import {
     DataExportToJSON,
     EventFromJSON,
     EventToJSON,
+    EventActionsFromJSON,
+    EventActionsToJSON,
     EventRequestFromJSON,
     EventRequestToJSON,
+    EventStatsFromJSON,
+    EventStatsToJSON,
     EventTopPerUserFromJSON,
     EventTopPerUserToJSON,
     EventVolumeFromJSON,
@@ -83,6 +91,10 @@ import {
     PatchedNotificationRuleRequestToJSON,
     PatchedNotificationTransportRequestFromJSON,
     PatchedNotificationTransportRequestToJSON,
+    SeverityEnumFromJSON,
+    SeverityEnumToJSON,
+    TransportModeEnumFromJSON,
+    TransportModeEnumToJSON,
     TypeCreateFromJSON,
     TypeCreateToJSON,
     UsedByFromJSON,
@@ -101,10 +113,11 @@ export interface EventsEventsDestroyRequest {
 
 export interface EventsEventsExportCreateRequest {
     action?: string;
-    actions?: Array<EventsEventsExportCreateActionsEnum>;
+    actions?: Array<EventActions>;
     brandName?: string;
     clientIp?: string;
     contextAuthorizedApp?: string;
+    contextDevice?: string;
     contextModelApp?: string;
     contextModelName?: string;
     contextModelPk?: string;
@@ -115,10 +128,11 @@ export interface EventsEventsExportCreateRequest {
 
 export interface EventsEventsListRequest {
     action?: string;
-    actions?: Array<EventsEventsListActionsEnum>;
+    actions?: Array<EventActions>;
     brandName?: string;
     clientIp?: string;
     contextAuthorizedApp?: string;
+    contextDevice?: string;
     contextModelApp?: string;
     contextModelName?: string;
     contextModelPk?: string;
@@ -138,6 +152,22 @@ export interface EventsEventsRetrieveRequest {
     eventUuid: string;
 }
 
+export interface EventsEventsStatsRetrieveRequest {
+    countSteps: Array<string>;
+    action?: string;
+    actions?: Array<EventActions>;
+    brandName?: string;
+    clientIp?: string;
+    contextAuthorizedApp?: string;
+    contextDevice?: string;
+    contextModelApp?: string;
+    contextModelName?: string;
+    contextModelPk?: string;
+    ordering?: string;
+    search?: string;
+    username?: string;
+}
+
 export interface EventsEventsTopPerUserListRequest {
     action?: string;
     topN?: number;
@@ -150,10 +180,11 @@ export interface EventsEventsUpdateRequest {
 
 export interface EventsEventsVolumeListRequest {
     action?: string;
-    actions?: Array<EventsEventsVolumeListActionsEnum>;
+    actions?: Array<EventActions>;
     brandName?: string;
     clientIp?: string;
     contextAuthorizedApp?: string;
+    contextDevice?: string;
     contextModelApp?: string;
     contextModelName?: string;
     contextModelPk?: string;
@@ -176,7 +207,7 @@ export interface EventsNotificationsListRequest {
     pageSize?: number;
     search?: string;
     seen?: boolean;
-    severity?: EventsNotificationsListSeverityEnum;
+    severity?: SeverityEnum;
     user?: number;
 }
 
@@ -213,7 +244,7 @@ export interface EventsRulesListRequest {
     page?: number;
     pageSize?: number;
     search?: string;
-    severity?: EventsRulesListSeverityEnum;
+    severity?: SeverityEnum;
 }
 
 export interface EventsRulesPartialUpdateRequest {
@@ -243,7 +274,7 @@ export interface EventsTransportsDestroyRequest {
 }
 
 export interface EventsTransportsListRequest {
-    mode?: EventsTransportsListModeEnum;
+    mode?: TransportModeEnum;
     name?: string;
     ordering?: string;
     page?: number;
@@ -458,6 +489,10 @@ export class EventsApi extends runtime.BaseAPI {
             queryParameters['context_authorized_app'] = requestParameters['contextAuthorizedApp'];
         }
 
+        if (requestParameters['contextDevice'] != null) {
+            queryParameters['context_device'] = requestParameters['contextDevice'];
+        }
+
         if (requestParameters['contextModelApp'] != null) {
             queryParameters['context_model_app'] = requestParameters['contextModelApp'];
         }
@@ -545,6 +580,10 @@ export class EventsApi extends runtime.BaseAPI {
 
         if (requestParameters['contextAuthorizedApp'] != null) {
             queryParameters['context_authorized_app'] = requestParameters['contextAuthorizedApp'];
+        }
+
+        if (requestParameters['contextDevice'] != null) {
+            queryParameters['context_device'] = requestParameters['contextDevice'];
         }
 
         if (requestParameters['contextModelApp'] != null) {
@@ -728,6 +767,110 @@ export class EventsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Creates request options for eventsEventsStatsRetrieve without sending the request
+     */
+    async eventsEventsStatsRetrieveRequestOpts(requestParameters: EventsEventsStatsRetrieveRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['countSteps'] == null) {
+            throw new runtime.RequiredError(
+                'countSteps',
+                'Required parameter "countSteps" was null or undefined when calling eventsEventsStatsRetrieve().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters['action'] != null) {
+            queryParameters['action'] = requestParameters['action'];
+        }
+
+        if (requestParameters['actions'] != null) {
+            queryParameters['actions'] = requestParameters['actions'];
+        }
+
+        if (requestParameters['brandName'] != null) {
+            queryParameters['brand_name'] = requestParameters['brandName'];
+        }
+
+        if (requestParameters['clientIp'] != null) {
+            queryParameters['client_ip'] = requestParameters['clientIp'];
+        }
+
+        if (requestParameters['contextAuthorizedApp'] != null) {
+            queryParameters['context_authorized_app'] = requestParameters['contextAuthorizedApp'];
+        }
+
+        if (requestParameters['contextDevice'] != null) {
+            queryParameters['context_device'] = requestParameters['contextDevice'];
+        }
+
+        if (requestParameters['contextModelApp'] != null) {
+            queryParameters['context_model_app'] = requestParameters['contextModelApp'];
+        }
+
+        if (requestParameters['contextModelName'] != null) {
+            queryParameters['context_model_name'] = requestParameters['contextModelName'];
+        }
+
+        if (requestParameters['contextModelPk'] != null) {
+            queryParameters['context_model_pk'] = requestParameters['contextModelPk'];
+        }
+
+        if (requestParameters['countSteps'] != null) {
+            queryParameters['count_steps'] = requestParameters['countSteps'];
+        }
+
+        if (requestParameters['ordering'] != null) {
+            queryParameters['ordering'] = requestParameters['ordering'];
+        }
+
+        if (requestParameters['search'] != null) {
+            queryParameters['search'] = requestParameters['search'];
+        }
+
+        if (requestParameters['username'] != null) {
+            queryParameters['username'] = requestParameters['username'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("authentik", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/events/events/stats/`;
+
+        return {
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Get event stats for specified filters and count steps
+     */
+    async eventsEventsStatsRetrieveRaw(requestParameters: EventsEventsStatsRetrieveRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<EventStats>> {
+        const requestOptions = await this.eventsEventsStatsRetrieveRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EventStatsFromJSON(jsonValue));
+    }
+
+    /**
+     * Get event stats for specified filters and count steps
+     */
+    async eventsEventsStatsRetrieve(requestParameters: EventsEventsStatsRetrieveRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<EventStats> {
+        const response = await this.eventsEventsStatsRetrieveRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Creates request options for eventsEventsTopPerUserList without sending the request
      */
     async eventsEventsTopPerUserListRequestOpts(requestParameters: EventsEventsTopPerUserListRequest): Promise<runtime.RequestOpts> {
@@ -867,6 +1010,10 @@ export class EventsApi extends runtime.BaseAPI {
 
         if (requestParameters['contextAuthorizedApp'] != null) {
             queryParameters['context_authorized_app'] = requestParameters['contextAuthorizedApp'];
+        }
+
+        if (requestParameters['contextDevice'] != null) {
+            queryParameters['context_device'] = requestParameters['contextDevice'];
         }
 
         if (requestParameters['contextModelApp'] != null) {
@@ -2203,155 +2350,3 @@ export class EventsApi extends runtime.BaseAPI {
     }
 
 }
-
-/**
- * @export
- */
-export const EventsEventsExportCreateActionsEnum = {
-    AuthorizeApplication: 'authorize_application',
-    ConfigurationError: 'configuration_error',
-    ConfigurationWarning: 'configuration_warning',
-    Custom: 'custom_',
-    EmailSent: 'email_sent',
-    ExportReady: 'export_ready',
-    FlowExecution: 'flow_execution',
-    ImpersonationEnded: 'impersonation_ended',
-    ImpersonationStarted: 'impersonation_started',
-    InvitationUsed: 'invitation_used',
-    Login: 'login',
-    LoginFailed: 'login_failed',
-    Logout: 'logout',
-    ModelCreated: 'model_created',
-    ModelDeleted: 'model_deleted',
-    ModelUpdated: 'model_updated',
-    PasswordSet: 'password_set',
-    PolicyException: 'policy_exception',
-    PolicyExecution: 'policy_execution',
-    PropertyMappingException: 'property_mapping_exception',
-    ReviewAttested: 'review_attested',
-    ReviewCompleted: 'review_completed',
-    ReviewInitiated: 'review_initiated',
-    ReviewOverdue: 'review_overdue',
-    SecretRotate: 'secret_rotate',
-    SecretView: 'secret_view',
-    SourceLinked: 'source_linked',
-    SuspiciousRequest: 'suspicious_request',
-    SystemException: 'system_exception',
-    SystemTaskException: 'system_task_exception',
-    SystemTaskExecution: 'system_task_execution',
-    UpdateAvailable: 'update_available',
-    UserWrite: 'user_write',
-    UnknownDefaultOpenApi: '11184809'
-} as const;
-export type EventsEventsExportCreateActionsEnum = typeof EventsEventsExportCreateActionsEnum[keyof typeof EventsEventsExportCreateActionsEnum];
-/**
- * @export
- */
-export const EventsEventsListActionsEnum = {
-    AuthorizeApplication: 'authorize_application',
-    ConfigurationError: 'configuration_error',
-    ConfigurationWarning: 'configuration_warning',
-    Custom: 'custom_',
-    EmailSent: 'email_sent',
-    ExportReady: 'export_ready',
-    FlowExecution: 'flow_execution',
-    ImpersonationEnded: 'impersonation_ended',
-    ImpersonationStarted: 'impersonation_started',
-    InvitationUsed: 'invitation_used',
-    Login: 'login',
-    LoginFailed: 'login_failed',
-    Logout: 'logout',
-    ModelCreated: 'model_created',
-    ModelDeleted: 'model_deleted',
-    ModelUpdated: 'model_updated',
-    PasswordSet: 'password_set',
-    PolicyException: 'policy_exception',
-    PolicyExecution: 'policy_execution',
-    PropertyMappingException: 'property_mapping_exception',
-    ReviewAttested: 'review_attested',
-    ReviewCompleted: 'review_completed',
-    ReviewInitiated: 'review_initiated',
-    ReviewOverdue: 'review_overdue',
-    SecretRotate: 'secret_rotate',
-    SecretView: 'secret_view',
-    SourceLinked: 'source_linked',
-    SuspiciousRequest: 'suspicious_request',
-    SystemException: 'system_exception',
-    SystemTaskException: 'system_task_exception',
-    SystemTaskExecution: 'system_task_execution',
-    UpdateAvailable: 'update_available',
-    UserWrite: 'user_write',
-    UnknownDefaultOpenApi: '11184809'
-} as const;
-export type EventsEventsListActionsEnum = typeof EventsEventsListActionsEnum[keyof typeof EventsEventsListActionsEnum];
-/**
- * @export
- */
-export const EventsEventsVolumeListActionsEnum = {
-    AuthorizeApplication: 'authorize_application',
-    ConfigurationError: 'configuration_error',
-    ConfigurationWarning: 'configuration_warning',
-    Custom: 'custom_',
-    EmailSent: 'email_sent',
-    ExportReady: 'export_ready',
-    FlowExecution: 'flow_execution',
-    ImpersonationEnded: 'impersonation_ended',
-    ImpersonationStarted: 'impersonation_started',
-    InvitationUsed: 'invitation_used',
-    Login: 'login',
-    LoginFailed: 'login_failed',
-    Logout: 'logout',
-    ModelCreated: 'model_created',
-    ModelDeleted: 'model_deleted',
-    ModelUpdated: 'model_updated',
-    PasswordSet: 'password_set',
-    PolicyException: 'policy_exception',
-    PolicyExecution: 'policy_execution',
-    PropertyMappingException: 'property_mapping_exception',
-    ReviewAttested: 'review_attested',
-    ReviewCompleted: 'review_completed',
-    ReviewInitiated: 'review_initiated',
-    ReviewOverdue: 'review_overdue',
-    SecretRotate: 'secret_rotate',
-    SecretView: 'secret_view',
-    SourceLinked: 'source_linked',
-    SuspiciousRequest: 'suspicious_request',
-    SystemException: 'system_exception',
-    SystemTaskException: 'system_task_exception',
-    SystemTaskExecution: 'system_task_execution',
-    UpdateAvailable: 'update_available',
-    UserWrite: 'user_write',
-    UnknownDefaultOpenApi: '11184809'
-} as const;
-export type EventsEventsVolumeListActionsEnum = typeof EventsEventsVolumeListActionsEnum[keyof typeof EventsEventsVolumeListActionsEnum];
-/**
- * @export
- */
-export const EventsNotificationsListSeverityEnum = {
-    Alert: 'alert',
-    Notice: 'notice',
-    Warning: 'warning',
-    UnknownDefaultOpenApi: '11184809'
-} as const;
-export type EventsNotificationsListSeverityEnum = typeof EventsNotificationsListSeverityEnum[keyof typeof EventsNotificationsListSeverityEnum];
-/**
- * @export
- */
-export const EventsRulesListSeverityEnum = {
-    Alert: 'alert',
-    Notice: 'notice',
-    Warning: 'warning',
-    UnknownDefaultOpenApi: '11184809'
-} as const;
-export type EventsRulesListSeverityEnum = typeof EventsRulesListSeverityEnum[keyof typeof EventsRulesListSeverityEnum];
-/**
- * @export
- */
-export const EventsTransportsListModeEnum = {
-    Email: 'email',
-    Local: 'local',
-    Webhook: 'webhook',
-    WebhookSlack: 'webhook_slack',
-    UnknownDefaultOpenApi: '11184809'
-} as const;
-export type EventsTransportsListModeEnum = typeof EventsTransportsListModeEnum[keyof typeof EventsTransportsListModeEnum];
