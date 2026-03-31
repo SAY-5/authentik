@@ -33794,6 +33794,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/Provider'
           readOnly: true
+          nullable: true
         backchannel_providers:
           type: array
           items:
@@ -37990,6 +37991,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/DeviceAccessGroup'
           readOnly: true
+          nullable: true
         connector:
           type: string
           format: uuid
@@ -53167,6 +53169,7 @@ components:
         download_url:
           type: string
           readOnly: true
+          nullable: true
       required:
       - download_url
       - metadata
