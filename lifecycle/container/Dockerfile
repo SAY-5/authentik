@@ -111,7 +111,7 @@ RUN --mount=type=cache,id=apt-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/v
     # Required for installing pip packages
     apt-get install -y --no-install-recommends \
     # Build essentials
-    build-essential pkg-config libffi-dev git \
+    build-essential pkg-config libffi-dev git rustup \
     # cryptography
     curl \
     # libxml
@@ -123,7 +123,6 @@ RUN --mount=type=cache,id=apt-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/v
     # xmlsec
     libltdl-dev && \
     export RUST_TOOLCHAIN="$(awk -F'\"' '/^[[:space:]]*channel[[:space:]]*=/{print $2; exit}' rust-toolchain.toml)" && \
-    curl https://sh.rustup.rs -sSf | sh -s -- -y --profile minimal --default-toolchain "${RUST_TOOLCHAIN}" && \
     rustup default "${RUST_TOOLCHAIN}" && \
     rustc --version && \
     cargo --version
