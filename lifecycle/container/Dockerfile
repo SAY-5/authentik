@@ -96,22 +96,24 @@ WORKDIR /ak-root/
 COPY --from=uv /uv /uvx /bin/
 
 # Stage 6: Python dependencies
+FROM docker.io/library/rust:1.94.1-slim-trixie@sha256:1d0000a49fb62f4fde24455f49d59c6c088af46202d65d8f455b722f7263e8f8 AS rust
 FROM python-base AS python-deps
 
 ARG TARGETARCH
 ARG TARGETVARIANT
 
+COPY --from=rust /usr/local/cargo/bin/rustup /usr/bin/rustup
 RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 
 ENV PATH="/root/.cargo/bin:$PATH"
 
 RUN --mount=type=cache,id=apt-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/var/cache/apt \
-    --mount=type=bind,target=rust-toolchain.toml,src=rust-toolchain.toml \
+    --mount=type=bind,target=rut-toolchain.toml,src=rust-toolchain.toml \
     apt-get update && \
     # Required for installing pip packages
     apt-get install -y --no-install-recommends \
     # Build essentials
-    build-essential pkg-config libffi-dev git rustup \
+    build-essential pkg-config libffi-dev git \
     # cryptography
     curl \
     # libxml
