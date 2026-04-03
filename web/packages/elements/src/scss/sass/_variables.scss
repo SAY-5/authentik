@@ -1,5 +1,5 @@
-@use "@scss:init" as i;
-@use "@scss:colors" as c;
+@use "@scss/sass/init" as i;
+@use "@scss/sass/colors" as c;
 @use "sass:math";
 
 // Patternfly uses the default root size of the browser, it assumes a 16px base

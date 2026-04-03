@@ -1,0 +1,446 @@
+@use "@scss/sass/functions" as f;
+@use "@scss/sass/init" as i;
+@use "@scss/sass/variables" as v;
+@use "@scss/sass/mixins" as m;
+@use "sass:math";
+
+// @debug $drawer; // check your variable names located in src/patternfly/sass-utilities/component-namespaces.scss
+$pf-v5-c-drawer--breakpoint-map: f.build-breakpoint-map("base", "lg", "xl", "2xl");
+$pf-v5-c-drawer--breakpoint-map--width: f.build-breakpoint-map("base", "lg", "xl", "2xl");
+$pf-v5-c-drawer__panel--list--width: (25, 33, 50, 66, 75, 100);
+
+slot {
+    display: content;
+}
+
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-x: hidden;
+}
+
+:host([class*="pf-m-inline"]),
+:host([class*="pf-m-static"]) {
+    .#{cn.$drawer}__main > .#{cn.$drawer}__panel:not(.pf-m-no-border, .pf-m-resizable) {
+        padding-inline-start: var(--#{cn.$drawer}--m-inline__panel--PaddingLeft);
+    }
+}
+
+:host([class*="pf-m-panel-left"]) .#{cn.$drawer}__main {
+    > .#{cn.$drawer}__panel {
+        order: 0;
+        margin-inline-end: calc(var(--#{cn.$drawer}__panel--FlexBasis) * -1);
+
+        @include f.pf-v5-bidirectional-style($prop: transform, $ltr-val: translateX(-100%), $rtl-val: translateX(#{pf-v5-calc-inverse(-100%)}));
+    }
+
+    > .#{cn.$drawer}__content {
+        order: 1;
+    }
+}
+
+:host([class*="pf-m-panel-bottom"]) .#{cn.$drawer}__main {
+    flex-direction: column;
+}
+
+// Expanded
+// stylelint-disable selector-max-class
+:host([class*="pf-m-expanded"]) {
+    .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+        @include f.pf-v5-bidirectional-style($prop: transform, $ltr-val: translateX(-100%), $rtl-val: translateX(#{pf-v5-calc-inverse(-100%)}));
+    }
+
+    :host([class*="pf-m-panel-left"]) .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+        transform: translateX(0);
+    }
+
+    :host([class*="pf-m-panel-bottom"]) .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+        transform: translate(0, -100%);
+    }
+}
+// stylelint-enable
+
+:host([class*="pf-m-resizing"]) {
+    --#{cn.$drawer}__panel--TransitionProperty: none;
+
+    pointer-events: none;
+
+    .#{cn.$drawer}__splitter {
+        pointer-events: auto;
+    }
+}
+
+// Main area
+.#{cn.$drawer}__main {
+    display: flex;
+    flex: 1;
+    flex-flow: column;
+    overflow: hidden;
+}
+
+// Content / panel
+.#{cn.$drawer}__content,
+.#{cn.$drawer}__panel,
+.#{cn.$drawer}__panel-main {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: auto;
+    --pf-c-drawer__content--BackgroundColor: transparent;
+}
+
+.#{cn.$drawer}__panel {
+    position: relative;
+    z-index: var(--#{cn.$drawer}__panel--ZIndex);
+    flex-basis: var(--#{cn.$drawer}__panel--FlexBasis);
+    order: 1;
+    max-height: var(--#{cn.$drawer}__panel--MaxHeight);
+    gap: var(--#{i.$pf-global}--spacer--sm);
+    overflow: auto;
+    background-color: var(--#{cn.$drawer}__panel--BackgroundColor);
+    box-shadow: var(--#{cn.$drawer}__panel--BoxShadow);
+    transition-duration: var(--#{cn.$drawer}__panel--TransitionDuration);
+    transition-property: var(--#{cn.$drawer}__panel--TransitionProperty);
+    transition-behavior: allow-discrete;
+    -webkit-overflow-scrolling: touch;
+
+    &::after {
+        position: absolute;
+        inset-block-start: 0;
+        inset-inline-start: 0;
+        width: var(--#{cn.$drawer}__panel--after--Width);
+        height: 100%;
+        content: "";
+        background-color: var(--#{cn.$drawer}__panel--after--BackgroundColor);
+    }
+
+    @media screen and (min-width: v.$pf-v5-global--breakpoint--md) {
+        --#{cn.$drawer}__panel--FlexBasis: max(var(--#{cn.$drawer}__panel--md--FlexBasis--min), min(var(--#{cn.$drawer}__panel--md--FlexBasis), var(--#{cn.$drawer}__panel--md--FlexBasis--max)));
+    }
+
+    @media screen and (min-width: v.$pf-v5-global--breakpoint--xl) {
+        --#{cn.$drawer}__panel--md--FlexBasis: var(--#{cn.$drawer}__panel--xl--FlexBasis);
+
+        .#{cn.$drawer}.pf-m-panel-bottom & {
+            --#{cn.$drawer}__panel--md--FlexBasis: var(--#{cn.$drawer}--m-panel-bottom__panel--xl--FlexBasis);
+        }
+    }
+}
+
+:where(:host(:not([position])), :host([position="left"]), :host([position="right"]), :host([position="start"]), :host([position="end"])) .#{cn.$drawer}__splitter {
+    --#{cn.$drawer}__splitter--Height: var(--#{cn.$drawer}__splitter--m-vertical--Height);
+    --#{cn.$drawer}__splitter--Width: var(--#{cn.$drawer}__splitter--m-vertical--Width);
+    --#{cn.$drawer}__splitter--Cursor: var(--#{cn.$drawer}__splitter--m-vertical--Cursor);
+    --#{cn.$drawer}__splitter-handle--after--Width: var(--#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--Width);
+    --#{cn.$drawer}__splitter-handle--after--Height: var(--#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--Height);
+    --#{cn.$drawer}__splitter-handle--after--BorderTopWidth: var(--#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--BorderTopWidth);
+    --#{cn.$drawer}__splitter-handle--after--BorderRightWidth: var(--#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--BorderRightWidth);
+    --#{cn.$drawer}__splitter-handle--after--BorderBottomWidth: var(--#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--BorderBottomWidth);
+    --#{cn.$drawer}__splitter-handle--after--BorderLeftWidth: var(--#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--BorderLeftWidth);
+}
+
+.#{cn.$drawer}__splitter {
+    position: relative;
+    display: none;
+    width: var(--#{cn.$drawer}__splitter--Width);
+    height: var(--#{cn.$drawer}__splitter--Height);
+    cursor: var(--#{cn.$drawer}__splitter--Cursor);
+    background-color: var(--#{cn.$drawer}__splitter--BackgroundColor);
+
+    &:hover {
+        --#{cn.$drawer}__splitter-handle--after--BorderColor: var(--#{cn.$drawer}__splitter--hover__splitter-handle--after--BorderColor);
+    }
+
+    &:focus {
+        --#{cn.$drawer}__splitter-handle--after--BorderColor: var(--#{cn.$drawer}__splitter--focus__splitter-handle--after--BorderColor);
+    }
+
+    &::after {
+        position: absolute;
+        inset-block-start: 0;
+        inset-block-end: 0;
+        inset-inline-start: 0;
+        inset-inline-end: 0;
+        content: "";
+        border: solid var(--#{cn.$drawer}__splitter--after--BorderColor);
+        border-block-start-width: var(--#{cn.$drawer}__splitter--after--BorderTopWidth);
+        border-block-end-width: var(--#{cn.$drawer}__splitter--after--BorderBottomWidth);
+        border-inline-start-width: var(--#{cn.$drawer}__splitter--after--BorderLeftWidth);
+        border-inline-end-width: var(--#{cn.$drawer}__splitter--after--BorderRightWidth);
+    }
+}
+
+.#{cn.$drawer}__splitter-handle {
+    position: absolute;
+    inset-block-start: var(--#{cn.$drawer}__splitter-handle--Top);
+    inset-inline-start: var(--#{cn.$drawer}__splitter-handle--Left);
+
+    @include f.pf-v5-bidirectional-style($prop: transform, $ltr-val: translate(-50%, -50%), $rtl-val: translate(#{pf-v5-calc-inverse(-50%)}, -50%));
+
+    &::after {
+        display: block;
+        width: var(--#{cn.$drawer}__splitter-handle--after--Width);
+        height: var(--#{cn.$drawer}__splitter-handle--after--Height);
+        content: "";
+        border-color: var(--#{cn.$drawer}__splitter-handle--after--BorderColor);
+        border-style: solid;
+        border-block-start-width: var(--#{cn.$drawer}__splitter-handle--after--BorderTopWidth);
+        border-block-end-width: var(--#{cn.$drawer}__splitter-handle--after--BorderBottomWidth);
+        border-inline-start-width: var(--#{cn.$drawer}__splitter-handle--after--BorderLeftWidth);
+        border-inline-end-width: var(--#{cn.$drawer}__splitter-handle--after--BorderRightWidth);
+    }
+}
+
+// Layout modifications happen after md breakpoint
+@media screen and (min-width: v.$pf-v5-global--breakpoint--md) {
+    // Default
+    :host {
+        min-width: var(--#{cn.$drawer}__panel--MinWidth);
+    }
+
+    :host([expanded]) {
+        .#{cn.$drawer}__main {
+            > .#{cn.$drawer}__panel {
+                box-shadow: var(--#{cn.$drawer}--m-expanded__panel--BoxShadow);
+            }
+        }
+
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel.pf-m-resizable {
+            --#{cn.$drawer}__panel--md--FlexBasis--min: var(--#{cn.$drawer}__panel--m-resizable--md--FlexBasis--min);
+
+            flex-direction: var(--#{cn.$drawer}__panel--m-resizable--FlexDirection);
+            min-width: var(--#{cn.$drawer}__panel--m-resizable--MinWidth);
+
+            &::after {
+                width: 0;
+                height: 0;
+            }
+
+            > .#{cn.$drawer}__splitter {
+                flex-shrink: 0;
+            }
+
+            > .#{cn.$drawer}__panel-main {
+                flex-shrink: 1;
+            }
+        }
+    }
+
+    :host([position="left"]) {
+        --#{cn.$drawer}--m-expanded__panel--BoxShadow: var(--#{cn.$drawer}--m-expanded--m-panel-left__panel--BoxShadow);
+    }
+
+    :host([position="left"][inline]),
+    :host([position="left"][static]) {
+        > .#{cn.$drawer}__main > .#{cn.$drawer}__panel:not(.pf-m-no-border, .pf-m-resizable) {
+            padding-inline-start: 0;
+            padding-inline-end: var(--#{cn.$drawer}--m-panel-left--m-inline__panel--PaddingRight);
+        }
+    }
+
+    :host([postion="left"][expanded]) {
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+            transform: translateX(0);
+        }
+
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel::after {
+            inset-inline-start: auto;
+            inset-inline-end: 0;
+        }
+
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel.pf-m-resizable {
+            > .#{cn.$drawer}__splitter {
+                --#{cn.$drawer}__splitter-handle--Left: var(--#{cn.$drawer}--m-panel-left__splitter-handle--Left);
+                --#{cn.$drawer}__splitter--after--BorderRightWidth: 0;
+                --#{cn.$drawer}__splitter--after--BorderLeftWidth: var(--#{cn.$drawer}--m-panel-left__splitter--after--BorderLeftWidth);
+
+                order: 1;
+            }
+        }
+    }
+
+    :host([postion="bottom"]) {
+        --#{cn.$drawer}--m-expanded__panel--BoxShadow: var(--#{cn.$drawer}--m-expanded--m-panel-bottom__panel--BoxShadow);
+        --#{cn.$drawer}__panel--MaxHeight: 100%;
+        --#{cn.$drawer}__panel--FlexBasis--min: var(--#{cn.$drawer}--m-panel-bottom__panel--FlexBasis--min);
+
+        min-width: auto;
+        min-height: var(--#{cn.$drawer}--m-panel-bottom__panel--md--MinHeight);
+
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel::after {
+            inset-block-start: 0;
+            inset-inline-start: auto;
+            width: 100%;
+            height: var(--#{cn.$drawer}--m-panel-bottom__panel--after--Height);
+        }
+
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel.pf-m-resizable {
+            --#{cn.$drawer}__panel--md--FlexBasis--min: var(--#{cn.$drawer}--m-panel-bottom__panel--m-resizable--md--FlexBasis--min);
+            --#{cn.$drawer}__panel--m-resizable--FlexDirection: var(--#{cn.$drawer}--m-panel-bottom__panel--m-resizable--FlexDirection);
+            --#{cn.$drawer}__panel--m-resizable--MinWidth: 0;
+
+            min-height: var(--#{cn.$drawer}--m-panel-bottom__panel--m-resizable--MinHeight);
+
+            > .#{cn.$drawer}__splitter {
+                --#{cn.$drawer}__splitter-handle--Top: var(--#{cn.$drawer}--m-panel-bottom__splitter-handle--Top);
+                --#{cn.$drawer}__splitter--after--BorderRightWidth: 0;
+                --#{cn.$drawer}__splitter--after--BorderBottomWidth: var(--#{cn.$drawer}--m-panel-bottom__splitter--after--BorderBottomWidth);
+            }
+        }
+    }
+
+    :host([position="left"][inline]),
+    :host([position="left"][static]) {
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel:not(.pf-m-no-border, .pf-m-resizable) {
+            padding-block-start: var(--#{cn.$drawer}--m-panel-bottom--m-inline__panel--PaddingTop);
+            padding-inline-start: 0;
+        }
+    }
+
+    :host([inline]) {
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel.pf-m-resizable {
+            > .#{cn.$drawer}__splitter {
+                --#{cn.$drawer}__splitter--m-vertical--Width: var(--#{cn.$drawer}--m-inline__splitter--m-vertical--Width);
+                --#{cn.$drawer}__splitter-handle--Left: var(--#{cn.$drawer}--m-inline__splitter-handle--Left);
+                --#{cn.$drawer}__splitter--after--BorderRightWidth: var(--#{cn.$drawer}--m-inline__splitter--after--BorderRightWidth);
+                --#{cn.$drawer}__splitter--after--BorderLeftWidth: var(--#{cn.$drawer}--m-inline__splitter--after--BorderLeftWidth);
+
+                outline-offset: var(--#{cn.$drawer}--m-inline__splitter--focus--OutlineOffset);
+            }
+        }
+    }
+
+    :host([position="bottom"][inline]) {
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel.pf-m-resizable {
+            > .#{cn.$drawer}__splitter {
+                --#{cn.$drawer}__splitter--Height: var(--#{cn.$drawer}--m-inline--m-panel-bottom__splitter--Height);
+                --#{cn.$drawer}__splitter-handle--Top: var(--#{cn.$drawer}--m-inline--m-panel-bottom__splitter-handle--Top);
+                --#{cn.$drawer}__splitter--after--BorderTopWidth: var(--#{cn.$drawer}--m-inline--m-panel-bottom__splitter--after--BorderTopWidth);
+                --#{cn.$drawer}__splitter--after--BorderRightWidth: 0;
+                --#{cn.$drawer}__splitter--after--BorderLeftWidth: 0;
+            }
+        }
+    }
+
+    :host([no-panel-border]) .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+        --#{cn.$drawer}--m-expanded__panel--BoxShadow: none;
+    }
+
+    .#{cn.$drawer}__splitter {
+        display: block;
+    }
+}
+
+// Responsive width modifiers
+@each $breakpoint, $breakpoint-value in $pf-v5-c-drawer--breakpoint-map--width {
+    $breakpoint-name: if($breakpoint != "base", -on-#{$breakpoint}, "");
+
+    @if $breakpoint == "base" {
+        $breakpoint: "md";
+    }
+
+    @include pf-v5-apply-breakpoint($breakpoint) {
+        @each $width-value in $pf-v5-c-drawer__panel--list--width {
+            :host([size="#{$width-value}#{$breakpoint-name}"]) {
+                --#{cn.$drawer}__panel--md--FlexBasis: #{percentage(div($width-value, 100))};
+            }
+        }
+    }
+}
+
+// Responsive modifiers
+@each $breakpoint, $breakpoint-value in $pf-v5-c-drawer--breakpoint-map {
+    $breakpoint-name: if($breakpoint != "base", -on-#{$breakpoint}, "");
+
+    @if $breakpoint == "base" {
+        $breakpoint: "md";
+    }
+
+    @include pf-v5-apply-breakpoint($breakpoint) {
+        // Drawer and inline
+        :host([inline#{$breakpoint-name}]),
+        :host([static#{$breakpoint-name}]) {
+            .#{cn.$drawer}__main > .#{cn.$drawer}__content {
+                flex-shrink: 1;
+            }
+
+            .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+                --#{cn.$drawer}--m-expanded__panel--BoxShadow: none;
+            }
+        }
+
+        :host([inline#{$breakpoint-name}]:not([no-border])),
+        :host([static#{$breakpoint-name}]:not([no-border])) {
+            background-color: var(--#{cn.$drawer}--m-inline--m-expanded__panel--after--BackgroundColor);
+        }
+    }
+
+    // Drawer inline
+    :host([inline#{$breakpoint-name}]) {
+        .#{cn.$drawer}__main > .#{cn.$drawer}__content {
+            overflow-x: auto;
+        }
+
+        #{cn.$drawer}__main > .#{cn.$drawer}__panel {
+            margin-inline-start: calc(var(--#{cn.$drawer}__panel--FlexBasis) * -1);
+
+            @include f.pf-v5-bidirectional-style($prop: transform, $ltr-val: translateX(100%), $rtl-val: translateX(#{pf-v5-calc-inverse(100%)}));
+        }
+    }
+
+    :host([inline#{$breakpoint-name}][expanded]) .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+        margin-inline-start: 0;
+        transform: translateX(0);
+    }
+
+    // Panel left
+    :host([inline#{$breakpoint-name}][position="left"]) {
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+            margin-inline-start: 0;
+            margin-inline-end: calc(var(--#{cn.$drawer}__panel--FlexBasis) * -1);
+
+            @include f.pf-v5-bidirectional-style($prop: transform, $ltr-val: translateX(-100%), $rtl-val: translateX(#{pf-v5-calc-inverse(-100%)}));
+        }
+    }
+
+    // Inline, expanded, panel left
+    :host([inline#{$breakpoint-name}][position="left"][expanded]) .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+        margin-inline-end: 0;
+        transform: translateX(0);
+    }
+
+    // Panel bottom
+    :host([inline#{$breakpoint-name}][postion="bottom"]) {
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+            margin-block-end: calc(var(--#{cn.$drawer}__panel--FlexBasis) * -1);
+            transform: translateY(100%);
+        }
+    }
+
+    // Inline, expanded, panel left
+    :host([inline#{$breakpoint-name}][expanded][postion="bottom"]) .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+        margin-block-end: 0;
+        transform: translateY(0);
+    }
+
+    :host([static#{$breakpoint-name}]) {
+        .#{drawer}__main > .#{cn.$drawer}__panel {
+            transform: translateX(0);
+        }
+    }
+
+    // stylelint-disable max-nesting-depth, selector-max-class, selector-max-combinators, selector-max-compound-selectors
+    :host([static#{$breakpoint-name}][position="left"]) {
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+            margin-inline-end: 0;
+            transform: translateX(0);
+        }
+    }
+
+    :host([static#{$breakpoint-name}][position="bottom"]) {
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+            transform: translateX(0);
+        }
+    }
+}

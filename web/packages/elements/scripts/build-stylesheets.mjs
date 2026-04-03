@@ -3,7 +3,6 @@ import path from "node:path";
 
 import prettierConfig from "@goauthentik/prettier-config";
 
-import { globSync } from "glob";
 import * as prettier from "prettier";
 import * as sass from "sass";
 import { create as sassAlias } from "sass-alias";
@@ -15,7 +14,7 @@ const NODE_ENV = process.env.NODE_ENV || "development";
 const isProduction = NODE_ENV === "production";
 
 const writeFile = (path, content) => fs.writeFileSync(path, content, { encoding: "utf8" });
-const globSrc = (glob) => globSync(glob, { cwd: SOURCE_DIR });
+const globSrc = (glob) => fs.globSync(glob, { cwd: SOURCE_DIR });
 
 function checkIsInPackageRoot() {
     if (!fs.existsSync("./package.json")) {

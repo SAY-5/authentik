@@ -1,6 +1,6 @@
-@use "@scss:init" as i;
-@use "@scss:variables" as v;
-@use "@scss:component-namespaces" as cn;
+@use "@scss/sass/init" as i;
+@use "@scss/sass/variables" as v;
+@use "@scss/sass/component-namespaces" as cn;
 
 %pf-v5-t-light {
     --#{i.$pf-global}--Color--100: var(--#{i.$pf-global}--Color--dark-100);

@@ -1,0 +1,393 @@
+@use "@scss/sass/init" as i;
+@use "@scss/sass/colors" as c;
+@use "@scss/sass/dark" as d;
+@use "@scss/sass/variables" as v;
+
+:where(:root) {
+    // Colors
+    // Global palette
+    --#{i.$pf-global}--palette--black-100: #{c.$pf-v5-color-black-100};
+    --#{i.$pf-global}--palette--black-150: #{c.$pf-v5-color-black-150};
+    --#{i.$pf-global}--palette--black-200: #{c.$pf-v5-color-black-200};
+    --#{i.$pf-global}--palette--black-300: #{c.$pf-v5-color-black-300};
+    --#{i.$pf-global}--palette--black-400: #{c.$pf-v5-color-black-400};
+    --#{i.$pf-global}--palette--black-500: #{c.$pf-v5-color-black-500};
+    --#{i.$pf-global}--palette--black-600: #{c.$pf-v5-color-black-600};
+    --#{i.$pf-global}--palette--black-700: #{c.$pf-v5-color-black-700};
+    --#{i.$pf-global}--palette--black-800: #{c.$pf-v5-color-black-800};
+    --#{i.$pf-global}--palette--black-850: #{c.$pf-v5-color-black-850};
+    --#{i.$pf-global}--palette--black-900: #{c.$pf-v5-color-black-900};
+    --#{i.$pf-global}--palette--black-1000: #{c.$pf-v5-color-black-1000};
+    --#{i.$pf-global}--palette--blue-50: #{c.$pf-v5-color-blue-50};
+    --#{i.$pf-global}--palette--blue-100: #{c.$pf-v5-color-blue-100};
+    --#{i.$pf-global}--palette--blue-200: #{c.$pf-v5-color-blue-200};
+    --#{i.$pf-global}--palette--blue-300: #{c.$pf-v5-color-blue-300};
+    --#{i.$pf-global}--palette--blue-400: #{c.$pf-v5-color-blue-400};
+    --#{i.$pf-global}--palette--blue-500: #{c.$pf-v5-color-blue-500};
+    --#{i.$pf-global}--palette--blue-600: #{c.$pf-v5-color-blue-600};
+    --#{i.$pf-global}--palette--blue-700: #{c.$pf-v5-color-blue-700};
+    --#{i.$pf-global}--palette--cyan-50: #{c.$pf-v5-color-cyan-50};
+    --#{i.$pf-global}--palette--cyan-100: #{c.$pf-v5-color-cyan-100};
+    --#{i.$pf-global}--palette--cyan-200: #{c.$pf-v5-color-cyan-200};
+    --#{i.$pf-global}--palette--cyan-300: #{c.$pf-v5-color-cyan-300};
+    --#{i.$pf-global}--palette--cyan-400: #{c.$pf-v5-color-cyan-400};
+    --#{i.$pf-global}--palette--cyan-500: #{c.$pf-v5-color-cyan-500};
+    --#{i.$pf-global}--palette--cyan-600: #{c.$pf-v5-color-cyan-600};
+    --#{i.$pf-global}--palette--cyan-700: #{c.$pf-v5-color-cyan-700};
+    --#{i.$pf-global}--palette--gold-50: #{c.$pf-v5-color-gold-50};
+    --#{i.$pf-global}--palette--gold-100: #{c.$pf-v5-color-gold-100};
+    --#{i.$pf-global}--palette--gold-200: #{c.$pf-v5-color-gold-200};
+    --#{i.$pf-global}--palette--gold-300: #{c.$pf-v5-color-gold-300};
+    --#{i.$pf-global}--palette--gold-400: #{c.$pf-v5-color-gold-400};
+    --#{i.$pf-global}--palette--gold-500: #{c.$pf-v5-color-gold-500};
+    --#{i.$pf-global}--palette--gold-600: #{c.$pf-v5-color-gold-600};
+    --#{i.$pf-global}--palette--gold-700: #{c.$pf-v5-color-gold-700};
+    --#{i.$pf-global}--palette--green-50: #{c.$pf-v5-color-green-50};
+    --#{i.$pf-global}--palette--green-100: #{c.$pf-v5-color-green-100};
+    --#{i.$pf-global}--palette--green-200: #{c.$pf-v5-color-green-200};
+    --#{i.$pf-global}--palette--green-300: #{c.$pf-v5-color-green-300};
+    --#{i.$pf-global}--palette--green-400: #{c.$pf-v5-color-green-400};
+    --#{i.$pf-global}--palette--green-500: #{c.$pf-v5-color-green-500};
+    --#{i.$pf-global}--palette--green-600: #{c.$pf-v5-color-green-600};
+    --#{i.$pf-global}--palette--green-700: #{c.$pf-v5-color-green-700};
+    --#{i.$pf-global}--palette--light-blue-100: #{c.$pf-v5-color-light-blue-100};
+    --#{i.$pf-global}--palette--light-blue-200: #{c.$pf-v5-color-light-blue-200};
+    --#{i.$pf-global}--palette--light-blue-300: #{c.$pf-v5-color-light-blue-300};
+    --#{i.$pf-global}--palette--light-blue-400: #{c.$pf-v5-color-light-blue-400};
+    --#{i.$pf-global}--palette--light-blue-500: #{c.$pf-v5-color-light-blue-500};
+    --#{i.$pf-global}--palette--light-blue-600: #{c.$pf-v5-color-light-blue-600};
+    --#{i.$pf-global}--palette--light-blue-700: #{c.$pf-v5-color-light-blue-700};
+    --#{i.$pf-global}--palette--light-green-100: #{c.$pf-v5-color-light-green-100};
+    --#{i.$pf-global}--palette--light-green-200: #{c.$pf-v5-color-light-green-200};
+    --#{i.$pf-global}--palette--light-green-300: #{c.$pf-v5-color-light-green-300};
+    --#{i.$pf-global}--palette--light-green-400: #{c.$pf-v5-color-light-green-400};
+    --#{i.$pf-global}--palette--light-green-500: #{c.$pf-v5-color-light-green-500};
+    --#{i.$pf-global}--palette--light-green-600: #{c.$pf-v5-color-light-green-600};
+    --#{i.$pf-global}--palette--light-green-700: #{c.$pf-v5-color-light-green-700};
+    --#{i.$pf-global}--palette--orange-50: #{c.$pf-v5-color-orange-50};
+    --#{i.$pf-global}--palette--orange-100: #{c.$pf-v5-color-orange-100};
+    --#{i.$pf-global}--palette--orange-200: #{c.$pf-v5-color-orange-200};
+    --#{i.$pf-global}--palette--orange-300: #{c.$pf-v5-color-orange-300};
+    --#{i.$pf-global}--palette--orange-400: #{c.$pf-v5-color-orange-400};
+    --#{i.$pf-global}--palette--orange-500: #{c.$pf-v5-color-orange-500};
+    --#{i.$pf-global}--palette--orange-600: #{c.$pf-v5-color-orange-600};
+    --#{i.$pf-global}--palette--orange-700: #{c.$pf-v5-color-orange-700};
+    --#{i.$pf-global}--palette--purple-50: #{c.$pf-v5-color-purple-50};
+    --#{i.$pf-global}--palette--purple-100: #{c.$pf-v5-color-purple-100};
+    --#{i.$pf-global}--palette--purple-200: #{c.$pf-v5-color-purple-200};
+    --#{i.$pf-global}--palette--purple-300: #{c.$pf-v5-color-purple-300};
+    --#{i.$pf-global}--palette--purple-400: #{c.$pf-v5-color-purple-400};
+    --#{i.$pf-global}--palette--purple-500: #{c.$pf-v5-color-purple-500};
+    --#{i.$pf-global}--palette--purple-600: #{c.$pf-v5-color-purple-600};
+    --#{i.$pf-global}--palette--purple-700: #{c.$pf-v5-color-purple-700};
+    --#{i.$pf-global}--palette--red-50: #{c.$pf-v5-color-red-50};
+    --#{i.$pf-global}--palette--red-100: #{c.$pf-v5-color-red-100};
+    --#{i.$pf-global}--palette--red-200: #{c.$pf-v5-color-red-200};
+    --#{i.$pf-global}--palette--red-300: #{c.$pf-v5-color-red-300};
+    --#{i.$pf-global}--palette--red-400: #{c.$pf-v5-color-red-400};
+    --#{i.$pf-global}--palette--red-500: #{c.$pf-v5-color-red-500};
+    --#{i.$pf-global}--palette--white: #{c.$pf-v5-color-white};
+
+    // Background color
+    --#{i.$pf-global}--BackgroundColor--100: #{v.$pf-v5-global--BackgroundColor--100};
+    --#{i.$pf-global}--BackgroundColor--150: #{v.$pf-v5-global--BackgroundColor--150};
+    --#{i.$pf-global}--BackgroundColor--200: #{v.$pf-v5-global--BackgroundColor--200};
+    --#{i.$pf-global}--BackgroundColor--light-100: #{v.$pf-v5-global--BackgroundColor--light-100};
+    --#{i.$pf-global}--BackgroundColor--light-200: #{v.$pf-v5-global--BackgroundColor--light-200};
+    --#{i.$pf-global}--BackgroundColor--light-300: #{v.$pf-v5-global--BackgroundColor--light-300};
+    --#{i.$pf-global}--BackgroundColor--dark-100: #{v.$pf-v5-global--BackgroundColor--dark-100};
+    --#{i.$pf-global}--BackgroundColor--dark-200: #{v.$pf-v5-global--BackgroundColor--dark-200};
+    --#{i.$pf-global}--BackgroundColor--dark-300: #{v.$pf-v5-global--BackgroundColor--dark-300};
+    --#{i.$pf-global}--BackgroundColor--dark-400: #{v.$pf-v5-global--BackgroundColor--dark-400};
+    --#{i.$pf-global}--BackgroundColor--dark-transparent-100: #{v.$pf-v5-global--BackgroundColor--dark-transparent-100};
+    --#{i.$pf-global}--BackgroundColor--dark-transparent-200: #{v.$pf-v5-global--BackgroundColor--dark-transparent-200};
+
+    // Text color
+    --#{i.$pf-global}--Color--100: #{v.$pf-v5-global--Color--100};
+    --#{i.$pf-global}--Color--200: #{v.$pf-v5-global--Color--200};
+    --#{i.$pf-global}--Color--300: #{v.$pf-v5-global--Color--300};
+    --#{i.$pf-global}--Color--400: #{v.$pf-v5-global--Color--400};
+    --#{i.$pf-global}--Color--light-100: #{v.$pf-v5-global--Color--light-100};
+    --#{i.$pf-global}--Color--light-200: #{v.$pf-v5-global--Color--light-200};
+    --#{i.$pf-global}--Color--light-300: #{v.$pf-v5-global--Color--light-300};
+    --#{i.$pf-global}--Color--dark-100: #{v.$pf-v5-global--Color--dark-100};
+    --#{i.$pf-global}--Color--dark-200: #{v.$pf-v5-global--Color--dark-200};
+
+    // States color
+    --#{i.$pf-global}--active-color--100: #{v.$pf-v5-global--active-color--100};
+    --#{i.$pf-global}--active-color--200: #{v.$pf-v5-global--active-color--200};
+    --#{i.$pf-global}--active-color--300: #{v.$pf-v5-global--active-color--300};
+    --#{i.$pf-global}--active-color--400: #{v.$pf-v5-global--active-color--400};
+    --#{i.$pf-global}--disabled-color--100: #{v.$pf-v5-global--disabled-color--100};
+    --#{i.$pf-global}--disabled-color--200: #{v.$pf-v5-global--disabled-color--200};
+    --#{i.$pf-global}--disabled-color--300: #{v.$pf-v5-global--disabled-color--300};
+
+    // Theme color
+    --#{i.$pf-global}--primary-color--100: #{v.$pf-v5-global--primary-color--100};
+    --#{i.$pf-global}--primary-color--200: #{v.$pf-v5-global--primary-color--200};
+    --#{i.$pf-global}--primary-color--light-100: #{v.$pf-v5-global--primary-color--light-100};
+    --#{i.$pf-global}--primary-color--dark-100: #{v.$pf-v5-global--primary-color--dark-100};
+    --#{i.$pf-global}--secondary-color--100: #{v.$pf-v5-global--secondary-color--100};
+    --#{i.$pf-global}--custom-color--100: #{v.$pf-v5-global--custom-color--100};
+    --#{i.$pf-global}--custom-color--200: #{v.$pf-v5-global--custom-color--200};
+    --#{i.$pf-global}--custom-color--300: #{v.$pf-v5-global--custom-color--300};
+    --#{i.$pf-global}--success-color--100: #{v.$pf-v5-global--success-color--100};
+    --#{i.$pf-global}--success-color--200: #{v.$pf-v5-global--success-color--200};
+    --#{i.$pf-global}--info-color--100: #{v.$pf-v5-global--info-color--100};
+    --#{i.$pf-global}--info-color--200: #{v.$pf-v5-global--info-color--200};
+    --#{i.$pf-global}--warning-color--100: #{v.$pf-v5-global--warning-color--100};
+    --#{i.$pf-global}--warning-color--200: #{v.$pf-v5-global--warning-color--200};
+    --#{i.$pf-global}--danger-color--100: #{v.$pf-v5-global--danger-color--100};
+    --#{i.$pf-global}--danger-color--200: #{v.$pf-v5-global--danger-color--200};
+    --#{i.$pf-global}--danger-color--300: #{v.$pf-v5-global--danger-color--300};
+
+    // Shadows
+    --#{i.$pf-global}--BoxShadow--sm: #{v.$pf-v5-global--BoxShadow--sm};
+    --#{i.$pf-global}--BoxShadow--sm-top: #{v.$pf-v5-global--BoxShadow--sm-top};
+    --#{i.$pf-global}--BoxShadow--sm-right: #{v.$pf-v5-global--BoxShadow--sm-right};
+    --#{i.$pf-global}--BoxShadow--sm-bottom: #{v.$pf-v5-global--BoxShadow--sm-bottom};
+    --#{i.$pf-global}--BoxShadow--sm-left: #{v.$pf-v5-global--BoxShadow--sm-left};
+    --#{i.$pf-global}--BoxShadow--md: #{v.$pf-v5-global--BoxShadow--md};
+    --#{i.$pf-global}--BoxShadow--md-top: #{v.$pf-v5-global--BoxShadow--md-top};
+    --#{i.$pf-global}--BoxShadow--md-right: #{v.$pf-v5-global--BoxShadow--md-right};
+    --#{i.$pf-global}--BoxShadow--md-bottom: #{v.$pf-v5-global--BoxShadow--md-bottom};
+    --#{i.$pf-global}--BoxShadow--md-left: #{v.$pf-v5-global--BoxShadow--md-left};
+    --#{i.$pf-global}--BoxShadow--lg: #{v.$pf-v5-global--BoxShadow--lg};
+    --#{i.$pf-global}--BoxShadow--lg-top: #{v.$pf-v5-global--BoxShadow--lg-top};
+    --#{i.$pf-global}--BoxShadow--lg-right: #{v.$pf-v5-global--BoxShadow--lg-right};
+    --#{i.$pf-global}--BoxShadow--lg-bottom: #{v.$pf-v5-global--BoxShadow--lg-bottom};
+    --#{i.$pf-global}--BoxShadow--lg-left: #{v.$pf-v5-global--BoxShadow--lg-left};
+    --#{i.$pf-global}--BoxShadow--xl: #{v.$pf-v5-global--BoxShadow--xl};
+    --#{i.$pf-global}--BoxShadow--xl-top: #{v.$pf-v5-global--BoxShadow--xl-top};
+    --#{i.$pf-global}--BoxShadow--xl-right: #{v.$pf-v5-global--BoxShadow--xl-right};
+    --#{i.$pf-global}--BoxShadow--xl-bottom: #{v.$pf-v5-global--BoxShadow--xl-bottom};
+    --#{i.$pf-global}--BoxShadow--xl-left: #{v.$pf-v5-global--BoxShadow--xl-left};
+    --#{i.$pf-global}--BoxShadow--inset: #{v.$pf-v5-global--BoxShadow--inset};
+
+    // Fontpath
+    --#{i.$pf-global}--font-path: "#{v.$pf-v5-global--font-path}";
+
+    // FontIconPath
+    --#{i.$pf-global}--fonticon-path: "#{v.$pf-v5-global--fonticon-path}";
+
+    // Spacers
+    --#{i.$pf-global}--spacer--xs: #{v.$pf-v5-global--spacer--xs};
+    --#{i.$pf-global}--spacer--sm: #{v.$pf-v5-global--spacer--sm};
+    --#{i.$pf-global}--spacer--md: #{v.$pf-v5-global--spacer--md};
+    --#{i.$pf-global}--spacer--lg: #{v.$pf-v5-global--spacer--lg};
+    --#{i.$pf-global}--spacer--xl: #{v.$pf-v5-global--spacer--xl};
+    --#{i.$pf-global}--spacer--2xl: #{v.$pf-v5-global--spacer--2xl};
+    --#{i.$pf-global}--spacer--3xl: #{v.$pf-v5-global--spacer--3xl};
+    --#{i.$pf-global}--spacer--4xl: #{v.$pf-v5-global--spacer--4xl};
+
+    // Form spacer
+    --#{i.$pf-global}--spacer--form-element: #{v.$pf-v5-global--spacer--form-element};
+
+    // Gutter
+    --#{i.$pf-global}--gutter: #{v.$pf-v5-global--gutter};
+    --#{i.$pf-global}--gutter--md: #{v.$pf-v5-global--gutter--md};
+
+    // Z-Index
+    --#{i.$pf-global}--ZIndex--xs: #{v.$pf-v5-global--ZIndex--xs};
+    --#{i.$pf-global}--ZIndex--sm: #{v.$pf-v5-global--ZIndex--sm};
+    --#{i.$pf-global}--ZIndex--md: #{v.$pf-v5-global--ZIndex--md};
+    --#{i.$pf-global}--ZIndex--lg: #{v.$pf-v5-global--ZIndex--lg};
+    --#{i.$pf-global}--ZIndex--xl: #{v.$pf-v5-global--ZIndex--xl};
+    --#{i.$pf-global}--ZIndex--2xl: #{v.$pf-v5-global--ZIndex--2xl};
+
+    // Grid breakpoints
+    --#{i.$pf-global}--breakpoint--xs: #{v.$pf-v5-global--breakpoint--xs};
+    --#{i.$pf-global}--breakpoint--sm: #{v.$pf-v5-global--breakpoint--sm};
+    --#{i.$pf-global}--breakpoint--md: #{v.$pf-v5-global--breakpoint--md};
+    --#{i.$pf-global}--breakpoint--lg: #{v.$pf-v5-global--breakpoint--lg};
+    --#{i.$pf-global}--breakpoint--xl: #{v.$pf-v5-global--breakpoint--xl};
+    --#{i.$pf-global}--breakpoint--2xl: #{v.$pf-v5-global--breakpoint--2xl};
+
+    // Vertical breakpoints
+    --#{i.$pf-global}--height-breakpoint--sm: #{v.$pf-v5-global--height-breakpoint--sm};
+    --#{i.$pf-global}--height-breakpoint--md: #{v.$pf-v5-global--height-breakpoint--md};
+    --#{i.$pf-global}--height-breakpoint--lg: #{v.$pf-v5-global--height-breakpoint--lg};
+    --#{i.$pf-global}--height-breakpoint--xl: #{v.$pf-v5-global--height-breakpoint--xl};
+    --#{i.$pf-global}--height-breakpoint--2xl: #{v.$pf-v5-global--height-breakpoint--2xl};
+
+    // Links
+    --#{i.$pf-global}--link--Color: #{v.$pf-v5-global--link--Color};
+    --#{i.$pf-global}--link--Color--hover: #{v.$pf-v5-global--link--Color--hover};
+    --#{i.$pf-global}--link--Color--light: #{v.$pf-v5-global--link--Color--light};
+    --#{i.$pf-global}--link--Color--light--hover: #{v.$pf-v5-global--link--Color--light--hover};
+    --#{i.$pf-global}--link--Color--dark: #{v.$pf-v5-global--link--Color--dark};
+    --#{i.$pf-global}--link--Color--dark--hover: #{v.$pf-v5-global--link--Color--dark--hover};
+    --#{i.$pf-global}--link--Color--visited: #{v.$pf-v5-global--link--Color--visited};
+    --#{i.$pf-global}--link--TextDecoration: #{v.$pf-v5-global--link--TextDecoration};
+    --#{i.$pf-global}--link--TextDecoration--hover: #{v.$pf-v5-global--link--TextDecoration--hover};
+
+    // Borders
+    --#{i.$pf-global}--BorderWidth--sm: #{v.$pf-v5-global--BorderWidth--sm};
+    --#{i.$pf-global}--BorderWidth--md: #{v.$pf-v5-global--BorderWidth--md};
+    --#{i.$pf-global}--BorderWidth--lg: #{v.$pf-v5-global--BorderWidth--lg};
+    --#{i.$pf-global}--BorderWidth--xl: #{v.$pf-v5-global--BorderWidth--xl};
+    --#{i.$pf-global}--BorderColor--100: #{v.$pf-v5-global--BorderColor--100};
+    --#{i.$pf-global}--BorderColor--200: #{v.$pf-v5-global--BorderColor--200};
+    --#{i.$pf-global}--BorderColor--300: #{v.$pf-v5-global--BorderColor--300};
+    --#{i.$pf-global}--BorderColor--dark-100: #{v.$pf-v5-global--BorderColor--dark-100};
+    --#{i.$pf-global}--BorderColor--light-100: #{v.$pf-v5-global--BorderColor--light-100};
+    --#{i.$pf-global}--BorderRadius--sm: #{v.$pf-v5-global--BorderRadius--sm};
+    --#{i.$pf-global}--BorderRadius--lg: #{v.$pf-v5-global--BorderRadius--lg};
+
+    // Icons
+    --#{i.$pf-global}--icon--Color--light: #{v.$pf-v5-global--icon--Color--light};
+    --#{i.$pf-global}--icon--Color--dark: #{v.$pf-v5-global--icon--Color--dark};
+    --#{i.$pf-global}--icon--Color--light--light: #{v.$pf-v5-global--icon--Color--light--light};
+    --#{i.$pf-global}--icon--Color--dark--light: #{v.$pf-v5-global--icon--Color--dark--light};
+    --#{i.$pf-global}--icon--Color--light--dark: #{v.$pf-v5-global--icon--Color--light--dark};
+    --#{i.$pf-global}--icon--Color--dark--dark: #{v.$pf-v5-global--icon--Color--dark--dark};
+    --#{i.$pf-global}--icon--FontSize--sm: #{v.$pf-v5-global--icon--FontSize--sm};
+    --#{i.$pf-global}--icon--FontSize--md: #{v.$pf-v5-global--icon--FontSize--md};
+    --#{i.$pf-global}--icon--FontSize--lg: #{v.$pf-v5-global--icon--FontSize--lg};
+    --#{i.$pf-global}--icon--FontSize--xl: #{v.$pf-v5-global--icon--FontSize--xl};
+
+    // Fonts
+
+    // Font family
+    --#{i.$pf-global}--FontFamily--text: #{v.$pf-v5-global--FontFamily--text};
+    --#{i.$pf-global}--FontFamily--heading: #{v.$pf-v5-global--FontFamily--heading};
+    --#{i.$pf-global}--FontFamily--monospace: #{v.$pf-v5-global--FontFamily--monospace};
+    --#{i.$pf-global}--FontFamily--text--vf: #{v.$pf-v5-global--FontFamily--text--vf};
+    --#{i.$pf-global}--FontFamily--heading--vf: #{v.$pf-v5-global--FontFamily--heading--vf};
+    --#{i.$pf-global}--FontFamily--monospace--vf: #{v.$pf-v5-global--FontFamily--monospace--vf};
+
+    // Font size
+    --#{i.$pf-global}--FontSize--4xl: #{v.$pf-v5-global--FontSize--4xl};
+    --#{i.$pf-global}--FontSize--3xl: #{v.$pf-v5-global--FontSize--3xl};
+    --#{i.$pf-global}--FontSize--2xl: #{v.$pf-v5-global--FontSize--2xl};
+    --#{i.$pf-global}--FontSize--xl: #{v.$pf-v5-global--FontSize--xl};
+    --#{i.$pf-global}--FontSize--lg: #{v.$pf-v5-global--FontSize--lg};
+    --#{i.$pf-global}--FontSize--md: #{v.$pf-v5-global--FontSize--md};
+    --#{i.$pf-global}--FontSize--sm: #{v.$pf-v5-global--FontSize--sm};
+    --#{i.$pf-global}--FontSize--xs: #{v.$pf-v5-global--FontSize--xs};
+
+    // Font weight
+    --#{i.$pf-global}--FontWeight--normal: #{v.$pf-v5-global--FontWeight--normal};
+    --#{i.$pf-global}--FontWeight--bold: #{v.$pf-v5-global--FontWeight--bold};
+
+    // Line height
+    --#{i.$pf-global}--LineHeight--sm: #{v.$pf-v5-global--LineHeight--sm};
+    --#{i.$pf-global}--LineHeight--md: #{v.$pf-v5-global--LineHeight--md};
+
+    // List
+    --#{i.$pf-global}--ListStyle: #{v.$pf-v5-global--ListStyle};
+    --#{i.$pf-global}--Transition: #{v.$pf-v5-global--Transition};
+    --#{i.$pf-global}--TimingFunction: #{v.$pf-v5-global--TimingFunction};
+    --#{i.$pf-global}--TransitionDuration: #{v.$pf-v5-global--TransitionDuration};
+
+    // Arrow size
+    --#{i.$pf-global}--arrow--width: #{v.$pf-v5-global--arrow--width};
+    --#{i.$pf-global}--arrow--width-lg: #{v.$pf-v5-global--arrow--width-lg};
+
+    // A11y
+    --#{i.$pf-global}--target-size--MinWidth: #{v.$pf-v5-global--target-size--MinWidth};
+    --#{i.$pf-global}--target-size--MinHeight: #{v.$pf-v5-global--target-size--MinHeight};
+}
+
+/* ------------ Dark Mode ----------------------------------------------------*/
+
+:where(:root([data-theme="dark"])),
+.pf-v5-t--dark {
+    --#{i.$pf-global}--palette--black-50: #{d.$pf-v5-color-black-50};
+    --#{i.$pf-global}--palette--black-100: #{d.$pf-v5-color-black-100};
+    --#{i.$pf-global}--palette--black-200: #{d.$pf-v5-color-black-200};
+    --#{i.$pf-global}--palette--black-300: #{d.$pf-v5-color-black-300};
+    --#{i.$pf-global}--palette--black-400: #{d.$pf-v5-color-black-400};
+    --#{i.$pf-global}--palette--black-500: #{d.$pf-v5-color-black-500};
+    --#{i.$pf-global}--palette--black-600: #{d.$pf-v5-color-black-600};
+    --#{i.$pf-global}--palette--black-700: #{d.$pf-v5-color-black-700};
+    --#{i.$pf-global}--palette--black-800: #{d.$pf-v5-color-black-800};
+    --#{i.$pf-global}--palette--black-900: #{d.$pf-v5-color-black-900};
+    --#{i.$pf-global}--palette--red-9999: #{d.$pf-v5-color-red-9999};
+    --#{i.$pf-global}--palette--red-8888: #{d.$pf-v5-color-red-8888};
+    --#{i.$pf-global}--palette--blue-300: #{d.$pf-v5-color-blue-300};
+
+    // background colors
+    --#{i.$pf-global}--BackgroundColor--100: #{d.$pf-v5-global--BackgroundColor--100};
+    --#{i.$pf-global}--BackgroundColor--150: #{d.$pf-v5-global--BackgroundColor--150};
+    --#{i.$pf-global}--BackgroundColor--200: #{d.$pf-v5-global--BackgroundColor--200};
+    --#{i.$pf-global}--BackgroundColor--300: #{d.$pf-v5-global--BackgroundColor--300};
+    --#{i.$pf-global}--BackgroundColor--400: #{d.$pf-v5-global--BackgroundColor--400};
+    --#{i.$pf-global}--BorderColor--100: #{d.$pf-v5-global--BorderColor--100};
+    --#{i.$pf-global}--BorderColor--200: #{d.$pf-v5-global--BorderColor--200};
+    --#{i.$pf-global}--BorderColor--300: #{d.$pf-v5-global--BorderColor--300};
+    --#{i.$pf-global}--BorderColor--400: #{d.$pf-v5-global--BorderColor--400};
+
+    // text colors
+    --#{i.$pf-global}--Color--100: #{d.$pf-v5-global--Color--100};
+    --#{i.$pf-global}--Color--200: #{d.$pf-v5-global--Color--200};
+    --#{i.$pf-global}--active-color--100: #{d.$pf-v5-global--active-color--100};
+    --#{i.$pf-global}--primary-color--100: #{d.$pf-v5-global--primary-color--100};
+    --#{i.$pf-global}--primary-color--300: #{d.$pf-v5-global--primary-color--300};
+    --#{i.$pf-global}--primary-color--400: #{d.$pf-v5-global--primary-color--400};
+    --#{i.$pf-global}--custom-color--200: #{d.$pf-v5-global--custom-color--200};
+    --#{i.$pf-global}--success-color--100: #{d.$pf-v5-global--success-color--100};
+    --#{i.$pf-global}--warning-color--100: #{d.$pf-v5-global--warning-color--100};
+    --#{i.$pf-global}--warning-color--200: #{d.$pf-v5-global--warning-color--200};
+    --#{i.$pf-global}--danger-color--100: #{d.$pf-v5-global--danger-color--100};
+    --#{i.$pf-global}--danger-color--200: #{d.$pf-v5-global--danger-color--200};
+    --#{i.$pf-global}--link--Color: #{d.$pf-v5-global--link--Color};
+    --#{i.$pf-global}--link--Color--hover: #{d.$pf-v5-global--link--Color--hover};
+    --#{i.$pf-global}--link--Color--visited: #{d.$pf-v5-global--link--Color--visited};
+    --#{i.$pf-global}--disabled-color--100: #{d.$pf-v5-global--disabled-color--100};
+    --#{i.$pf-global}--disabled-color--200: #{d.$pf-v5-global--disabled-color--200};
+    --#{i.$pf-global}--disabled-color--300: #{d.$pf-v5-global--disabled-color--300};
+
+    // icons
+    --#{i.$pf-global}--icon--Color--light: #{d.$pf-v5-global--icon--Color--light};
+    --#{i.$pf-global}--icon--Color--dark: #{d.$pf-v5-global--icon--Color--dark};
+
+    // theme color resets
+    --#{i.$pf-global}--Color--dark-100: #{d.$pf-v5-global--Color--dark-100};
+    --#{i.$pf-global}--Color--dark-200: #{d.$pf-v5-global--Color--dark-200};
+    --#{i.$pf-global}--Color--light-100: #{d.$pf-v5-global--Color--light-100};
+    --#{i.$pf-global}--Color--light-200: #{d.$pf-v5-global--Color--light-200};
+    --#{i.$pf-global}--Color--light-300: #{d.$pf-v5-global--Color--light-300};
+    --#{i.$pf-global}--BorderColor--dark-100: #{d.$pf-v5-global--BorderColor--dark-100};
+    --#{i.$pf-global}--BorderColor--light-100: #{d.$pf-v5-global--BorderColor--light-100};
+    --#{i.$pf-global}--primary-color--light-100: #{d.$pf-v5-global--primary-color--light-100};
+    --#{i.$pf-global}--primary-color--dark-100: #{d.$pf-v5-global--primary-color--dark-100};
+    --#{i.$pf-global}--link--Color--light: #{d.$pf-v5-global--link--Color--light};
+    --#{i.$pf-global}--link--Color--light--hover: #{d.$pf-v5-global--link--Color--light--hover};
+    --#{i.$pf-global}--link--Color--dark: #{d.$pf-v5-global--link--Color--dark};
+    --#{i.$pf-global}--link--Color--dark--hover: #{d.$pf-v5-global--link--Color--dark--hover};
+    --#{i.$pf-global}--icon--Color--light--light: #{d.$pf-v5-global--icon--Color--light};
+    --#{i.$pf-global}--icon--Color--dark--light: #{d.$pf-v5-global--icon--Color--dark};
+    --#{i.$pf-global}--icon--Color--light--dark: #{d.$pf-v5-global--icon--Color--light};
+    --#{i.$pf-global}--icon--Color--dark--dark: #{d.$pf-v5-global--icon--Color--dark};
+    --#{i.$pf-global}--BackgroundColor--light-100: #{d.$pf-v5-global--BackgroundColor--light-100};
+    --#{i.$pf-global}--BackgroundColor--light-200: #{d.$pf-v5-global--BackgroundColor--light-200};
+    --#{i.$pf-global}--BackgroundColor--light-300: #{d.$pf-v5-global--BackgroundColor--light-300};
+    --#{i.$pf-global}--BackgroundColor--dark-100: #{d.$pf-v5-global--BackgroundColor--dark-100};
+    --#{i.$pf-global}--BackgroundColor--dark-200: #{d.$pf-v5-global--BackgroundColor--dark-200};
+    --#{i.$pf-global}--BackgroundColor--dark-300: #{d.$pf-v5-global--BackgroundColor--dark-300};
+    --#{i.$pf-global}--BackgroundColor--dark-400: #{d.$pf-v5-global--BackgroundColor--dark-400};
+
+    // Shadows
+    --#{i.$pf-global}--BoxShadow--sm: #{d.$pf-v5-global--BoxShadow--sm};
+    --#{i.$pf-global}--BoxShadow--sm-top: #{d.$pf-v5-global--BoxShadow--sm-top};
+    --#{i.$pf-global}--BoxShadow--sm-right: #{d.$pf-v5-global--BoxShadow--sm-right};
+    --#{i.$pf-global}--BoxShadow--sm-bottom: #{d.$pf-v5-global--BoxShadow--sm-bottom};
+    --#{i.$pf-global}--BoxShadow--sm-left: #{d.$pf-v5-global--BoxShadow--sm-left};
+    --#{i.$pf-global}--BoxShadow--md: #{d.$pf-v5-global--BoxShadow--md};
+    --#{i.$pf-global}--BoxShadow--md-top: #{d.$pf-v5-global--BoxShadow--md-top};
+    --#{i.$pf-global}--BoxShadow--md-right: #{d.$pf-v5-global--BoxShadow--md-right};
+    --#{i.$pf-global}--BoxShadow--md-bottom: #{d.$pf-v5-global--BoxShadow--md-bottom};
+    --#{i.$pf-global}--BoxShadow--md-left: #{d.$pf-v5-global--BoxShadow--md-left};
+    --#{i.$pf-global}--BoxShadow--lg: #{d.$pf-v5-global--BoxShadow--lg};
+    --#{i.$pf-global}--BoxShadow--lg-top: #{d.$pf-v5-global--BoxShadow--lg-top};
+    --#{i.$pf-global}--BoxShadow--lg-right: #{d.$pf-v5-global--BoxShadow--lg-right};
+    --#{i.$pf-global}--BoxShadow--lg-bottom: #{d.$pf-v5-global--BoxShadow--lg-bottom};
+    --#{i.$pf-global}--BoxShadow--lg-left: #{d.$pf-v5-global--BoxShadow--lg-left};
+    --#{i.$pf-global}--BoxShadow--xl: #{d.$pf-v5-global--BoxShadow--xl};
+    --#{i.$pf-global}--BoxShadow--xl-top: #{d.$pf-v5-global--BoxShadow--xl-top};
+    --#{i.$pf-global}--BoxShadow--xl-right: #{d.$pf-v5-global--BoxShadow--xl-right};
+    --#{i.$pf-global}--BoxShadow--xl-bottom: #{d.$pf-v5-global--BoxShadow--xl-bottom};
+    --#{i.$pf-global}--BoxShadow--xl-left: #{d.$pf-v5-global--BoxShadow--xl-left};
+    --#{i.$pf-global}--BoxShadow--inset: #{d.$pf-v5-global--BoxShadow--inset};
+}
