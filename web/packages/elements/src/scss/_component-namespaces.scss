@@ -1,0 +1,280 @@
+@use "@scss:init" as i;
+
+// Globally scoped component variables
+// About Modal Box
+// stylelint-disable scss/dollar-variable-pattern
+$about-modal-box: #{i.$pf-prefix} + "c-about-modal-box";
+
+// Accordion
+$accordion: #{i.$pf-prefix} + "c-accordion";
+
+// Action List
+$action-list: #{i.$pf-prefix} + "c-action-list";
+
+// Alert
+$alert: #{i.$pf-prefix} + "c-alert";
+
+// Alert Group
+$alert-group: #{i.$pf-prefix} + "c-alert-group";
+
+// App Launcher
+$app-launcher: #{i.$pf-prefix} + "c-app-launcher";
+
+// Avatar
+$avatar: #{i.$pf-prefix} + "c-avatar";
+
+// Backdrop
+$backdrop: #{i.$pf-prefix} + "c-backdrop";
+
+// Background Image
+$background-image: #{i.$pf-prefix} + "c-background-image";
+
+// Back to Top
+$back-to-top: #{i.$pf-prefix} + "c-back-to-top";
+
+// Badge
+$badge: #{i.$pf-prefix} + "c-badge";
+
+// Banner
+$banner: #{i.$pf-prefix} + "c-banner";
+
+// Brand
+$brand: #{i.$pf-prefix} + "c-brand";
+
+// Breadcrumb
+$breadcrumb: #{i.$pf-prefix} + "c-breadcrumb";
+
+// Button
+$button: #{i.$pf-prefix} + "c-button";
+
+// Calendar-month
+$calendar-month: #{i.$pf-prefix} + "c-calendar-month";
+
+// Card
+$card: #{i.$pf-prefix} + "c-card";
+
+// Check
+$check: #{i.$pf-prefix} + "c-check";
+
+// Chip
+$chip: #{i.$pf-prefix} + "c-chip";
+
+// Chip Group
+$chip-group: #{i.$pf-prefix} + "c-chip-group";
+
+// Clipboard Copy
+$clipboard-copy: #{i.$pf-prefix} + "c-clipboard-copy";
+
+// Code Block
+$code-block: #{i.$pf-prefix} + "c-code-block";
+
+// Code Editor
+$code-editor: #{i.$pf-prefix} + "c-code-editor";
+
+// Content
+$content: #{i.$pf-prefix} + "c-content";
+
+// Context Selector
+$context-selector: #{i.$pf-prefix} + "c-context-selector";
+
+// Data List
+$data-list: #{i.$pf-prefix} + "c-data-list";
+
+// Date Picker
+$date-picker: #{i.$pf-prefix} + "c-date-picker";
+
+// Description List
+$description-list: #{i.$pf-prefix} + "c-description-list";
+
+// Divider
+$divider: #{i.$pf-prefix} + "c-divider";
+
+// Drag Drop
+$drag-drop: #{i.$pf-prefix} + "c-drag-drop";
+$draggable: #{i.$pf-prefix} + "c-draggable";
+$droppable: #{i.$pf-prefix} + "c-droppable";
+
+// Drawer
+$drawer: #{i.$pf-prefix} + "c-drawer";
+
+// Dropdown
+$dropdown: #{i.$pf-prefix} + "c-dropdown";
+
+// Dual List Selector
+$dual-list-selector: #{i.$pf-prefix} + "c-dual-list-selector";
+
+// Empty State
+$empty-state: #{i.$pf-prefix} + "c-empty-state";
+
+// Expandable Section
+$expandable-section: #{i.$pf-prefix} + "c-expandable-section";
+
+// File Upload
+$file-upload: #{i.$pf-prefix} + "c-file-upload";
+
+// Form
+$form: #{i.$pf-prefix} + "c-form";
+
+// Form Control
+$form-control: #{i.$pf-prefix} + "c-form-control";
+
+// Helper Text
+$helper-text: #{i.$pf-prefix} + "c-helper-text";
+
+// Hint
+$hint: #{i.$pf-prefix} + "c-hint";
+
+// Icon
+$icon: #{i.$pf-prefix} + "c-icon";
+
+// Inline Edit
+$inline-edit: #{i.$pf-prefix} + "c-inline-edit";
+
+// Input Group
+$input-group: #{i.$pf-prefix} + "c-input-group";
+
+// Jump Links
+$jump-links: #{i.$pf-prefix} + "c-jump-links";
+
+// Label
+$label: #{i.$pf-prefix} + "c-label";
+
+// Label Group
+$label-group: #{i.$pf-prefix} + "c-label-group";
+
+// List
+$list: #{i.$pf-prefix} + "c-list";
+
+// Login
+$login: #{i.$pf-prefix} + "c-login";
+
+// Log Viewer
+$log-viewer: #{i.$pf-prefix} + "c-log-viewer";
+
+// Masthead
+$masthead: #{i.$pf-prefix} + "c-masthead";
+
+// Menu
+$menu: #{i.$pf-prefix} + "c-menu";
+
+// Menu Toggle
+$menu-toggle: #{i.$pf-prefix} + "c-menu-toggle";
+
+// Modal Box
+$modal-box: #{i.$pf-prefix} + "c-modal-box";
+
+// Multiple File Upload
+$multiple-file-upload: #{i.$pf-prefix} + "c-multiple-file-upload";
+
+// Nav
+$nav: #{i.$pf-prefix} + "c-nav";
+
+// Notification Badge
+$notification-badge: #{i.$pf-prefix} + "c-notification-badge";
+
+// Notification Drawer
+$notification-drawer: #{i.$pf-prefix} + "c-notification-drawer";
+
+// Number Input
+$number-input: #{i.$pf-prefix} + "c-number-input";
+
+// Options Menu
+$options-menu: #{i.$pf-prefix} + "c-options-menu";
+
+// Overflow Menu
+$overflow-menu: #{i.$pf-prefix} + "c-overflow-menu";
+
+// Page
+$page: #{i.$pf-prefix} + "c-page";
+
+// Pagination
+$pagination: #{i.$pf-prefix} + "c-pagination";
+
+// Panel
+$panel: #{i.$pf-prefix} + "c-panel";
+
+// Popover
+$popover: #{i.$pf-prefix} + "c-popover";
+
+// Progress
+$progress: #{i.$pf-prefix} + "c-progress";
+
+// Progress Stepper
+$progress-stepper: #{i.$pf-prefix} + "c-progress-stepper";
+
+// Radio
+$radio: #{i.$pf-prefix} + "c-radio";
+
+// Select
+$select: #{i.$pf-prefix} + "c-select";
+
+// Sidebar
+$sidebar: #{i.$pf-prefix} + "c-sidebar";
+
+// Simple List
+$simple-list: #{i.$pf-prefix} + "c-simple-list";
+
+// Scroll Inner Wrapper
+$scroll-inner-wrapper: #{i.$pf-prefix} + "c-scroll-inner-wrapper";
+
+// Scroll Outer Wrapper
+$scroll-outer-wrapper: #{i.$pf-prefix} + "c-scroll-outer-wrapper";
+
+// Skeleton
+$skeleton: #{i.$pf-prefix} + "c-skeleton";
+
+// Skip to Content
+$skip-to-content: #{i.$pf-prefix} + "c-skip-to-content";
+
+// Slider
+$slider: #{i.$pf-prefix} + "c-slider";
+
+// Spinner
+$spinner: #{i.$pf-prefix} + "c-spinner";
+
+// Switch
+$switch: #{i.$pf-prefix} + "c-switch";
+
+// Tab Content
+$tab-content: #{i.$pf-prefix} + "c-tab-content";
+
+// Table
+$table: #{i.$pf-prefix} + "c-table";
+
+// Tabs
+$tabs: #{i.$pf-prefix} + "c-tabs";
+
+// Text Input Group
+$test-demo: #{i.$pf-prefix} + "c-test-demo";
+
+// Text Input Group
+$text-input-group: #{i.$pf-prefix} + "c-text-input-group";
+
+// Tile
+$tile: #{i.$pf-prefix} + "c-tile";
+
+// Timestamp
+$timestamp: #{i.$pf-prefix} + "c-timestamp";
+
+// Title
+$title: #{i.$pf-prefix} + "c-title";
+
+// Toggle Group
+$toggle-group: #{i.$pf-prefix} + "c-toggle-group";
+
+// Toolbar
+$toolbar: #{i.$pf-prefix} + "c-toolbar";
+
+// Tooltip
+$tooltip: #{i.$pf-prefix} + "c-tooltip";
+
+// Tree View
+$tree-view: #{i.$pf-prefix} + "c-tree-view";
+
+// Truncate
+$truncate: #{i.$pf-prefix} + "c-truncate";
+
+// Wizard
+$wizard: #{i.$pf-prefix} + "c-wizard";
+
+// stylelint-enable

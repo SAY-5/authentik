@@ -1,0 +1,883 @@
+@use "@scss/functions" as f;
+@use "@scss/init" as i;
+@use "@scss/variables" as v;
+@use "@scss/mixins" as m;
+@use "sass:math";
+
+// @debug $drawer; // check your variable names located in src/patternfly/sass-utilities/component-namespaces.scss
+$pf-v5-c-drawer--breakpoint-map: f.build-breakpoint-map("base", "lg", "xl", "2xl");
+$pf-v5-c-drawer--breakpoint-map--width: f.build-breakpoint-map("base", "lg", "xl", "2xl");
+$pf-v5-c-drawer__panel--list--width: (25, 33, 50, 66, 75, 100);
+
+.ak-drawer {
+    // Section
+    --ak-drawer__section--BackgroundColor: var(--#{i.$pf-global}--BackgroundColor--100);
+    --ak-drawer__section--m-light-200--BackgroundColor: var(
+        --#{i.$pf-global}--BackgroundColor--200
+    );
+
+    // Content
+    --ak-drawer__content--FlexBasis: 100%;
+    --ak-drawer__content--BackgroundColor: var(--#{i.$pf-global}--BackgroundColor--100);
+    --ak-drawer__content--m-light-200--BackgroundColor: var(
+        --#{i.$pf-global}--BackgroundColor--200
+    );
+    --ak-drawer__content--ZIndex: var(--#{i.$pf-global}--ZIndex--xs);
+
+    // Panel
+    --ak-drawer__panel--MinWidth: 50%; // change to __panel--md--MinWidth at breaking change
+    --ak-drawer__panel--MaxHeight: auto;
+    --ak-drawer__panel--ZIndex: var(--#{i.$pf-global}--ZIndex--sm);
+    --ak-drawer__panel--BackgroundColor: var(--#{i.$pf-global}--BackgroundColor--100);
+    --ak-drawer__panel--m-light-200--BackgroundColor: var(--#{i.$pf-global}--BackgroundColor--200);
+    --ak-drawer__panel--TransitionDuration: var(--#{i.$pf-global}--TransitionDuration);
+    --ak-drawer__panel--TransitionProperty: margin, transform, box-shadow, flex-basis;
+    --ak-drawer__panel--FlexBasis: 100%;
+    --ak-drawer__panel--md--FlexBasis--min: #{f.size-prem(24px)};
+    --ak-drawer__panel--md--FlexBasis: 50%;
+    --ak-drawer__panel--md--FlexBasis--max: 100%;
+    --ak-drawer__panel--xl--MinWidth: #{f.size-prem(450px)};
+    --ak-drawer__panel--xl--FlexBasis: #{f.size-prem(450px)};
+    --ak-drawer--m-panel-bottom__panel--md--MinHeight: 50%;
+    --ak-drawer--m-panel-bottom__panel--xl--MinHeight: #{f.size-prem(300px)};
+    --ak-drawer--m-panel-bottom__panel--xl--FlexBasis: #{f.size-prem(300px)};
+    --ak-drawer__panel--m-resizable--FlexDirection: row;
+    --ak-drawer__panel--m-resizable--md--FlexBasis--min: var(
+        --ak-drawer__splitter--m-vertical--Width
+    );
+    --ak-drawer__panel--m-resizable--MinWidth: #{f.size-prem(24px)};
+    --ak-drawer--m-panel-bottom__panel--m-resizable--FlexDirection: column;
+    --ak-drawer--m-panel-bottom__panel--m-resizable--md--FlexBasis--min: #{f.size-prem(24px)};
+    --ak-drawer--m-panel-bottom__panel--m-resizable--MinHeight: #{f.size-prem(24px)};
+
+    // Child padding
+    --ak-drawer--child--PaddingTop: var(--#{i.$pf-global}--spacer--md);
+    --ak-drawer--child--PaddingRight: var(--#{i.$pf-global}--spacer--md);
+    --ak-drawer--child--PaddingBottom: var(--#{i.$pf-global}--spacer--md);
+    --ak-drawer--child--PaddingLeft: var(--#{i.$pf-global}--spacer--md);
+
+    // Responsive child padding
+    --ak-drawer--child--md--PaddingTop: var(--#{i.$pf-global}--spacer--lg);
+    --ak-drawer--child--md--PaddingRight: var(--#{i.$pf-global}--spacer--lg);
+    --ak-drawer--child--md--PaddingBottom: var(--#{i.$pf-global}--spacer--lg);
+    --ak-drawer--child--md--PaddingLeft: var(--#{i.$pf-global}--spacer--lg);
+
+    // Modified padding, child padding
+    --ak-drawer--child--m-padding--PaddingTop: var(--#{i.$pf-global}--spacer--md);
+    --ak-drawer--child--m-padding--PaddingRight: var(--#{i.$pf-global}--spacer--md);
+    --ak-drawer--child--m-padding--PaddingBottom: var(--#{i.$pf-global}--spacer--md);
+    --ak-drawer--child--m-padding--PaddingLeft: var(--#{i.$pf-global}--spacer--md);
+
+    // Responsive, modified padding, child padding
+    --ak-drawer--child--m-padding--md--PaddingTop: var(--#{i.$pf-global}--spacer--lg);
+    --ak-drawer--child--m-padding--md--PaddingRight: var(--#{i.$pf-global}--spacer--lg);
+    --ak-drawer--child--m-padding--md--PaddingBottom: var(--#{i.$pf-global}--spacer--lg);
+    --ak-drawer--child--m-padding--md--PaddingLeft: var(--#{i.$pf-global}--spacer--lg);
+
+    // Content
+    --ak-drawer__content--child--PaddingTop: 0;
+    --ak-drawer__content--child--PaddingRight: 0;
+    --ak-drawer__content--child--PaddingBottom: 0;
+    --ak-drawer__content--child--PaddingLeft: 0;
+
+    // Splitter
+    --ak-drawer__splitter--Height: #{f.size-prem(9px)};
+    --ak-drawer__splitter--Width: 100%;
+    --ak-drawer__splitter--BackgroundColor: var(--#{i.$pf-global}--BackgroundColor--100);
+    --ak-drawer__splitter--Cursor: row-resize;
+    --ak-drawer__splitter--m-vertical--Height: 100%;
+    --ak-drawer__splitter--m-vertical--Width: #{f.size-prem(9px)};
+    --ak-drawer__splitter--m-vertical--Cursor: col-resize;
+    --ak-drawer--m-inline__splitter--focus--OutlineOffset: #{f.size-prem(-1px)};
+
+    // Splitter border
+    --ak-drawer__splitter--after--BorderColor: var(--#{i.$pf-global}--BorderColor--100);
+    --ak-drawer__splitter--after--border-width--base: var(--#{i.$pf-global}--BorderWidth--sm);
+    --ak-drawer__splitter--after--BorderTopWidth: 0;
+    --ak-drawer__splitter--after--BorderRightWidth: var(
+        --ak-drawer__splitter--after--border-width--base
+    );
+    --ak-drawer__splitter--after--BorderBottomWidth: 0;
+    --ak-drawer__splitter--after--BorderLeftWidth: 0;
+    --ak-drawer--m-panel-left__splitter--after--BorderLeftWidth: var(
+        --ak-drawer__splitter--after--border-width--base
+    );
+    --ak-drawer--m-panel-bottom__splitter--after--BorderBottomWidth: var(
+        --ak-drawer__splitter--after--border-width--base
+    );
+    --ak-drawer--m-inline__splitter--m-vertical--Width: #{f.size-prem(10px)};
+    --ak-drawer--m-inline__splitter-handle--Left: 50%;
+    --ak-drawer--m-inline__splitter--after--BorderRightWidth: var(
+        --ak-drawer__splitter--after--border-width--base
+    );
+    --ak-drawer--m-inline__splitter--after--BorderLeftWidth: var(
+        --ak-drawer__splitter--after--border-width--base
+    );
+    --ak-drawer--m-inline--m-panel-bottom__splitter--Height: #{f.size-prem(10px)};
+    --ak-drawer--m-inline--m-panel-bottom__splitter-handle--Top: 50%;
+    --ak-drawer--m-inline--m-panel-bottom__splitter--after--BorderTopWidth: var(
+        --ak-drawer__splitter--after--border-width--base
+    );
+
+    // Splitter handle
+    --ak-drawer__splitter-handle--Top: 50%;
+    --ak-drawer__splitter-handle--Left: calc(
+        50% - var(--ak-drawer__splitter--after--border-width--base)
+    );
+    --ak-drawer--m-panel-left__splitter-handle--Left: 50%;
+    --ak-drawer--m-panel-bottom__splitter-handle--Top: calc(
+        50% - var(--ak-drawer__splitter--after--border-width--base)
+    );
+
+    // Splitter handle line
+    --ak-drawer__splitter-handle--after--BorderColor: var(--#{i.$pf-global}--Color--200);
+    --ak-drawer__splitter-handle--after--BorderTopWidth: var(--#{i.$pf-global}--BorderWidth--sm);
+    --ak-drawer__splitter-handle--after--BorderRightWidth: 0;
+    --ak-drawer__splitter-handle--after--BorderBottomWidth: var(--#{i.$pf-global}--BorderWidth--sm);
+    --ak-drawer__splitter-handle--after--BorderLeftWidth: 0;
+    --ak-drawer__splitter--hover__splitter-handle--after--BorderColor: var(
+        --#{i.$pf-global}--Color--100
+    );
+    --ak-drawer__splitter--focus__splitter-handle--after--BorderColor: var(
+        --#{i.$pf-global}--Color--100
+    );
+    --ak-drawer__splitter--m-vertical__splitter-handle--after--BorderTopWidth: 0;
+    --ak-drawer__splitter--m-vertical__splitter-handle--after--BorderRightWidth: var(
+        --#{i.$pf-global}--BorderWidth--sm
+    );
+    --ak-drawer__splitter--m-vertical__splitter-handle--after--BorderBottomWidth: 0;
+    --ak-drawer__splitter--m-vertical__splitter-handle--after--BorderLeftWidth: var(
+        --#{i.$pf-global}--BorderWidth--sm
+    );
+    --ak-drawer__splitter-handle--after--Width: #{f.size-prem(12px)};
+    --ak-drawer__splitter-handle--after--Height: #{f.size-prem(4px)};
+    --ak-drawer__splitter--m-vertical__splitter-handle--after--Width: #{f.size-prem(4px)};
+    --ak-drawer__splitter--m-vertical__splitter-handle--after--Height: #{f.size-prem(12px)};
+
+    @media screen and (min-width: v.$breakpoint--md) {
+        // Responsive child padding
+        --ak-drawer--child--PaddingTop: var(--ak-drawer--child--md--PaddingTop);
+        --ak-drawer--child--PaddingRight: var(--ak-drawer--child--md--PaddingRight);
+        --ak-drawer--child--PaddingBottom: var(--ak-drawer--child--md--PaddingBottom);
+        --ak-drawer--child--PaddingLeft: var(--ak-drawer--child--md--PaddingLeft);
+
+        // Responsive, modified padding, child padding
+        --ak-drawer--child--m-padding--PaddingTop: var(
+            --ak-drawer--child--m-padding--md--PaddingTop
+        );
+        --ak-drawer--child--m-padding--PaddingRight: var(
+            --ak-drawer--child--m-padding--md--PaddingRight
+        );
+        --ak-drawer--child--m-padding--PaddingBottom: var(
+            --ak-drawer--child--m-padding--md--PaddingBottom
+        );
+        --ak-drawer--child--m-padding--PaddingLeft: var(
+            --ak-drawer--child--m-padding--md--PaddingLeft
+        );
+    }
+
+    @media screen and (min-width: v.$breakpoint--xl) {
+        --ak-drawer__panel--MinWidth: var(--ak-drawer__panel--xl--MinWidth);
+
+        &.pf-m-panel-bottom {
+            --ak-drawer__panel--MinWidth: auto;
+            --ak-drawer__panel--MinHeight: var(--ak-drawer--m-panel-bottom__panel--xl--MinHeight);
+        }
+    }
+
+    // Actions
+    --ak-drawer__actions--MarginTop: calc(var(--#{i.$pf-global}--spacer--form-element) * -1);
+    --ak-drawer__actions--MarginRight: calc(var(--#{i.$pf-global}--spacer--form-element) * -1);
+
+    // Box shadow
+    --ak-drawer__panel--BoxShadow: none;
+    --ak-drawer--m-expanded--m-panel-bottom__panel--BoxShadow: var(
+        --#{i.$pf-global}--BoxShadow--lg-top
+    );
+
+    @include m.bidirectional-style(
+        $prop: --ak-drawer--m-expanded__panel--BoxShadow,
+        $ltr-val: var(--#{i.$pf-global}--BoxShadow--lg-left),
+        $rtl-val: var(--#{i.$pf-global}--BoxShadow--lg-right)
+    );
+
+    @include m.bidirectional-style(
+        $prop: --ak-drawer--m-expanded--m-panel-left__panel--BoxShadow,
+        $ltr-val: var(--#{i.$pf-global}--BoxShadow--lg-right),
+        $rtl-val: var(--#{i.$pf-global}--BoxShadow--lg-left)
+    );
+
+    // Divider
+    --ak-drawer__panel--after--Width: var(--#{i.$pf-global}--BorderWidth--sm);
+    --ak-drawer--m-panel-bottom__panel--after--Height: var(--#{i.$pf-global}--BorderWidth--sm);
+    --ak-drawer__panel--after--BackgroundColor: transparent;
+    --ak-drawer--m-inline--m-expanded__panel--after--BackgroundColor: var(
+        --#{i.$pf-global}--BorderColor--100
+    );
+    --ak-drawer--m-inline__panel--PaddingLeft: var(--ak-drawer__panel--after--Width);
+    --ak-drawer--m-panel-left--m-inline__panel--PaddingRight: var(--ak-drawer__panel--after--Width);
+    --ak-drawer--m-panel-bottom--m-inline__panel--PaddingTop: var(--ak-drawer__panel--after--Width);
+
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-x: hidden;
+
+    &.pf-m-inline,
+    &.pf-m-static {
+        > .ak-drawer__main > .ak-drawer__panel:not(.pf-m-no-border, .pf-m-resizable) {
+            padding-inline-start: var(--ak-drawer--m-inline__panel--PaddingLeft);
+        }
+    }
+
+    &.pf-m-panel-left > .ak-drawer__main {
+        > .ak-drawer__panel {
+            order: 0;
+            margin-inline-end: calc(var(--ak-drawer__panel--FlexBasis) * -1);
+
+            @include m.bidirectional-style(
+                $prop: transform,
+                $ltr-val: translateX(-100%),
+                $rtl-val: translateX(#{pf-v5-calc-inverse(-100%)})
+            );
+        }
+
+        > .ak-drawer__content {
+            order: 1;
+        }
+    }
+
+    &.pf-m-panel-bottom > .ak-drawer__main {
+        flex-direction: column;
+    }
+
+    // Expanded
+    // stylelint-disable selector-max-class
+    &.pf-m-expanded {
+        > .ak-drawer__main > .ak-drawer__panel {
+            @include m.bidirectional-style(
+                $prop: transform,
+                $ltr-val: translateX(-100%),
+                $rtl-val: translateX(#{pf-v5-calc-inverse(-100%)})
+            );
+        }
+
+        &.pf-m-panel-left > .ak-drawer__main > .ak-drawer__panel {
+            transform: translateX(0);
+        }
+
+        &.pf-m-panel-bottom > .ak-drawer__main > .ak-drawer__panel {
+            transform: translate(0, -100%);
+        }
+    }
+    // stylelint-enable
+
+    &.pf-m-resizing {
+        --ak-drawer__panel--TransitionProperty: none;
+
+        pointer-events: none;
+
+        .ak-drawer__splitter {
+            pointer-events: auto;
+        }
+    }
+}
+
+// Header area
+.ak-drawer__section {
+    flex-grow: 0;
+    background-color: var(--ak-drawer__section--BackgroundColor);
+
+    &.pf-m-no-background {
+        --ak-drawer__section--BackgroundColor: transparent;
+    }
+
+    &.pf-m-light-200 {
+        --ak-drawer__section--BackgroundColor: var(
+            --ak-drawer__section--m-light-200--BackgroundColor
+        );
+    }
+}
+
+// Main area
+.ak-drawer__main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+// Content / panel
+.ak-drawer__content,
+.ak-drawer__panel,
+.ak-drawer__panel-main {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: auto;
+}
+
+// Content
+.ak-drawer__content {
+    z-index: var(--ak-drawer__content--ZIndex);
+    flex-basis: var(--ak-drawer__content--FlexBasis);
+    order: 0;
+    background-color: var(--ak-drawer__content--BackgroundColor);
+
+    &.pf-m-no-background {
+        --ak-drawer__content--BackgroundColor: transparent;
+    }
+
+    &.pf-m-light-200 {
+        --ak-drawer__content--BackgroundColor: var(
+            --ak-drawer__content--m-light-200--BackgroundColor
+        );
+    }
+
+    > .ak-drawer__body {
+        padding-block-start: var(--ak-drawer__content--child--PaddingTop);
+        padding-block-end: var(--ak-drawer__content--child--PaddingBottom);
+        padding-inline-start: var(--ak-drawer__content--child--PaddingLeft);
+        padding-inline-end: var(--ak-drawer__content--child--PaddingRight);
+    }
+}
+
+// Panel
+.ak-drawer__panel {
+    position: relative;
+    z-index: var(--ak-drawer__panel--ZIndex);
+    flex-basis: var(--ak-drawer__panel--FlexBasis);
+    order: 1;
+    max-height: var(--ak-drawer__panel--MaxHeight);
+    overflow: auto;
+    background-color: var(--ak-drawer__panel--BackgroundColor);
+    box-shadow: var(--ak-drawer__panel--BoxShadow);
+    transition-duration: var(--ak-drawer__panel--TransitionDuration);
+    transition-property: var(--ak-drawer__panel--TransitionProperty);
+    -webkit-overflow-scrolling: touch;
+
+    &::after {
+        position: absolute;
+        inset-block-start: 0;
+        inset-inline-start: 0;
+        width: var(--ak-drawer__panel--after--Width);
+        height: 100%;
+        content: "";
+        background-color: var(--ak-drawer__panel--after--BackgroundColor);
+    }
+
+    &.pf-m-no-background {
+        --ak-drawer__panel--BackgroundColor: transparent;
+    }
+
+    &.pf-m-light-200 {
+        --ak-drawer__panel--BackgroundColor: var(--ak-drawer__panel--m-light-200--BackgroundColor);
+    }
+
+    @media screen and (min-width: v.$breakpoint--md) {
+        --ak-drawer__panel--FlexBasis: max(
+            var(--ak-drawer__panel--md--FlexBasis--min),
+            min(var(--ak-drawer__panel--md--FlexBasis), var(--ak-drawer__panel--md--FlexBasis--max))
+        );
+    }
+
+    @media screen and (min-width: v.$breakpoint--xl) {
+        --ak-drawer__panel--md--FlexBasis: var(--ak-drawer__panel--xl--FlexBasis);
+
+        .ak-drawer.pf-m-panel-bottom & {
+            --ak-drawer__panel--md--FlexBasis: var(
+                --ak-drawer--m-panel-bottom__panel--xl--FlexBasis
+            );
+        }
+    }
+}
+
+.ak-drawer__panel-main {
+    flex-grow: 1;
+}
+
+// Remove tab focus
+@include m.animate-remove-tab-focus(
+    ".ak-drawer__panel",
+    var(--ak-drawer__panel--TransitionDuration)
+);
+
+// Panel head
+.ak-drawer__head {
+    display: grid;
+    grid-template-columns: auto;
+    grid-auto-columns: max-content;
+
+    > * {
+        grid-column: 1;
+    }
+}
+
+// Panel actions
+.ak-drawer__actions {
+    display: flex;
+    grid-row: 1;
+    grid-column: 2;
+    align-self: baseline;
+    margin-block-start: var(--ak-drawer__actions--MarginTop);
+    margin-inline-end: var(--ak-drawer__actions--MarginRight);
+}
+
+// Modified content children
+.ak-drawer__body {
+    padding-block-start: var(--ak-drawer--child--PaddingTop);
+    padding-block-end: var(--ak-drawer--child--PaddingBottom);
+    padding-inline-start: var(--ak-drawer--child--PaddingLeft);
+    padding-inline-end: var(--ak-drawer--child--PaddingRight);
+
+    // No padding
+    &.pf-m-no-padding {
+        padding: 0;
+
+        > .ak-drawer__actions,
+        > .ak-drawer__head > .ak-drawer__actions {
+            margin-block-start: 0;
+            margin-inline-end: 0;
+        }
+    }
+
+    // Padding
+    &.pf-m-padding {
+        padding-block-start: var(--ak-drawer--child--m-padding--PaddingTop);
+        padding-block-end: var(--ak-drawer--child--m-padding--PaddingBottom);
+        padding-inline-start: var(--ak-drawer--child--m-padding--PaddingLeft);
+        padding-inline-end: var(--ak-drawer--child--m-padding--PaddingRight);
+    }
+
+    &:not(.pf-m-no-padding) + * {
+        padding-block-start: 0;
+    }
+
+    &:last-child {
+        flex: 1 1;
+    }
+}
+
+// Page level drawer - move to page component in breaking change
+.ak-drawer__body > .ak-page__main {
+    height: 100%;
+}
+
+.ak-drawer__splitter {
+    position: relative;
+    display: none;
+    width: var(--ak-drawer__splitter--Width);
+    height: var(--ak-drawer__splitter--Height);
+    cursor: var(--ak-drawer__splitter--Cursor);
+    background-color: var(--ak-drawer__splitter--BackgroundColor);
+
+    &.pf-m-vertical {
+        --ak-drawer__splitter--Height: var(--ak-drawer__splitter--m-vertical--Height);
+        --ak-drawer__splitter--Width: var(--ak-drawer__splitter--m-vertical--Width);
+        --ak-drawer__splitter--Cursor: var(--ak-drawer__splitter--m-vertical--Cursor);
+        --ak-drawer__splitter-handle--after--Width: var(
+            --ak-drawer__splitter--m-vertical__splitter-handle--after--Width
+        );
+        --ak-drawer__splitter-handle--after--Height: var(
+            --ak-drawer__splitter--m-vertical__splitter-handle--after--Height
+        );
+        --ak-drawer__splitter-handle--after--BorderTopWidth: var(
+            --ak-drawer__splitter--m-vertical__splitter-handle--after--BorderTopWidth
+        );
+        --ak-drawer__splitter-handle--after--BorderRightWidth: var(
+            --ak-drawer__splitter--m-vertical__splitter-handle--after--BorderRightWidth
+        );
+        --ak-drawer__splitter-handle--after--BorderBottomWidth: var(
+            --ak-drawer__splitter--m-vertical__splitter-handle--after--BorderBottomWidth
+        );
+        --ak-drawer__splitter-handle--after--BorderLeftWidth: var(
+            --ak-drawer__splitter--m-vertical__splitter-handle--after--BorderLeftWidth
+        );
+    }
+
+    &:hover {
+        --ak-drawer__splitter-handle--after--BorderColor: var(
+            --ak-drawer__splitter--hover__splitter-handle--after--BorderColor
+        );
+    }
+
+    &:focus {
+        --ak-drawer__splitter-handle--after--BorderColor: var(
+            --ak-drawer__splitter--focus__splitter-handle--after--BorderColor
+        );
+    }
+
+    &::after {
+        position: absolute;
+        inset-block-start: 0;
+        inset-block-end: 0;
+        inset-inline-start: 0;
+        inset-inline-end: 0;
+        content: "";
+        border: solid var(--ak-drawer__splitter--after--BorderColor);
+        border-block-start-width: var(--ak-drawer__splitter--after--BorderTopWidth);
+        border-block-end-width: var(--ak-drawer__splitter--after--BorderBottomWidth);
+        border-inline-start-width: var(--ak-drawer__splitter--after--BorderLeftWidth);
+        border-inline-end-width: var(--ak-drawer__splitter--after--BorderRightWidth);
+    }
+}
+
+.ak-drawer__splitter-handle {
+    position: absolute;
+    inset-block-start: var(--ak-drawer__splitter-handle--Top);
+    inset-inline-start: var(--ak-drawer__splitter-handle--Left);
+
+    @include m.bidirectional-style(
+        $prop: transform,
+        $ltr-val: translate(-50%, -50%),
+        $rtl-val: translate(#{pf-v5-calc-inverse(-50%)}, -50%)
+    );
+
+    &::after {
+        display: block;
+        width: var(--ak-drawer__splitter-handle--after--Width);
+        height: var(--ak-drawer__splitter-handle--after--Height);
+        content: "";
+        border-color: var(--ak-drawer__splitter-handle--after--BorderColor);
+        border-style: solid;
+        border-block-start-width: var(--ak-drawer__splitter-handle--after--BorderTopWidth);
+        border-block-end-width: var(--ak-drawer__splitter-handle--after--BorderBottomWidth);
+        border-inline-start-width: var(--ak-drawer__splitter-handle--after--BorderLeftWidth);
+        border-inline-end-width: var(--ak-drawer__splitter-handle--after--BorderRightWidth);
+    }
+}
+
+// Layout modifications happen after md breakpoint
+@media screen and (min-width: v.$breakpoint--md) {
+    // Default
+    .ak-drawer {
+        min-width: var(--ak-drawer__panel--MinWidth);
+
+        // stylelint-disable selector-max-class
+        // Expanded
+        &.pf-m-expanded > .ak-drawer__main {
+            > .ak-drawer__panel {
+                box-shadow: var(--ak-drawer--m-expanded__panel--BoxShadow);
+            }
+        }
+
+        > .ak-drawer__main > .ak-drawer__panel.pf-m-resizable {
+            --ak-drawer__panel--md--FlexBasis--min: var(
+                --ak-drawer__panel--m-resizable--md--FlexBasis--min
+            );
+
+            flex-direction: var(--ak-drawer__panel--m-resizable--FlexDirection);
+            min-width: var(--ak-drawer__panel--m-resizable--MinWidth);
+
+            &::after {
+                width: 0;
+                height: 0;
+            }
+
+            > .ak-drawer__splitter {
+                flex-shrink: 0;
+            }
+
+            > .ak-drawer__panel-main {
+                flex-shrink: 1;
+            }
+        }
+    }
+
+    // Panel left
+    .ak-drawer.pf-m-panel-left {
+        --ak-drawer--m-expanded__panel--BoxShadow: var(
+            --ak-drawer--m-expanded--m-panel-left__panel--BoxShadow
+        );
+
+        &.pf-m-inline,
+        &.pf-m-static {
+            > .ak-drawer__main > .ak-drawer__panel:not(.pf-m-no-border, .pf-m-resizable) {
+                padding-inline-start: 0;
+                padding-inline-end: var(--ak-drawer--m-panel-left--m-inline__panel--PaddingRight);
+            }
+        }
+
+        &.pf-m-expanded > .ak-drawer__main > .ak-drawer__panel {
+            transform: translateX(0);
+        }
+
+        > .ak-drawer__main > .ak-drawer__panel::after {
+            inset-inline-start: auto;
+            inset-inline-end: 0;
+        }
+
+        > .ak-drawer__main > .ak-drawer__panel.pf-m-resizable {
+            > .ak-drawer__splitter {
+                --ak-drawer__splitter-handle--Left: var(
+                    --ak-drawer--m-panel-left__splitter-handle--Left
+                );
+                --ak-drawer__splitter--after--BorderRightWidth: 0;
+                --ak-drawer__splitter--after--BorderLeftWidth: var(
+                    --ak-drawer--m-panel-left__splitter--after--BorderLeftWidth
+                );
+
+                order: 1;
+            }
+        }
+    }
+
+    .ak-drawer.pf-m-panel-bottom {
+        --ak-drawer--m-expanded__panel--BoxShadow: var(
+            --ak-drawer--m-expanded--m-panel-bottom__panel--BoxShadow
+        );
+        --ak-drawer__panel--MaxHeight: 100%;
+        --ak-drawer__panel--FlexBasis--min: var(--ak-drawer--m-panel-bottom__panel--FlexBasis--min);
+
+        min-width: auto;
+        min-height: var(--ak-drawer--m-panel-bottom__panel--md--MinHeight);
+
+        &.pf-m-inline,
+        &.pf-m-static {
+            > .ak-drawer__main > .ak-drawer__panel:not(.pf-m-no-border, .pf-m-resizable) {
+                padding-block-start: var(--ak-drawer--m-panel-bottom--m-inline__panel--PaddingTop);
+                padding-inline-start: 0;
+            }
+        }
+
+        > .ak-drawer__main > .ak-drawer__panel::after {
+            inset-block-start: 0;
+            inset-inline-start: auto;
+            width: 100%;
+            height: var(--ak-drawer--m-panel-bottom__panel--after--Height);
+        }
+
+        > .ak-drawer__main > .ak-drawer__panel.pf-m-resizable {
+            --ak-drawer__panel--md--FlexBasis--min: var(
+                --ak-drawer--m-panel-bottom__panel--m-resizable--md--FlexBasis--min
+            );
+            --ak-drawer__panel--m-resizable--FlexDirection: var(
+                --ak-drawer--m-panel-bottom__panel--m-resizable--FlexDirection
+            );
+            --ak-drawer__panel--m-resizable--MinWidth: 0;
+
+            min-height: var(--ak-drawer--m-panel-bottom__panel--m-resizable--MinHeight);
+
+            > .ak-drawer__splitter {
+                --ak-drawer__splitter-handle--Top: var(
+                    --ak-drawer--m-panel-bottom__splitter-handle--Top
+                );
+                --ak-drawer__splitter--after--BorderRightWidth: 0;
+                --ak-drawer__splitter--after--BorderBottomWidth: var(
+                    --ak-drawer--m-panel-bottom__splitter--after--BorderBottomWidth
+                );
+            }
+        }
+    }
+
+    .ak-drawer.pf-m-inline {
+        > .ak-drawer__main > .ak-drawer__panel.pf-m-resizable {
+            > .ak-drawer__splitter {
+                --ak-drawer__splitter--m-vertical--Width: var(
+                    --ak-drawer--m-inline__splitter--m-vertical--Width
+                );
+                --ak-drawer__splitter-handle--Left: var(
+                    --ak-drawer--m-inline__splitter-handle--Left
+                );
+                --ak-drawer__splitter--after--BorderRightWidth: var(
+                    --ak-drawer--m-inline__splitter--after--BorderRightWidth
+                );
+                --ak-drawer__splitter--after--BorderLeftWidth: var(
+                    --ak-drawer--m-inline__splitter--after--BorderLeftWidth
+                );
+
+                outline-offset: var(--ak-drawer--m-inline__splitter--focus--OutlineOffset);
+            }
+        }
+
+        &.pf-m-panel-bottom {
+            > .ak-drawer__main > .ak-drawer__panel.pf-m-resizable {
+                > .ak-drawer__splitter {
+                    --ak-drawer__splitter--Height: var(
+                        --ak-drawer--m-inline--m-panel-bottom__splitter--Height
+                    );
+                    --ak-drawer__splitter-handle--Top: var(
+                        --ak-drawer--m-inline--m-panel-bottom__splitter-handle--Top
+                    );
+                    --ak-drawer__splitter--after--BorderTopWidth: var(
+                        --ak-drawer--m-inline--m-panel-bottom__splitter--after--BorderTopWidth
+                    );
+                    --ak-drawer__splitter--after--BorderRightWidth: 0;
+                    --ak-drawer__splitter--after--BorderLeftWidth: 0;
+                }
+            }
+        }
+    }
+
+    // Border
+    .ak-drawer > .ak-drawer__main > .ak-drawer__panel.pf-m-no-border,
+    .ak-drawer.pf-m-panel-left > .ak-drawer__main > .ak-drawer__panel.pf-m-no-border {
+        --ak-drawer--m-expanded__panel--BoxShadow: none;
+    }
+    // stylelint-enable
+
+    .ak-drawer__splitter {
+        display: block;
+    }
+}
+
+// Responsive width modifiers
+@each $breakpoint, $breakpoint-value in $pf-v5-c-drawer--breakpoint-map--width {
+    $breakpoint-name: if($breakpoint != "base", -on-#{$breakpoint}, "");
+
+    @if $breakpoint == "base" {
+        $breakpoint: "md";
+    }
+
+    @include m.apply-breakpoint($breakpoint) {
+        @each $width-value in $pf-v5-c-drawer__panel--list--width {
+            .ak-drawer__panel.pf-m-width-#{$width-value}#{$breakpoint-name} {
+                --ak-drawer__panel--md--FlexBasis: #{math.percentage(math.div($width-value, 100))};
+            }
+        }
+    }
+}
+
+// Responsive modifiers
+@each $breakpoint, $breakpoint-value in $pf-v5-c-drawer--breakpoint-map {
+    $breakpoint-name: if($breakpoint != "base", -on-#{$breakpoint}, "");
+
+    @if $breakpoint == "base" {
+        $breakpoint: "md";
+    }
+
+    @include m.apply-breakpoint($breakpoint) {
+        // Drawer and inline
+        .ak-drawer.pf-m-inline#{$breakpoint-name},
+        .ak-drawer.pf-m-static#{$breakpoint-name} {
+            > .ak-drawer__main > .ak-drawer__content {
+                flex-shrink: 1;
+            }
+
+            > .ak-drawer__main > .ak-drawer__panel {
+                --ak-drawer--m-expanded__panel--BoxShadow: none;
+
+                &:not(.pf-m-no-border)::after {
+                    background-color: var(
+                        --ak-drawer--m-inline--m-expanded__panel--after--BackgroundColor
+                    );
+                }
+            }
+        }
+
+        // Drawer inline
+        .ak-drawer.pf-m-inline#{$breakpoint-name} {
+            > .ak-drawer__main > .ak-drawer__content {
+                overflow-x: auto;
+            }
+
+            > .ak-drawer__main > .ak-drawer__panel {
+                margin-inline-start: calc(var(--ak-drawer__panel--FlexBasis) * -1);
+
+                @include m.bidirectional-style(
+                    $prop: transform,
+                    $ltr-val: translateX(100%),
+                    $rtl-val: translateX(#{pf-v5-calc-inverse(100%)})
+                );
+            }
+
+            // stylelint-disable selector-max-class, selector-max-combinators, selector-max-compound-selectors
+            // Inline, expanded
+            &.pf-m-expanded > .ak-drawer__main > .ak-drawer__panel {
+                margin-inline-start: 0;
+                transform: translateX(0);
+            }
+
+            > .ak-drawer__main
+                > .ak-drawer__panel
+                > .ak-drawer__body
+                > .ak-drawer__head
+                .ak-drawer__close {
+                display: unset;
+            }
+
+            // Panel left
+            &.pf-m-panel-left {
+                > .ak-drawer__main > .ak-drawer__panel {
+                    margin-inline-start: 0;
+                    margin-inline-end: calc(var(--ak-drawer__panel--FlexBasis) * -1);
+
+                    @include m.bidirectional-style(
+                        $prop: transform,
+                        $ltr-val: translateX(-100%),
+                        $rtl-val: translateX(#{pf-v5-calc-inverse(-100%)})
+                    );
+                }
+
+                // Inline, expanded, panel left
+                &.pf-m-expanded > .ak-drawer__main > .ak-drawer__panel {
+                    margin-inline-end: 0;
+                    transform: translateX(0);
+                }
+
+                > .ak-drawer__main
+                    > .ak-drawer__panel
+                    > .ak-drawer__body
+                    > .ak-drawer__head
+                    .ak-drawer__close {
+                    display: unset;
+                }
+            }
+
+            // Panel bottom
+            &.pf-m-panel-bottom {
+                > .ak-drawer__main > .ak-drawer__panel {
+                    margin-block-end: calc(var(--ak-drawer__panel--FlexBasis) * -1);
+                    transform: translateY(100%);
+                }
+
+                // Inline, expanded, panel left
+                &.pf-m-expanded > .ak-drawer__main > .ak-drawer__panel {
+                    margin-block-end: 0;
+                    transform: translateY(0);
+                }
+            }
+            // stylelint-enable
+        }
+
+        // Static
+        .ak-drawer.pf-m-static#{$breakpoint-name} {
+            > .ak-drawer__main > .ak-drawer__panel {
+                transform: translateX(0);
+            }
+
+            // stylelint-disable max-nesting-depth, selector-max-class, selector-max-combinators, selector-max-compound-selectors
+            &.pf-m-panel-left {
+                > .ak-drawer__main > .ak-drawer__panel {
+                    margin-inline-end: 0;
+                    transform: translateX(0);
+                }
+            }
+
+            &.pf-m-panel-bottom {
+                > .ak-drawer__main > .ak-drawer__panel {
+                    transform: translateX(0);
+                }
+            }
+
+            > .ak-drawer__main
+                > .ak-drawer__panel
+                > .ak-drawer__body
+                > .ak-drawer__head
+                .ak-drawer__close {
+                display: none;
+            }
+            // stylelint-enable
+        }
+    }
+}
+
+:root([data-theme="dark"]) .ak-drawer,
+:root([data-theme="dark"]) ak-drawer {
+    --ak-drawer__panel--BackgroundColor: var(--#{i.$pf-global}--BackgroundColor--400);
+    --ak-drawer__splitter--BackgroundColor: transparent;
+
+    &.pf-m-inline,
+    &.pf-m-static {
+        --ak-drawer__panel--BackgroundColor: var(--#{i.$pf-global}--BackgroundColor--100);
+    }
+}

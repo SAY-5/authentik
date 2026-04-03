@@ -1,0 +1,58 @@
+{
+    "name": "@goauthentik/elements",
+    "version": "0.0.6",
+    "description": "The Authentik open-source elements library",
+    "license": "MIT",
+    "author": "Authentik Security, Inc. <https://goauthentik.io>",
+    "repository": "goauthentik/elements.git",
+    "bugs": "https://github.com/goauthentik/elements/issues",
+    "homepage": "https://github.com/goauthentik/elements#readme",
+    "scripts": {
+        "build": "run-s clean:build-info clean:dist build:sources",
+        "build:components": "tsgo -p .",
+        "build:copying": "copyfiles -u 1 \"src/**/*.css\" dist",
+        "build:sources": "run-p build:components build:copying",
+        "clean:build-info": "rm -f ./tsconfig.tsbuildinfo",
+        "clean:dist": "rimraf ./dist/"
+    },
+    "exports": {
+        "./*": "./dist/*"
+    },
+    "dependencies": {
+        "@custom-elements-manifest/analyzer": "^0.11.0",
+        "@goauthentik/eslint-config": "^1.3.0",
+        "@goauthentik/prettier-config": "^3.5.0",
+        "@goauthentik/tsconfig": "^1.0.9",
+        "@patternfly/patternfly": "^4.224.5",
+        "@typescript/native-preview": "^7.0.0-dev.20260401.1",
+        "baseline-browser-mapping": "^2.10.13",
+        "copyfiles": "^2.4.1",
+        "lint-staged": "^16.4.0",
+        "lit": "^3.3.2",
+        "npm-run-all": "^4.1.5",
+        "prettier": "^3.8.1",
+        "rimraf": "^6.1.3",
+        "sass-alias": "^2.0.1",
+        "ts-lit-plugin": "^2.0.2",
+        "typescript-plugin-css-modules": "^5.2.0"
+    },
+    "engines": {
+        "node": ">=24"
+    },
+    "prettier": "@goauthentik/prettier-config",
+    "eslintConfig": {
+        "extends": [
+            "plugin:storybook/recommended"
+        ]
+    },
+    "keywords": [
+        "authentik",
+        "design system",
+        "lit-element",
+        "web components"
+    ],
+    "browserslist": [
+        "baseline widely available"
+    ],
+    "customElements": "custom-elements.json"
+}

@@ -1,0 +1,38 @@
+{
+    "extends": "@goauthentik/tsconfig",
+    "include": ["src/**/*"],
+    "compilerOptions": {
+        "paths": { "*": ["./*"] },
+        "rootDir": "src",
+        "outDir": "dist",
+        "checkJs": true,
+        "allowJs": true,
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true,
+        "experimentalDecorators": true,
+        "useDefineForClassFields": false,
+        "target": "esnext",
+        "module": "preserve",
+        "moduleResolution": "bundler",
+        "lib": ["DOM", "DOM.Iterable", "ESNext"],
+        // TODO: We should enable this when when we're ready to enforce it.
+        "noUncheckedIndexedAccess": false,
+        "sourceMap": true,
+        "declaration": true,
+        "types": ["node"],
+        "declarationMap": true,
+        "plugins": [
+            {
+                "name": "ts-lit-plugin",
+                "strict": true,
+                "rules": {
+                    "no-incompatible-type-binding": "off"
+                }
+            },
+            {
+                "name": "typescript-plugin-css-modules"
+            }
+        ]
+    },
+    "exclude": ["node_modules", "dist", "src/**/*.stories.ts", "config/**/*.mts"]
+}

@@ -1,0 +1,78 @@
+@use "@scss:init" as i;
+@use "@scss:variables" as v;
+@use "@scss:component-namespaces" as cn;
+
+%pf-v5-t-light {
+    --#{i.$pf-global}--Color--100: var(--#{i.$pf-global}--Color--dark-100);
+    --#{i.$pf-global}--Color--200: var(--#{i.$pf-global}--Color--dark-200);
+    --#{i.$pf-global}--BorderColor--100: var(--#{i.$pf-global}--BorderColor--dark-100);
+    --#{i.$pf-global}--primary-color--100: var(--#{i.$pf-global}--primary-color--dark-100);
+    --#{i.$pf-global}--link--Color: var(--#{i.$pf-global}--link--Color--dark);
+    --#{i.$pf-global}--link--Color--hover: var(--#{i.$pf-global}--link--Color--dark--hover);
+    --#{i.$pf-global}--BackgroundColor--100: var(--#{i.$pf-global}--BackgroundColor--light-100);
+    --#{i.$pf-global}--icon--Color--light: var(--#{i.$pf-global}--icon--Color--light--dark);
+    --#{i.$pf-global}--icon--Color--dark: var(--#{i.$pf-global}--icon--Color--dark--dark);
+}
+
+%pf-v5-t-dark {
+    --#{i.$pf-global}--Color--100: var(--#{i.$pf-global}--Color--light-100);
+    --#{i.$pf-global}--Color--200: var(--#{i.$pf-global}--Color--light-200);
+    --#{i.$pf-global}--BorderColor--100: var(--#{i.$pf-global}--BorderColor--light-100);
+    --#{i.$pf-global}--primary-color--100: var(--#{i.$pf-global}--primary-color--light-100);
+    --#{i.$pf-global}--link--Color: var(--#{i.$pf-global}--link--Color--light);
+    --#{i.$pf-global}--link--Color--hover: var(--#{i.$pf-global}--link--Color--light);
+    --#{i.$pf-global}--BackgroundColor--100: var(--#{i.$pf-global}--BackgroundColor--dark-100);
+    --#{i.$pf-global}--icon--Color--light: var(--#{i.$pf-global}--icon--Color--light--light);
+    --#{i.$pf-global}--icon--Color--dark: var(--#{i.$pf-global}--icon--Color--dark--light);
+
+    .#{cn.$button} {
+        --#{cn.$button}--m-primary--BackgroundColor: var(
+            --#{i.$pf-global}--primary-color--dark-100
+        );
+    }
+}
+
+// stylelint-disable
+%pf-v5-hidden-visible {
+    // base value for visible display property is set to 'block' by default and passed in to
+    // placeholder via `pf-v5-hidden-visible` mixin
+
+    // set hidden var values
+    --pf-v5-hidden-visible--hidden--Display: none;
+
+    // set visibile var values
+    --pf-v5-hidden-visible--Display: var(--pf-v5-hidden-visible--visible--Display);
+
+    // set default state to visible
+    display: var(--pf-v5-hidden-visible--Display);
+
+    // toggle values based on state
+    &.pf-m-hidden {
+        --pf-v5-hidden-visible--Display: var(--pf-v5-hidden-visible--hidden--Display);
+    }
+
+    @each $size, $bp in v.$pf-v5-global--breakpoint-name-map {
+        @media screen and (min-width: $bp) {
+            &.pf-m-hidden-on-#{$size} {
+                --pf-v5-hidden-visible--Display: var(--pf-v5-hidden-visible--hidden--Display);
+            }
+
+            &.pf-m-visible-on-#{$size} {
+                --pf-v5-hidden-visible--Display: var(--pf-v5-hidden-visible--visible--Display);
+            }
+        }
+    }
+}
+// stylelint-enable
+
+%pf-v5-remove-num-arrows {
+    appearance: textfield;
+
+    // stylelint-disable
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+        // stylelint-enable
+        margin: 0;
+        appearance: none;
+    }
+}
