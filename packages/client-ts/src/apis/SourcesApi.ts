@@ -601,6 +601,10 @@ export interface SourcesLdapRetrieveRequest {
     slug: string;
 }
 
+export interface SourcesLdapSyncStartCreateRequest {
+    slug: string;
+}
+
 export interface SourcesLdapSyncStatusRetrieveRequest {
     slug: string;
 }
@@ -6077,6 +6081,69 @@ export class SourcesApi extends runtime.BaseAPI {
     }
 
     /**
+     * Creates request options for sourcesLdapSyncStartCreate without sending the request
+     */
+    async sourcesLdapSyncStartCreateRequestOpts(
+        requestParameters: SourcesLdapSyncStartCreateRequest,
+    ): Promise<runtime.RequestOpts> {
+        if (requestParameters["slug"] == null) {
+            throw new runtime.RequiredError(
+                "slug",
+                'Required parameter "slug" was null or undefined when calling sourcesLdapSyncStartCreate().',
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("authentik", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/sources/ldap/{slug}/sync/start/`;
+        urlPath = urlPath.replace(
+            `{${"slug"}}`,
+            encodeURIComponent(String(requestParameters["slug"])),
+        );
+
+        return {
+            path: urlPath,
+            method: "POST",
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Start source sync
+     */
+    async sourcesLdapSyncStartCreateRaw(
+        requestParameters: SourcesLdapSyncStartCreateRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<runtime.ApiResponse<void>> {
+        const requestOptions = await this.sourcesLdapSyncStartCreateRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Start source sync
+     */
+    async sourcesLdapSyncStartCreate(
+        requestParameters: SourcesLdapSyncStartCreateRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<void> {
+        await this.sourcesLdapSyncStartCreateRaw(requestParameters, initOverrides);
+    }
+
+    /**
      * Creates request options for sourcesLdapSyncStatusRetrieve without sending the request
      */
     async sourcesLdapSyncStatusRetrieveRequestOpts(
@@ -6117,7 +6184,7 @@ export class SourcesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get provider\'s sync status
+     * Get sources\'s sync status
      */
     async sourcesLdapSyncStatusRetrieveRaw(
         requestParameters: SourcesLdapSyncStatusRetrieveRequest,
@@ -6131,7 +6198,7 @@ export class SourcesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get provider\'s sync status
+     * Get sources\'s sync status
      */
     async sourcesLdapSyncStatusRetrieve(
         requestParameters: SourcesLdapSyncStatusRetrieveRequest,

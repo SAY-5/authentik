@@ -4,7 +4,7 @@ from typing import Any
 
 from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
-from drf_spectacular.utils import extend_schema, inline_serializer
+from drf_spectacular.utils import OpenApiResponse, extend_schema, inline_serializer
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import DictField, ListField, SerializerMethodField
@@ -145,6 +145,25 @@ class LDAPSourceViewSet(UsedByMixin, ModelViewSet):
     search_fields = ["name", "slug"]
     ordering = ["name"]
 
+    @extend_schema(
+        responses={
+            204: OpenApiResponse(description="Sync started"),
+        },
+        request=None,
+    )
+    @action(
+        methods=["POST"],
+        detail=True,
+        pagination_class=None,
+        url_path="sync/start",
+        filter_backends=[ObjectFilter],
+    )
+    def sync_start(self, request: Request, slug: str) -> Response:
+        """Start source sync"""
+        source: LDAPSource = self.get_object()
+        ldap_sync.send(source.pk)
+        return Response(status=204)
+
     @extend_schema(responses={200: SyncStatusSerializer()})
     @action(
         methods=["GET"],
@@ -154,7 +173,7 @@ class LDAPSourceViewSet(UsedByMixin, ModelViewSet):
         filter_backends=[ObjectFilter],
     )
     def sync_status(self, request: Request, slug: str) -> Response:
-        """Get provider's sync status"""
+        """Get sources's sync status"""
         source: LDAPSource = self.get_object()
 
         status = {}

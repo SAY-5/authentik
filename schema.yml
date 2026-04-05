@@ -23422,10 +23422,32 @@ paths:
           $ref: '#/components/responses/ValidationErrorResponse'
         '403':
           $ref: '#/components/responses/GenericErrorResponse'
+  /sources/ldap/{slug}/sync/start/:
+    post:
+      operationId: sources_ldap_sync_start_create
+      description: Start source sync
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+          description: Internal source name, used in URLs.
+        required: true
+      tags:
+      - sources
+      security:
+      - authentik: []
+      responses:
+        '204':
+          description: Sync started
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
+        '403':
+          $ref: '#/components/responses/GenericErrorResponse'
   /sources/ldap/{slug}/sync/status/:
     get:
       operationId: sources_ldap_sync_status_retrieve
-      description: Get provider's sync status
+      description: Get sources's sync status
       parameters:
       - in: path
         name: slug
