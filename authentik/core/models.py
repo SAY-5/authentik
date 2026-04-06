@@ -568,8 +568,12 @@ class User(SerializerModel, AttributesMixin, AbstractUser):
     def set_password_from_hash(self, password_hash: str, signal=True, sender=None, request=None):
         """Set password directly from a pre-hashed value.
 
-        Unlike set_password(), this does not hash the input - it sets it directly.
-        The hash format is validated before setting.
+        Unlike set_password(), this does not hash the input again. The provided value
+        must already be a valid Django password hash, and it is stored directly on the
+        user after validation.
+
+        Because no raw password is available, downstream password sync integrations
+        such as LDAP and Kerberos cannot be updated from this code path.
 
         Raises ValueError if the hash format is not recognized.
         """

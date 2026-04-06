@@ -12,6 +12,8 @@ import { customElement, property } from "lit/decorators.js";
 
 @customElement("ak-user-password-hash-form")
 export class UserPasswordHashForm extends Form<UserPasswordHashSetRequest> {
+    public override submitLabel = msg("Set Password");
+
     @property({ type: Number })
     public instancePk?: number;
 
@@ -19,14 +21,14 @@ export class UserPasswordHashForm extends Form<UserPasswordHashSetRequest> {
         return msg("Successfully updated password.");
     }
 
-    public override async send(data: UserPasswordHashSetRequest): Promise<void> {
+    protected override async send(data: UserPasswordHashSetRequest): Promise<void> {
         return new CoreApi(DEFAULT_CONFIG).coreUsersSetPasswordHashCreate({
             id: this.instancePk || 0,
             userPasswordHashSetRequest: data,
         });
     }
 
-    renderForm(): TemplateResult {
+    protected override renderForm(): TemplateResult {
         return html`
             <ak-form-element-horizontal label=${msg("Password hash")} required name="passwordHash">
                 <input
@@ -35,6 +37,7 @@ export class UserPasswordHashForm extends Form<UserPasswordHashSetRequest> {
                     class="pf-c-form-control"
                     required
                     placeholder=${msg("pbkdf2_sha256$...")}
+                    aria-label=${msg("Password hash")}
                 />
                 <p class="pf-c-form__helper-text">
                     ${msg("Enter a pre-hashed password (e.g. pbkdf2_sha256$iterations$salt$hash).")}

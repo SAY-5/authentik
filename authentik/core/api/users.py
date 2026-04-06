@@ -5,6 +5,7 @@ from json import loads
 from typing import Any
 
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.hashers import identify_hasher
 from django.contrib.auth.models import AnonymousUser, Permission
 from django.db.transaction import atomic
 from django.db.utils import IntegrityError
@@ -196,6 +197,7 @@ class UserSerializer(ModelSerializer):
         method instead of directly setting it like rest_framework."""
         password = validated_data.pop("password", None)
         password_hash = validated_data.pop("password_hash", None)
+        self._validate_password_inputs(password, password_hash)
         perms_qs = Permission.objects.filter(
             codename__in=[x.split(".")[1] for x in validated_data.pop("permissions", [])]
         ).values_list("content_type__app_label", "codename")
@@ -210,6 +212,7 @@ class UserSerializer(ModelSerializer):
         context"""
         password = validated_data.pop("password", None)
         password_hash = validated_data.pop("password_hash", None)
+        self._validate_password_inputs(password, password_hash)
         perms_qs = Permission.objects.filter(
             codename__in=[x.split(".")[1] for x in validated_data.pop("permissions", [])]
         ).values_list("content_type__app_label", "codename")
@@ -219,24 +222,29 @@ class UserSerializer(ModelSerializer):
         instance.assign_perms_to_managed_role(perms_list)
         return instance
 
+    def _validate_password_inputs(self, password: str | None, password_hash: str | None):
+        """Validate mutually-exclusive password inputs before any model mutation."""
+        if SERIALIZER_CONTEXT_BLUEPRINT not in self.context:
+            return
+        if password is not None and password_hash is not None:
+            raise ValidationError(_("Cannot set both password and password_hash. Use only one."))
+        if password_hash is None:
+            return
+        try:
+            identify_hasher(password_hash)
+        except ValueError as exc:
+            LOGGER.warning("Failed to identify password hash format", exc_info=exc)
+            raise ValidationError(
+                _("Invalid password hash format. Must be a valid Django password hash.")
+            ) from exc
+
     def _set_password(self, instance: User, password: str | None, password_hash: str | None = None):
         """Set password of user if we're in a blueprint context, and if it's an empty
         string then use an unusable password. Supports both plaintext password and
         pre-hashed password via password_hash parameter."""
         if SERIALIZER_CONTEXT_BLUEPRINT in self.context:
-            # Fail if both password and password_hash are set
-            if password is not None and password_hash is not None:
-                raise ValidationError(
-                    _("Cannot set both password and password_hash. Use only one.")
-                )
             if password_hash is not None:
-                try:
-                    instance.set_password_from_hash(password_hash)
-                except ValueError as exc:
-                    LOGGER.warning("Failed to identify password hash format", exc_info=exc)
-                    raise ValidationError(
-                        _("Invalid password hash format. Must be a valid Django password hash.")
-                    ) from exc
+                instance.set_password_from_hash(password_hash)
                 instance.save()
                 return
             elif password:
@@ -413,7 +421,11 @@ class UserPasswordSetSerializer(PassiveSerializer):
 
 
 class UserPasswordHashSetSerializer(PassiveSerializer):
-    """Payload to set a users' password from a pre-hashed value"""
+    """Payload to set a user's password from a pre-hashed Django password value.
+
+    This only updates authentik's stored password verifier and does not propagate
+    the change to LDAP or Kerberos password-sync integrations.
+    """
 
     password_hash = CharField(required=True)
 
@@ -786,12 +798,27 @@ class UserViewSet(
     def set_password_hash(
         self, request: Request, pk: int, body: UserPasswordHashSetSerializer
     ) -> Response:
-        """Set password for user using a pre-hashed password"""
+        """Set a user's password from a pre-hashed Django password value.
+
+        This updates authentik's local password verifier only. It does not attempt
+        to propagate the password change to LDAP or Kerberos because no raw password
+        is available from the request payload.
+        """
         user: User = self.get_object()
         try:
             user.set_password_from_hash(body.validated_data["password_hash"], request=request)
             user.save()
-        except (ValidationError, IntegrityError, ValueError) as exc:
+        except ValueError as exc:
+            LOGGER.debug("Failed to set password hash", exc=exc)
+            return Response(
+                data={
+                    "password_hash": [
+                        _("Invalid password hash format. Must be a valid Django password hash.")
+                    ]
+                },
+                status=400,
+            )
+        except (ValidationError, IntegrityError) as exc:
             LOGGER.debug("Failed to set password hash", exc=exc)
             return Response(status=400)
         if user.pk == request.user.pk and SESSION_KEY_IMPERSONATE_USER not in self.request.session:

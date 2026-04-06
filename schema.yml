@@ -4525,7 +4525,12 @@ paths:
   /core/users/{id}/set_password_hash/:
     post:
       operationId: core_users_set_password_hash_create
-      description: Set password for user using a pre-hashed password
+      description: |-
+        Set a user's password from a pre-hashed Django password value.
+
+        This updates authentik's local password verifier only. It does not attempt
+        to propagate the password change to LDAP or Kerberos because no raw password
+        is available from the request payload.
       parameters:
       - in: path
         name: id
@@ -57300,7 +57305,11 @@ components:
       - user
     UserPasswordHashSetRequest:
       type: object
-      description: Payload to set a users' password from a pre-hashed value
+      description: |-
+        Payload to set a user's password from a pre-hashed Django password value.
+
+        This only updates authentik's stored password verifier and does not propagate
+        the change to LDAP or Kerberos password-sync integrations.
       properties:
         password_hash:
           type: string

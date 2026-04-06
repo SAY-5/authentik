@@ -7,9 +7,12 @@ To install authentik automatically (skipping the Out-of-box experience), you can
 :::info
 These can't be defined using the file-based syntax (`file://`), so you can't pass them in as secrets in a Docker Compose installation.
 :::
+
 ### `AUTHENTIK_BOOTSTRAP_PASSWORD_HASH`
 
 Configure the default password for the `akadmin` user using a pre-hashed password. Only read on the first startup.
+
+This updates authentik's stored password hash directly. It does not propagate the password to LDAP or Kerberos integrations.
 
 To generate a hash, run this command before your initial deployment:
 
@@ -72,7 +75,7 @@ When using password hashes in quoted YAML strings as shown above, no escaping of
 
 - Using Helm templating syntax (e.g., `{{ .Values.something }}`) where `$` has special meaning
 - Referencing values from environment variable substitution in your values file
-  :::
+:::
 
 Or store the password hash in a secret and reference it via `envFrom`:
 
