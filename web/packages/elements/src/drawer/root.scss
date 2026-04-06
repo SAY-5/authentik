@@ -2,16 +2,13 @@
 @use "@scss/sass/init" as i;
 @use "@scss/sass/variables" as v;
 @use "@scss/sass/functions" as f;
+@use "@scss/sass/mixins" as m;
+@use "@scss/authentik" as a;
 
 :root {
-    // Section
-    --#{cn.$drawer}__section--BackgroundColor: var(--#{i.$pf-global}--BackgroundColor--100);
-    --#{cn.$drawer}__section--m-light-200--BackgroundColor: var(--#{i.$pf-global}--BackgroundColor--200);
-
     // Content
     --#{cn.$drawer}__content--FlexBasis: 100%;
     --#{cn.$drawer}__content--BackgroundColor: var(--#{i.$pf-global}--BackgroundColor--100);
-    --#{cn.$drawer}__content--m-light-200--BackgroundColor: var(--#{i.$pf-global}--BackgroundColor--200);
     --#{cn.$drawer}__content--ZIndex: var(--#{i.$pf-global}--ZIndex--xs, auto);
 
     // Panel
@@ -19,7 +16,6 @@
     --#{cn.$drawer}__panel--MaxHeight: auto;
     --#{cn.$drawer}__panel--ZIndex: var(--#{i.$pf-global}--ZIndex--sm);
     --#{cn.$drawer}__panel--BackgroundColor: var(--#{i.$pf-global}--BackgroundColor--100);
-    --#{cn.$drawer}__panel--m-light-200--BackgroundColor: var(--#{i.$pf-global}--BackgroundColor--200);
     --#{cn.$drawer}__panel--TransitionDuration: var(--#{i.$pf-global}--TransitionDuration);
     --#{cn.$drawer}__panel--TransitionProperty: margin, transform, box-shadow, flex-basis;
     --#{cn.$drawer}__panel--FlexBasis: 100%;
@@ -32,41 +28,13 @@
     --#{cn.$drawer}--m-panel-bottom__panel--xl--MinHeight: #{f.pf-size-prem(300px)};
     --#{cn.$drawer}--m-panel-bottom__panel--xl--FlexBasis: #{f.pf-size-prem(300px)};
     --#{cn.$drawer}__panel--m-resizable--FlexDirection: row;
-    --#{cn.$drawer}__panel--m-resizable--md--FlexBasis--min: var(--#{cn.$drawer}__splitter--m-vertical--Width);
+    --#{cn.$drawer}__panel--m-resizable--md--FlexBasis--min: var(
+        --#{cn.$drawer}__splitter--m-vertical--Width
+    );
     --#{cn.$drawer}__panel--m-resizable--MinWidth: #{f.pf-size-prem(24px)};
     --#{cn.$drawer}--m-panel-bottom__panel--m-resizable--FlexDirection: column;
     --#{cn.$drawer}--m-panel-bottom__panel--m-resizable--md--FlexBasis--min: #{f.pf-size-prem(24px)};
     --#{cn.$drawer}--m-panel-bottom__panel--m-resizable--MinHeight: #{f.pf-size-prem(24px)};
-
-    // Child padding
-    --#{cn.$drawer}--child--PaddingTop: var(--#{i.$pf-global}--spacer--md);
-    --#{cn.$drawer}--child--PaddingRight: var(--#{i.$pf-global}--spacer--md);
-    --#{cn.$drawer}--child--PaddingBottom: var(--#{i.$pf-global}--spacer--md);
-    --#{cn.$drawer}--child--PaddingLeft: var(--#{i.$pf-global}--spacer--md);
-
-    // Responsive child padding
-    --#{cn.$drawer}--child--md--PaddingTop: var(--#{i.$pf-global}--spacer--lg);
-    --#{cn.$drawer}--child--md--PaddingRight: var(--#{i.$pf-global}--spacer--lg);
-    --#{cn.$drawer}--child--md--PaddingBottom: var(--#{i.$pf-global}--spacer--lg);
-    --#{cn.$drawer}--child--md--PaddingLeft: var(--#{i.$pf-global}--spacer--lg);
-
-    // Modified padding, child padding
-    --#{cn.$drawer}--child--m-padding--PaddingTop: var(--#{i.$pf-global}--spacer--md);
-    --#{cn.$drawer}--child--m-padding--PaddingRight: var(--#{i.$pf-global}--spacer--md);
-    --#{cn.$drawer}--child--m-padding--PaddingBottom: var(--#{i.$pf-global}--spacer--md);
-    --#{cn.$drawer}--child--m-padding--PaddingLeft: var(--#{i.$pf-global}--spacer--md);
-
-    // Responsive, modified padding, child padding
-    --#{cn.$drawer}--child--m-padding--md--PaddingTop: var(--#{i.$pf-global}--spacer--lg);
-    --#{cn.$drawer}--child--m-padding--md--PaddingRight: var(--#{i.$pf-global}--spacer--lg);
-    --#{cn.$drawer}--child--m-padding--md--PaddingBottom: var(--#{i.$pf-global}--spacer--lg);
-    --#{cn.$drawer}--child--m-padding--md--PaddingLeft: var(--#{i.$pf-global}--spacer--lg);
-
-    // Content
-    --#{cn.$drawer}__content--child--PaddingTop: 0;
-    --#{cn.$drawer}__content--child--PaddingRight: 0;
-    --#{cn.$drawer}__content--child--PaddingBottom: 0;
-    --#{cn.$drawer}__content--child--PaddingLeft: 0;
 
     // Splitter
     --#{cn.$drawer}__splitter--Height: #{f.pf-size-prem(9px)};
@@ -82,88 +50,109 @@
     --#{cn.$drawer}__splitter--after--BorderColor: var(--#{i.$pf-global}--BorderColor--100);
     --#{cn.$drawer}__splitter--after--border-width--base: var(--#{i.$pf-global}--BorderWidth--sm);
     --#{cn.$drawer}__splitter--after--BorderTopWidth: 0;
-    --#{cn.$drawer}__splitter--after--BorderRightWidth: var(--#{cn.$drawer}__splitter--after--border-width--base);
+    --#{cn.$drawer}__splitter--after--BorderRightWidth: var(
+        --#{cn.$drawer}__splitter--after--border-width--base
+    );
     --#{cn.$drawer}__splitter--after--BorderBottomWidth: 0;
     --#{cn.$drawer}__splitter--after--BorderLeftWidth: 0;
-    --#{cn.$drawer}--m-panel-left__splitter--after--BorderLeftWidth: var(--#{cn.$drawer}__splitter--after--border-width--base);
-    --#{cn.$drawer}--m-panel-bottom__splitter--after--BorderBottomWidth: var(--#{cn.$drawer}__splitter--after--border-width--base);
+    --#{cn.$drawer}--m-panel-left__splitter--after--BorderLeftWidth: var(
+        --#{cn.$drawer}__splitter--after--border-width--base
+    );
+    --#{cn.$drawer}--m-panel-bottom__splitter--after--BorderBottomWidth: var(
+        --#{cn.$drawer}__splitter--after--border-width--base
+    );
     --#{cn.$drawer}--m-inline__splitter--m-vertical--Width: #{f.pf-size-prem(10px)};
     --#{cn.$drawer}--m-inline__splitter-handle--Left: 50%;
-    --#{cn.$drawer}--m-inline__splitter--after--BorderRightWidth: var(--#{cn.$drawer}__splitter--after--border-width--base);
-    --#{cn.$drawer}--m-inline__splitter--after--BorderLeftWidth: var(--#{cn.$drawer}__splitter--after--border-width--base);
+    --#{cn.$drawer}--m-inline__splitter--after--BorderRightWidth: var(
+        --#{cn.$drawer}__splitter--after--border-width--base
+    );
+    --#{cn.$drawer}--m-inline__splitter--after--BorderLeftWidth: var(
+        --#{cn.$drawer}__splitter--after--border-width--base
+    );
     --#{cn.$drawer}--m-inline--m-panel-bottom__splitter--Height: #{f.pf-size-prem(10px)};
     --#{cn.$drawer}--m-inline--m-panel-bottom__splitter-handle--Top: 50%;
-    --#{cn.$drawer}--m-inline--m-panel-bottom__splitter--after--BorderTopWidth: var(--#{cn.$drawer}__splitter--after--border-width--base);
+    --#{cn.$drawer}--m-inline--m-panel-bottom__splitter--after--BorderTopWidth: var(
+        --#{cn.$drawer}__splitter--after--border-width--base
+    );
 
     // Splitter handle
     --#{cn.$drawer}__splitter-handle--Top: 50%;
-    --#{cn.$drawer}__splitter-handle--Left: calc(50% - var(--#{cn.$drawer}__splitter--after--border-width--base));
+    --#{cn.$drawer}__splitter-handle--Left: calc(
+        50% - var(--#{cn.$drawer}__splitter--after--border-width--base)
+    );
     --#{cn.$drawer}--m-panel-left__splitter-handle--Left: 50%;
-    --#{cn.$drawer}--m-panel-bottom__splitter-handle--Top: calc(50% - var(--#{cn.$drawer}__splitter--after--border-width--base));
+    --#{cn.$drawer}--m-panel-bottom__splitter-handle--Top: calc(
+        50% - var(--#{cn.$drawer}__splitter--after--border-width--base)
+    );
 
     // Splitter handle line
     --#{cn.$drawer}__splitter-handle--after--BorderColor: var(--#{i.$pf-global}--Color--200);
-    --#{cn.$drawer}__splitter-handle--after--BorderTopWidth: var(--#{i.$pf-global}--BorderWidth--sm);
+    --#{cn.$drawer}__splitter-handle--after--BorderTopWidth: var(
+        --#{i.$pf-global}--BorderWidth--sm
+    );
     --#{cn.$drawer}__splitter-handle--after--BorderRightWidth: 0;
-    --#{cn.$drawer}__splitter-handle--after--BorderBottomWidth: var(--#{i.$pf-global}--BorderWidth--sm);
+    --#{cn.$drawer}__splitter-handle--after--BorderBottomWidth: var(
+        --#{i.$pf-global}--BorderWidth--sm
+    );
     --#{cn.$drawer}__splitter-handle--after--BorderLeftWidth: 0;
-    --#{cn.$drawer}__splitter--hover__splitter-handle--after--BorderColor: var(--#{i.$pf-global}--Color--100);
-    --#{cn.$drawer}__splitter--focus__splitter-handle--after--BorderColor: var(--#{i.$pf-global}--Color--100);
+    --#{cn.$drawer}__splitter--hover__splitter-handle--after--BorderColor: var(
+        --#{i.$pf-global}--Color--100
+    );
+    --#{cn.$drawer}__splitter--focus__splitter-handle--after--BorderColor: var(
+        --#{i.$pf-global}--Color--100
+    );
     --#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--BorderTopWidth: 0;
-    --#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--BorderRightWidth: var(--#{i.$pf-global}--BorderWidth--sm);
+    --#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--BorderRightWidth: var(
+        --#{i.$pf-global}--BorderWidth--sm
+    );
     --#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--BorderBottomWidth: 0;
-    --#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--BorderLeftWidth: var(--#{i.$pf-global}--BorderWidth--sm);
+    --#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--BorderLeftWidth: var(
+        --#{i.$pf-global}--BorderWidth--sm
+    );
     --#{cn.$drawer}__splitter-handle--after--Width: #{f.pf-size-prem(12px)};
     --#{cn.$drawer}__splitter-handle--after--Height: #{f.pf-size-prem(4px)};
     --#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--Width: #{f.pf-size-prem(4px)};
     --#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--Height: #{f.pf-size-prem(12px)};
 
-    @media screen and (min-width: $pf-v5-global--breakpoint--md) {
-        // Responsive child padding
-        --#{cn.$drawer}--child--PaddingTop: var(--#{cn.$drawer}--child--md--PaddingTop);
-        --#{cn.$drawer}--child--PaddingRight: var(--#{cn.$drawer}--child--md--PaddingRight);
-        --#{cn.$drawer}--child--PaddingBottom: var(--#{cn.$drawer}--child--md--PaddingBottom);
-        --#{cn.$drawer}--child--PaddingLeft: var(--#{cn.$drawer}--child--md--PaddingLeft);
-
-        // Responsive, modified padding, child padding
-        --#{cn.$drawer}--child--m-padding--PaddingTop: var(--#{cn.$drawer}--child--m-padding--md--PaddingTop);
-        --#{cn.$drawer}--child--m-padding--PaddingRight: var(--#{cn.$drawer}--child--m-padding--md--PaddingRight);
-        --#{cn.$drawer}--child--m-padding--PaddingBottom: var(--#{cn.$drawer}--child--m-padding--md--PaddingBottom);
-        --#{cn.$drawer}--child--m-padding--PaddingLeft: var(--#{cn.$drawer}--child--m-padding--md--PaddingLeft);
-    }
-
-    @media screen and (min-width: $pf-v5-global--breakpoint--xl) {
+    @media screen and (min-width: v.$pf-v5-global--breakpoint--xl) {
         --#{cn.$drawer}__panel--MinWidth: var(--#{cn.$drawer}__panel--xl--MinWidth);
-
-        &.pf-m-panel-bottom {
-            --#{cn.$drawer}__panel--MinWidth: auto;
-            --#{cn.$drawer}__panel--MinHeight: var(--#{cn.$drawer}--m-panel-bottom__panel--xl--MinHeight);
-        }
     }
-
-    // Actions
-    --#{cn.$drawer}__actions--MarginTop: calc(var(--#{i.$pf-global}--spacer--form-element) * -1);
-    --#{cn.$drawer}__actions--MarginRight: calc(var(--#{i.$pf-global}--spacer--form-element) * -1);
 
     // Box shadow
     --#{cn.$drawer}__panel--BoxShadow: none;
-    --#{cn.$drawer}--m-expanded--m-panel-bottom__panel--BoxShadow: var(--#{i.$pf-global}--BoxShadow--lg-top);
+    --#{cn.$drawer}--m-expanded--m-panel-bottom__panel--BoxShadow: var(
+        --#{i.$pf-global}--BoxShadow--lg-top
+    );
 
-    @include pf-v5-bidirectional-style($prop: --#{cn.$drawer}--m-expanded__panel--BoxShadow, $ltr-val: var(--#{i.$pf-global}--BoxShadow--lg-left), $rtl-val: var(--#{i.$pf-global}--BoxShadow--lg-right));
-    @include pf-v5-bidirectional-style($prop: --#{cn.$drawer}--m-expanded--m-panel-left__panel--BoxShadow, $ltr-val: var(--#{i.$pf-global}--BoxShadow--lg-right), $rtl-val: var(--#{i.$pf-global}--BoxShadow--lg-left));
+    @include m.pf-v5-bidirectional-style(
+        $prop: --#{cn.$drawer}--m-expanded__panel--BoxShadow,
+        $ltr-val: var(--#{i.$pf-global}--BoxShadow--lg-left),
+        $rtl-val: var(--#{i.$pf-global}--BoxShadow--lg-right)
+    );
+    @include m.pf-v5-bidirectional-style(
+        $prop: --#{cn.$drawer}--m-expanded--m-panel-left__panel--BoxShadow,
+        $ltr-val: var(--#{i.$pf-global}--BoxShadow--lg-right),
+        $rtl-val: var(--#{i.$pf-global}--BoxShadow--lg-left)
+    );
 
     // Divider
     --#{cn.$drawer}__panel--after--Width: var(--#{i.$pf-global}--BorderWidth--sm);
     --#{cn.$drawer}--m-panel-bottom__panel--after--Height: var(--#{i.$pf-global}--BorderWidth--sm);
     --#{cn.$drawer}__panel--after--BackgroundColor: transparent;
-    --#{cn.$drawer}--m-inline--m-expanded__panel--after--BackgroundColor: var(--#{i.$pf-global}--BorderColor--100);
+    --#{cn.$drawer}--m-inline--m-expanded__panel--after--BackgroundColor: var(
+        --#{i.$pf-global}--BorderColor--100
+    );
     --#{cn.$drawer}--m-inline__panel--PaddingLeft: var(--#{cn.$drawer}__panel--after--Width);
-    --#{cn.$drawer}--m-panel-left--m-inline__panel--PaddingRight: var(--#{cn.$drawer}__panel--after--Width);
-    --#{cn.$drawer}--m-panel-bottom--m-inline__panel--PaddingTop: var(--#{cn.$drawer}__panel--after--Width);
+    --#{cn.$drawer}--m-panel-left--m-inline__panel--PaddingRight: var(
+        --#{cn.$drawer}__panel--after--Width
+    );
+    --#{cn.$drawer}--m-panel-bottom--m-inline__panel--PaddingTop: var(
+        --#{cn.$drawer}__panel--after--Width
+    );
 }
 
-:root([data-theme="dark"]),
+html[data-theme="dark"],
 .pf-t-dark {
-    --#{$drawer}__panel--BackgroundColor: var(--${a.ak-global}-dark-background);
-    --#{$drawer}__splitter--BackgroundColor: transparent;
+    --#{cn.$drawer}__panel--BackgroundColor: var(--#{a.$ak-global}-dark-background);
+    --#{cn.$drawer}__splitter--BackgroundColor: transparent;
 }

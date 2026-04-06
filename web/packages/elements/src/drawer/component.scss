@@ -1,3 +1,4 @@
+@use "@scss/sass/component-namespaces" as cn;
 @use "@scss/sass/functions" as f;
 @use "@scss/sass/init" as i;
 @use "@scss/sass/variables" as v;
@@ -9,10 +10,6 @@ $pf-v5-c-drawer--breakpoint-map: f.build-breakpoint-map("base", "lg", "xl", "2xl
 $pf-v5-c-drawer--breakpoint-map--width: f.build-breakpoint-map("base", "lg", "xl", "2xl");
 $pf-v5-c-drawer__panel--list--width: (25, 33, 50, 66, 75, 100);
 
-slot {
-    display: content;
-}
-
 :host {
     display: flex;
     flex-direction: column;
@@ -20,19 +17,27 @@ slot {
     overflow-x: hidden;
 }
 
-:host([class*="pf-m-inline"]),
-:host([class*="pf-m-static"]) {
+slot {
+    display: contents;
+}
+
+:host([inline]),
+:host([static]) {
     .#{cn.$drawer}__main > .#{cn.$drawer}__panel:not(.pf-m-no-border, .pf-m-resizable) {
         padding-inline-start: var(--#{cn.$drawer}--m-inline__panel--PaddingLeft);
     }
 }
 
-:host([class*="pf-m-panel-left"]) .#{cn.$drawer}__main {
+:host([position="left"]) .#{cn.$drawer}__main {
     > .#{cn.$drawer}__panel {
         order: 0;
         margin-inline-end: calc(var(--#{cn.$drawer}__panel--FlexBasis) * -1);
 
-        @include f.pf-v5-bidirectional-style($prop: transform, $ltr-val: translateX(-100%), $rtl-val: translateX(#{pf-v5-calc-inverse(-100%)}));
+        @include m.pf-v5-bidirectional-style(
+            $prop: transform,
+            $ltr-val: translateX(-100%),
+            $rtl-val: translateX(#{f.pf-v5-calc-inverse(-100%)})
+        );
     }
 
     > .#{cn.$drawer}__content {
@@ -40,24 +45,28 @@ slot {
     }
 }
 
-:host([class*="pf-m-panel-bottom"]) .#{cn.$drawer}__main {
+:host([position="bottom"]) .#{cn.$drawer}__main {
     flex-direction: column;
 }
 
 // Expanded
 // stylelint-disable selector-max-class
-:host([class*="pf-m-expanded"]) {
+:host([expanded]) {
     .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
-        @include f.pf-v5-bidirectional-style($prop: transform, $ltr-val: translateX(-100%), $rtl-val: translateX(#{pf-v5-calc-inverse(-100%)}));
+        @include m.pf-v5-bidirectional-style(
+            $prop: transform,
+            $ltr-val: translateX(-100%),
+            $rtl-val: translateX(#{f.pf-v5-calc-inverse(-100%)})
+        );
     }
+}
 
-    :host([class*="pf-m-panel-left"]) .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
-        transform: translateX(0);
-    }
+:host([expanded][position="left"]) .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+    transform: translateX(0);
+}
 
-    :host([class*="pf-m-panel-bottom"]) .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
-        transform: translate(0, -100%);
-    }
+:host([position="bottom"][expanded]) .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+    transform: translate(0, -100%);
 }
 // stylelint-enable
 
@@ -116,28 +125,59 @@ slot {
     }
 
     @media screen and (min-width: v.$pf-v5-global--breakpoint--md) {
-        --#{cn.$drawer}__panel--FlexBasis: max(var(--#{cn.$drawer}__panel--md--FlexBasis--min), min(var(--#{cn.$drawer}__panel--md--FlexBasis), var(--#{cn.$drawer}__panel--md--FlexBasis--max)));
+        --#{cn.$drawer}__panel--FlexBasis: max(
+            var(--#{cn.$drawer}__panel--md--FlexBasis--min),
+            min(
+                var(--#{cn.$drawer}__panel--md--FlexBasis),
+                var(--#{cn.$drawer}__panel--md--FlexBasis--max)
+            )
+        );
     }
 
     @media screen and (min-width: v.$pf-v5-global--breakpoint--xl) {
         --#{cn.$drawer}__panel--md--FlexBasis: var(--#{cn.$drawer}__panel--xl--FlexBasis);
+    }
+}
 
+:host([position="bottom"]) {
+    @media screen and (min-width: v.$pf-v5-global--breakpoint--xl) {
         .#{cn.$drawer}.pf-m-panel-bottom & {
-            --#{cn.$drawer}__panel--md--FlexBasis: var(--#{cn.$drawer}--m-panel-bottom__panel--xl--FlexBasis);
+            --#{cn.$drawer}__panel--md--FlexBasis: var(
+                --#{cn.$drawer}--m-panel-bottom__panel--xl--FlexBasis
+            );
         }
     }
 }
 
-:where(:host(:not([position])), :host([position="left"]), :host([position="right"]), :host([position="start"]), :host([position="end"])) .#{cn.$drawer}__splitter {
+:where(
+        :host(:not([position])),
+        :host([position="left"]),
+        :host([position="right"]),
+        :host([position="start"]),
+        :host([position="end"])
+    )
+    .#{cn.$drawer}__splitter {
     --#{cn.$drawer}__splitter--Height: var(--#{cn.$drawer}__splitter--m-vertical--Height);
     --#{cn.$drawer}__splitter--Width: var(--#{cn.$drawer}__splitter--m-vertical--Width);
     --#{cn.$drawer}__splitter--Cursor: var(--#{cn.$drawer}__splitter--m-vertical--Cursor);
-    --#{cn.$drawer}__splitter-handle--after--Width: var(--#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--Width);
-    --#{cn.$drawer}__splitter-handle--after--Height: var(--#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--Height);
-    --#{cn.$drawer}__splitter-handle--after--BorderTopWidth: var(--#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--BorderTopWidth);
-    --#{cn.$drawer}__splitter-handle--after--BorderRightWidth: var(--#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--BorderRightWidth);
-    --#{cn.$drawer}__splitter-handle--after--BorderBottomWidth: var(--#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--BorderBottomWidth);
-    --#{cn.$drawer}__splitter-handle--after--BorderLeftWidth: var(--#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--BorderLeftWidth);
+    --#{cn.$drawer}__splitter-handle--after--Width: var(
+        --#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--Width
+    );
+    --#{cn.$drawer}__splitter-handle--after--Height: var(
+        --#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--Height
+    );
+    --#{cn.$drawer}__splitter-handle--after--BorderTopWidth: var(
+        --#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--BorderTopWidth
+    );
+    --#{cn.$drawer}__splitter-handle--after--BorderRightWidth: var(
+        --#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--BorderRightWidth
+    );
+    --#{cn.$drawer}__splitter-handle--after--BorderBottomWidth: var(
+        --#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--BorderBottomWidth
+    );
+    --#{cn.$drawer}__splitter-handle--after--BorderLeftWidth: var(
+        --#{cn.$drawer}__splitter--m-vertical__splitter-handle--after--BorderLeftWidth
+    );
 }
 
 .#{cn.$drawer}__splitter {
@@ -149,11 +189,15 @@ slot {
     background-color: var(--#{cn.$drawer}__splitter--BackgroundColor);
 
     &:hover {
-        --#{cn.$drawer}__splitter-handle--after--BorderColor: var(--#{cn.$drawer}__splitter--hover__splitter-handle--after--BorderColor);
+        --#{cn.$drawer}__splitter-handle--after--BorderColor: var(
+            --#{cn.$drawer}__splitter--hover__splitter-handle--after--BorderColor
+        );
     }
 
     &:focus {
-        --#{cn.$drawer}__splitter-handle--after--BorderColor: var(--#{cn.$drawer}__splitter--focus__splitter-handle--after--BorderColor);
+        --#{cn.$drawer}__splitter-handle--after--BorderColor: var(
+            --#{cn.$drawer}__splitter--focus__splitter-handle--after--BorderColor
+        );
     }
 
     &::after {
@@ -176,7 +220,11 @@ slot {
     inset-block-start: var(--#{cn.$drawer}__splitter-handle--Top);
     inset-inline-start: var(--#{cn.$drawer}__splitter-handle--Left);
 
-    @include f.pf-v5-bidirectional-style($prop: transform, $ltr-val: translate(-50%, -50%), $rtl-val: translate(#{pf-v5-calc-inverse(-50%)}, -50%));
+    @include m.pf-v5-bidirectional-style(
+        $prop: transform,
+        $ltr-val: translate(-50%, -50%),
+        $rtl-val: translate(#{f.pf-v5-calc-inverse(-50%)}, -50%)
+    );
 
     &::after {
         display: block;
@@ -205,9 +253,13 @@ slot {
                 box-shadow: var(--#{cn.$drawer}--m-expanded__panel--BoxShadow);
             }
         }
+    }
 
-        .#{cn.$drawer}__main > .#{cn.$drawer}__panel.pf-m-resizable {
-            --#{cn.$drawer}__panel--md--FlexBasis--min: var(--#{cn.$drawer}__panel--m-resizable--md--FlexBasis--min);
+    :host([expanded][resizable]) {
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+            --#{cn.$drawer}__panel--md--FlexBasis--min: var(
+                --#{cn.$drawer}__panel--m-resizable--md--FlexBasis--min
+            );
 
             flex-direction: var(--#{cn.$drawer}__panel--m-resizable--FlexDirection);
             min-width: var(--#{cn.$drawer}__panel--m-resizable--MinWidth);
@@ -228,7 +280,9 @@ slot {
     }
 
     :host([position="left"]) {
-        --#{cn.$drawer}--m-expanded__panel--BoxShadow: var(--#{cn.$drawer}--m-expanded--m-panel-left__panel--BoxShadow);
+        --#{cn.$drawer}--m-expanded__panel--BoxShadow: var(
+            --#{cn.$drawer}--m-expanded--m-panel-left__panel--BoxShadow
+        );
     }
 
     :host([position="left"][inline]),
@@ -239,7 +293,7 @@ slot {
         }
     }
 
-    :host([postion="left"][expanded]) {
+    :host([position="left"][expanded]) {
         .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
             transform: translateX(0);
         }
@@ -248,22 +302,32 @@ slot {
             inset-inline-start: auto;
             inset-inline-end: 0;
         }
+    }
 
-        .#{cn.$drawer}__main > .#{cn.$drawer}__panel.pf-m-resizable {
+    :host([position="left"][expanded][resizable]) {
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
             > .#{cn.$drawer}__splitter {
-                --#{cn.$drawer}__splitter-handle--Left: var(--#{cn.$drawer}--m-panel-left__splitter-handle--Left);
+                --#{cn.$drawer}__splitter-handle--Left: var(
+                    --#{cn.$drawer}--m-panel-left__splitter-handle--Left
+                );
                 --#{cn.$drawer}__splitter--after--BorderRightWidth: 0;
-                --#{cn.$drawer}__splitter--after--BorderLeftWidth: var(--#{cn.$drawer}--m-panel-left__splitter--after--BorderLeftWidth);
+                --#{cn.$drawer}__splitter--after--BorderLeftWidth: var(
+                    --#{cn.$drawer}--m-panel-left__splitter--after--BorderLeftWidth
+                );
 
                 order: 1;
             }
         }
     }
 
-    :host([postion="bottom"]) {
-        --#{cn.$drawer}--m-expanded__panel--BoxShadow: var(--#{cn.$drawer}--m-expanded--m-panel-bottom__panel--BoxShadow);
+    :host([position="bottom"]) {
+        --#{cn.$drawer}--m-expanded__panel--BoxShadow: var(
+            --#{cn.$drawer}--m-expanded--m-panel-bottom__panel--BoxShadow
+        );
         --#{cn.$drawer}__panel--MaxHeight: 100%;
-        --#{cn.$drawer}__panel--FlexBasis--min: var(--#{cn.$drawer}--m-panel-bottom__panel--FlexBasis--min);
+        --#{cn.$drawer}__panel--FlexBasis--min: var(
+            --#{cn.$drawer}--m-panel-bottom__panel--FlexBasis--min
+        );
 
         min-width: auto;
         min-height: var(--#{cn.$drawer}--m-panel-bottom__panel--md--MinHeight);
@@ -274,49 +338,73 @@ slot {
             width: 100%;
             height: var(--#{cn.$drawer}--m-panel-bottom__panel--after--Height);
         }
+    }
 
-        .#{cn.$drawer}__main > .#{cn.$drawer}__panel.pf-m-resizable {
-            --#{cn.$drawer}__panel--md--FlexBasis--min: var(--#{cn.$drawer}--m-panel-bottom__panel--m-resizable--md--FlexBasis--min);
-            --#{cn.$drawer}__panel--m-resizable--FlexDirection: var(--#{cn.$drawer}--m-panel-bottom__panel--m-resizable--FlexDirection);
+    :host([position="bottom"][resizable]) {
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+            --#{cn.$drawer}__panel--md--FlexBasis--min: var(
+                --#{cn.$drawer}--m-panel-bottom__panel--m-resizable--md--FlexBasis--min
+            );
+            --#{cn.$drawer}__panel--m-resizable--FlexDirection: var(
+                --#{cn.$drawer}--m-panel-bottom__panel--m-resizable--FlexDirection
+            );
             --#{cn.$drawer}__panel--m-resizable--MinWidth: 0;
 
             min-height: var(--#{cn.$drawer}--m-panel-bottom__panel--m-resizable--MinHeight);
 
             > .#{cn.$drawer}__splitter {
-                --#{cn.$drawer}__splitter-handle--Top: var(--#{cn.$drawer}--m-panel-bottom__splitter-handle--Top);
+                --#{cn.$drawer}__splitter-handle--Top: var(
+                    --#{cn.$drawer}--m-panel-bottom__splitter-handle--Top
+                );
                 --#{cn.$drawer}__splitter--after--BorderRightWidth: 0;
-                --#{cn.$drawer}__splitter--after--BorderBottomWidth: var(--#{cn.$drawer}--m-panel-bottom__splitter--after--BorderBottomWidth);
+                --#{cn.$drawer}__splitter--after--BorderBottomWidth: var(
+                    --#{cn.$drawer}--m-panel-bottom__splitter--after--BorderBottomWidth
+                );
             }
         }
     }
 
-    :host([position="left"][inline]),
-    :host([position="left"][static]) {
-        .#{cn.$drawer}__main > .#{cn.$drawer}__panel:not(.pf-m-no-border, .pf-m-resizable) {
-            padding-block-start: var(--#{cn.$drawer}--m-panel-bottom--m-inline__panel--PaddingTop);
+    :host([position="left"][inline]:not([no-border], [resizable])),
+    :host([position="left"][static]:not([no-border], [resizable])) {
+        .#{cn.$drawer}__main > .#{$drawer}__panel:not(.pf-m-no-border, .pf-m-resizable) {
             padding-inline-start: 0;
+            padding-inline-end: var(--#{$drawer}--m-panel-left--m-inline__panel--PaddingRight);
         }
     }
 
-    :host([inline]) {
-        .#{cn.$drawer}__main > .#{cn.$drawer}__panel.pf-m-resizable {
+    :host([inline][resizable]) {
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
             > .#{cn.$drawer}__splitter {
-                --#{cn.$drawer}__splitter--m-vertical--Width: var(--#{cn.$drawer}--m-inline__splitter--m-vertical--Width);
-                --#{cn.$drawer}__splitter-handle--Left: var(--#{cn.$drawer}--m-inline__splitter-handle--Left);
-                --#{cn.$drawer}__splitter--after--BorderRightWidth: var(--#{cn.$drawer}--m-inline__splitter--after--BorderRightWidth);
-                --#{cn.$drawer}__splitter--after--BorderLeftWidth: var(--#{cn.$drawer}--m-inline__splitter--after--BorderLeftWidth);
+                --#{cn.$drawer}__splitter--m-vertical--Width: var(
+                    --#{cn.$drawer}--m-inline__splitter--m-vertical--Width
+                );
+                --#{cn.$drawer}__splitter-handle--Left: var(
+                    --#{cn.$drawer}--m-inline__splitter-handle--Left
+                );
+                --#{cn.$drawer}__splitter--after--BorderRightWidth: var(
+                    --#{cn.$drawer}--m-inline__splitter--after--BorderRightWidth
+                );
+                --#{cn.$drawer}__splitter--after--BorderLeftWidth: var(
+                    --#{cn.$drawer}--m-inline__splitter--after--BorderLeftWidth
+                );
 
                 outline-offset: var(--#{cn.$drawer}--m-inline__splitter--focus--OutlineOffset);
             }
         }
     }
 
-    :host([position="bottom"][inline]) {
-        .#{cn.$drawer}__main > .#{cn.$drawer}__panel.pf-m-resizable {
+    :host([position="bottom"][inline][resizable]) {
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
             > .#{cn.$drawer}__splitter {
-                --#{cn.$drawer}__splitter--Height: var(--#{cn.$drawer}--m-inline--m-panel-bottom__splitter--Height);
-                --#{cn.$drawer}__splitter-handle--Top: var(--#{cn.$drawer}--m-inline--m-panel-bottom__splitter-handle--Top);
-                --#{cn.$drawer}__splitter--after--BorderTopWidth: var(--#{cn.$drawer}--m-inline--m-panel-bottom__splitter--after--BorderTopWidth);
+                --#{cn.$drawer}__splitter--Height: var(
+                    --#{cn.$drawer}--m-inline--m-panel-bottom__splitter--Height
+                );
+                --#{cn.$drawer}__splitter-handle--Top: var(
+                    --#{cn.$drawer}--m-inline--m-panel-bottom__splitter-handle--Top
+                );
+                --#{cn.$drawer}__splitter--after--BorderTopWidth: var(
+                    --#{cn.$drawer}--m-inline--m-panel-bottom__splitter--after--BorderTopWidth
+                );
                 --#{cn.$drawer}__splitter--after--BorderRightWidth: 0;
                 --#{cn.$drawer}__splitter--after--BorderLeftWidth: 0;
             }
@@ -340,10 +428,12 @@ slot {
         $breakpoint: "md";
     }
 
-    @include pf-v5-apply-breakpoint($breakpoint) {
+    @include m.pf-v5-apply-breakpoint($breakpoint) {
         @each $width-value in $pf-v5-c-drawer__panel--list--width {
-            :host([size="#{$width-value}#{$breakpoint-name}"]) {
-                --#{cn.$drawer}__panel--md--FlexBasis: #{percentage(div($width-value, 100))};
+            :host([width="#{$width-value}#{$breakpoint-name}"]) {
+                --#{cn.$drawer}__panel--md--FlexBasis: #{math.percentage(
+                        math.div($width-value, 100)
+                    )};
             }
         }
     }
@@ -357,7 +447,7 @@ slot {
         $breakpoint: "md";
     }
 
-    @include pf-v5-apply-breakpoint($breakpoint) {
+    @include m.pf-v5-apply-breakpoint($breakpoint) {
         // Drawer and inline
         :host([inline#{$breakpoint-name}]),
         :host([static#{$breakpoint-name}]) {
@@ -372,7 +462,9 @@ slot {
 
         :host([inline#{$breakpoint-name}]:not([no-border])),
         :host([static#{$breakpoint-name}]:not([no-border])) {
-            background-color: var(--#{cn.$drawer}--m-inline--m-expanded__panel--after--BackgroundColor);
+            background-color: var(
+                --#{cn.$drawer}--m-inline--m-expanded__panel--after--BackgroundColor
+            );
         }
     }
 
@@ -382,10 +474,14 @@ slot {
             overflow-x: auto;
         }
 
-        #{cn.$drawer}__main > .#{cn.$drawer}__panel {
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
             margin-inline-start: calc(var(--#{cn.$drawer}__panel--FlexBasis) * -1);
 
-            @include f.pf-v5-bidirectional-style($prop: transform, $ltr-val: translateX(100%), $rtl-val: translateX(#{pf-v5-calc-inverse(100%)}));
+            @include m.pf-v5-bidirectional-style(
+                $prop: transform,
+                $ltr-val: translateX(100%),
+                $rtl-val: translateX(#{f.pf-v5-calc-inverse(100%)})
+            );
         }
     }
 
@@ -400,18 +496,24 @@ slot {
             margin-inline-start: 0;
             margin-inline-end: calc(var(--#{cn.$drawer}__panel--FlexBasis) * -1);
 
-            @include f.pf-v5-bidirectional-style($prop: transform, $ltr-val: translateX(-100%), $rtl-val: translateX(#{pf-v5-calc-inverse(-100%)}));
+            @include m.pf-v5-bidirectional-style(
+                $prop: transform,
+                $ltr-val: translateX(-100%),
+                $rtl-val: translateX(#{f.pf-v5-calc-inverse(-100%)})
+            );
         }
     }
 
     // Inline, expanded, panel left
-    :host([inline#{$breakpoint-name}][position="left"][expanded]) .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+    :host([inline#{$breakpoint-name}][position="left"][expanded])
+        .#{cn.$drawer}__main
+        > .#{cn.$drawer}__panel {
         margin-inline-end: 0;
         transform: translateX(0);
     }
 
     // Panel bottom
-    :host([inline#{$breakpoint-name}][postion="bottom"]) {
+    :host([inline#{$breakpoint-name}][position="bottom"]) {
         .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
             margin-block-end: calc(var(--#{cn.$drawer}__panel--FlexBasis) * -1);
             transform: translateY(100%);
@@ -419,13 +521,15 @@ slot {
     }
 
     // Inline, expanded, panel left
-    :host([inline#{$breakpoint-name}][expanded][postion="bottom"]) .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+    :host([inline#{$breakpoint-name}][expanded][position="bottom"])
+        .#{cn.$drawer}__main
+        > .#{cn.$drawer}__panel {
         margin-block-end: 0;
         transform: translateY(0);
     }
 
     :host([static#{$breakpoint-name}]) {
-        .#{drawer}__main > .#{cn.$drawer}__panel {
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
             transform: translateX(0);
         }
     }
@@ -442,5 +546,14 @@ slot {
         .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
             transform: translateX(0);
         }
+    }
+}
+
+@media screen and (min-width: v.$pf-v5-global--breakpoint--xl) {
+    :host([position="bottom"]) {
+        --#{cn.$drawer}__panel--MinWidth: auto;
+        --#{cn.$drawer}__panel--MinHeight: var(
+            --#{cn.$drawer}--m-panel-bottom__panel--xl--MinHeight
+        );
     }
 }

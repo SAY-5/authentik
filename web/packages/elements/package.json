@@ -8,10 +8,11 @@
     "bugs": "https://github.com/goauthentik/elements/issues",
     "homepage": "https://github.com/goauthentik/elements#readme",
     "scripts": {
-        "build": "run-s clean:build-info clean:dist build:sources",
+        "build": "run-s clean:build-info clean:dist build:sources build:adjust-css-paths",
+        "build:adjust-css-paths": "node ./scripts/adjust-component-stylesheet-paths.mjs",
+        "build:build-stylesheets": "node ./scripts/build-stylesheets.mjs",
         "build:components": "tsgo -p .",
-        "build:copying": "copyfiles -u 1 \"src/**/*.css\" dist",
-        "build:sources": "run-p build:components build:copying",
+        "build:sources": "run-p build:components build:build-stylesheets",
         "clean:build-info": "rm -f ./tsconfig.tsbuildinfo",
         "clean:dist": "rimraf ./dist/"
     },
@@ -34,6 +35,7 @@
         "rimraf": "^6.1.3",
         "sass-alias": "^2.0.1",
         "ts-lit-plugin": "^2.0.2",
+        "ts-pattern": "^5.9.0",
         "typescript-plugin-css-modules": "^5.2.0"
     },
     "engines": {
@@ -54,5 +56,8 @@
     "browserslist": [
         "baseline widely available"
     ],
-    "customElements": "custom-elements.json"
+    "customElements": "custom-elements.json",
+    "devDependencies": {
+        "sass": "^1.99.0"
+    }
 }
