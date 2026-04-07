@@ -112,7 +112,7 @@ class UserAccountLockdownMixin:
                 {"non_field_errors": [_("Lockdown flow not applicable to user.")]}
             ) from exc
 
-        token, __ = FlowToken.objects.update_or_create(
+        token, __ = FlowToken.objects.including_expired().update_or_create(
             identifier=f"{user.uid}-account-lockdown",
             defaults={
                 # The actor opens the tokenized URL, so the token must belong to the
