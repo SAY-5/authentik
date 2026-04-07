@@ -12,6 +12,9 @@
  * Do not edit the class manually.
  */
 
+import type { AuthenticationEnum } from "./AuthenticationEnum";
+import { AuthenticationEnumFromJSON } from "./AuthenticationEnum";
+
 /**
  * Brand Serializer
  * @export
@@ -103,6 +106,18 @@ export interface Brand {
      */
     flowDeviceCode?: string | null;
     /**
+     *
+     * @type {string}
+     * @memberof Brand
+     */
+    flowLockdown?: string | null;
+    /**
+     * Required level of authentication and authorization to access a flow.
+     * @type {AuthenticationEnum}
+     * @memberof Brand
+     */
+    readonly flowLockdownAuthentication: AuthenticationEnum | null;
+    /**
      * When set, external users will be redirected to this application after authenticating.
      * @type {string}
      * @memberof Brand
@@ -134,6 +149,11 @@ export interface Brand {
 export function instanceOfBrand(value: object): value is Brand {
     if (!("brandUuid" in value) || value["brandUuid"] === undefined) return false;
     if (!("domain" in value) || value["domain"] === undefined) return false;
+    if (
+        !("flowLockdownAuthentication" in value) ||
+        value["flowLockdownAuthentication"] === undefined
+    )
+        return false;
     return true;
 }
 
@@ -166,6 +186,10 @@ export function BrandFromJSONTyped(json: any, ignoreDiscriminator: boolean): Bra
         flowUserSettings:
             json["flow_user_settings"] == null ? undefined : json["flow_user_settings"],
         flowDeviceCode: json["flow_device_code"] == null ? undefined : json["flow_device_code"],
+        flowLockdown: json["flow_lockdown"] == null ? undefined : json["flow_lockdown"],
+        flowLockdownAuthentication: AuthenticationEnumFromJSON(
+            json["flow_lockdown_authentication"],
+        ),
         defaultApplication:
             json["default_application"] == null ? undefined : json["default_application"],
         webCertificate: json["web_certificate"] == null ? undefined : json["web_certificate"],
@@ -180,7 +204,7 @@ export function BrandToJSON(json: any): Brand {
 }
 
 export function BrandToJSONTyped(
-    value?: Omit<Brand, "brand_uuid"> | null,
+    value?: Omit<Brand, "brand_uuid" | "flow_lockdown_authentication"> | null,
     ignoreDiscriminator: boolean = false,
 ): any {
     if (value == null) {
@@ -201,6 +225,7 @@ export function BrandToJSONTyped(
         flow_unenrollment: value["flowUnenrollment"],
         flow_user_settings: value["flowUserSettings"],
         flow_device_code: value["flowDeviceCode"],
+        flow_lockdown: value["flowLockdown"],
         default_application: value["defaultApplication"],
         web_certificate: value["webCertificate"],
         client_certificates: value["clientCertificates"],

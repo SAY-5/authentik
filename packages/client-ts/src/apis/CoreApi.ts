@@ -13,6 +13,7 @@
  */
 
 import type {
+    AccountLockdownFlowResponse,
     Application,
     ApplicationEntitlement,
     ApplicationEntitlementRequest,
@@ -52,6 +53,7 @@ import type {
     TransactionApplicationResponse,
     UsedBy,
     User,
+    UserAccountLockdownRequest,
     UserAccountRequest,
     UserConsent,
     UserPasswordSetRequest,
@@ -64,6 +66,7 @@ import type {
     UserTypeEnum,
 } from "../models/index";
 import {
+    AccountLockdownFlowResponseFromJSON,
     ApplicationEntitlementFromJSON,
     ApplicationEntitlementRequestToJSON,
     ApplicationFromJSON,
@@ -101,6 +104,7 @@ import {
     TransactionApplicationRequestToJSON,
     TransactionApplicationResponseFromJSON,
     UsedByFromJSON,
+    UserAccountLockdownRequestToJSON,
     UserAccountRequestToJSON,
     UserConsentFromJSON,
     UserFromJSON,
@@ -243,6 +247,7 @@ export interface CoreBrandsListRequest {
     flowAuthentication?: string;
     flowDeviceCode?: string;
     flowInvalidation?: string;
+    flowLockdown?: string;
     flowRecovery?: string;
     flowUnenrollment?: string;
     flowUserSettings?: string;
@@ -399,6 +404,10 @@ export interface CoreUserConsentRetrieveRequest {
 
 export interface CoreUserConsentUsedByListRequest {
     id: number;
+}
+
+export interface CoreUsersAccountLockdownCreateRequest {
+    userAccountLockdownRequest?: UserAccountLockdownRequest;
 }
 
 export interface CoreUsersCreateRequest {
@@ -2205,6 +2214,10 @@ export class CoreApi extends runtime.BaseAPI {
 
         if (requestParameters["flowInvalidation"] != null) {
             queryParameters["flow_invalidation"] = requestParameters["flowInvalidation"];
+        }
+
+        if (requestParameters["flowLockdown"] != null) {
+            queryParameters["flow_lockdown"] = requestParameters["flowLockdown"];
         }
 
         if (requestParameters["flowRecovery"] != null) {
@@ -4179,6 +4192,68 @@ export class CoreApi extends runtime.BaseAPI {
         initOverrides?: RequestInit | runtime.InitOverrideFunction,
     ): Promise<Array<UsedBy>> {
         const response = await this.coreUserConsentUsedByListRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for coreUsersAccountLockdownCreate without sending the request
+     */
+    async coreUsersAccountLockdownCreateRequestOpts(
+        requestParameters: CoreUsersAccountLockdownCreateRequest,
+    ): Promise<runtime.RequestOpts> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters["Content-Type"] = "application/json";
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("authentik", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/core/users/account_lockdown/`;
+
+        return {
+            path: urlPath,
+            method: "POST",
+            headers: headerParameters,
+            query: queryParameters,
+            body: UserAccountLockdownRequestToJSON(requestParameters["userAccountLockdownRequest"]),
+        };
+    }
+
+    /**
+     * Trigger account lockdown for a user.  If no user is specified, locks the current user (self-service). When targeting another user, admin permissions are required.  Returns a flow URL for the frontend to redirect to.
+     */
+    async coreUsersAccountLockdownCreateRaw(
+        requestParameters: CoreUsersAccountLockdownCreateRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<runtime.ApiResponse<AccountLockdownFlowResponse>> {
+        const requestOptions =
+            await this.coreUsersAccountLockdownCreateRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) =>
+            AccountLockdownFlowResponseFromJSON(jsonValue),
+        );
+    }
+
+    /**
+     * Trigger account lockdown for a user.  If no user is specified, locks the current user (self-service). When targeting another user, admin permissions are required.  Returns a flow URL for the frontend to redirect to.
+     */
+    async coreUsersAccountLockdownCreate(
+        requestParameters: CoreUsersAccountLockdownCreateRequest = {},
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<AccountLockdownFlowResponse> {
+        const response = await this.coreUsersAccountLockdownCreateRaw(
+            requestParameters,
+            initOverrides,
+        );
         return await response.value();
     }
 
