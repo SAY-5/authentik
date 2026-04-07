@@ -15,7 +15,6 @@
         "module": "preserve",
         "moduleResolution": "bundler",
         "lib": ["DOM", "DOM.Iterable", "ESNext"],
-        // TODO: We should enable this when when we're ready to enforce it.
         "noUncheckedIndexedAccess": false,
         "sourceMap": true,
         "declaration": true,
@@ -34,5 +33,5 @@
             }
         ]
     },
-    "exclude": ["node_modules", "dist", "src/**/*.stories.ts", "config/**/*.mts"]
+    "exclude": ["node_modules", "dist", "config/**/*.mts"]
 }

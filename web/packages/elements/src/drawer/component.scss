@@ -96,7 +96,7 @@ slot {
     flex-direction: column;
     flex-shrink: 0;
     overflow: auto;
-    --pf-c-drawer__content--BackgroundColor: transparent;
+    --#{cn.$drawer}__content--BackgroundColor: transparent;
 }
 
 .#{cn.$drawer}__panel {
@@ -366,9 +366,9 @@ slot {
 
     :host([position="left"][inline]:not([no-border], [resizable])),
     :host([position="left"][static]:not([no-border], [resizable])) {
-        .#{cn.$drawer}__main > .#{$drawer}__panel:not(.pf-m-no-border, .pf-m-resizable) {
+        .#{cn.$drawer}__main > .#{cn.$drawer}__panel:not(.pf-m-no-border, .pf-m-resizable) {
             padding-inline-start: 0;
-            padding-inline-end: var(--#{$drawer}--m-panel-left--m-inline__panel--PaddingRight);
+            padding-inline-end: var(--#{cn.$drawer}--m-panel-left--m-inline__panel--PaddingRight);
         }
     }
 

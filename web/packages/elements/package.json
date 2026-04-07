@@ -13,8 +13,10 @@
         "build:build-stylesheets": "node ./scripts/build-stylesheets.mjs",
         "build:components": "tsgo -p .",
         "build:sources": "run-p build:components build:build-stylesheets",
+        "build:storybook": "storybook build",
         "clean:build-info": "rm -f ./tsconfig.tsbuildinfo",
-        "clean:dist": "rimraf ./dist/"
+        "clean:dist": "rimraf ./dist/",
+        "storybook": "storybook dev -p 6006"
     },
     "exports": {
         "./*": "./dist/*"
@@ -38,6 +40,15 @@
         "ts-pattern": "^5.9.0",
         "typescript-plugin-css-modules": "^5.2.0"
     },
+    "devDependencies": {
+        "@storybook/addon-a11y": "^10.3.4",
+        "@storybook/addon-docs": "^10.3.3",
+        "@storybook/addon-links": "^10.3.3",
+        "@storybook/web-components": "^10.3.3",
+        "@storybook/web-components-vite": "^10.3.3",
+        "sass": "^1.99.0",
+        "storybook": "^10.2.1"
+    },
     "engines": {
         "node": ">=24"
     },
@@ -56,8 +67,5 @@
     "browserslist": [
         "baseline widely available"
     ],
-    "customElements": "custom-elements.json",
-    "devDependencies": {
-        "sass": "^1.99.0"
-    }
+    "customElements": "custom-elements.json"
 }

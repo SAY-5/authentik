@@ -27,7 +27,9 @@ function adjustPaths(componentFile) {
     const componentPath = path.join(buildDir, componentFile);
     const componentSource = readFile(componentPath);
     const componentLines = componentSource.split(/\r?\n/);
-    const results = componentLines.map((l) => l.replace(stylingLineRe, (_, p1) => `${p1}.css.js`));
+    const results = componentLines.map((l) =>
+        l.replace(stylingLineRe, (_, p1) => `${p1}.css.js";`)
+    );
     writeFile(componentPath, results.join("\n"));
 }
 

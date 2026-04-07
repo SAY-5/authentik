@@ -122,3 +122,5 @@ storybook-static/
 .wireit
 
 custom-elements.json
+
+*storybook.log
