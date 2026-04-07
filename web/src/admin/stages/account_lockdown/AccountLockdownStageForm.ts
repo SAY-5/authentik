@@ -1,5 +1,6 @@
 import "#elements/forms/HorizontalFormElement";
 import "#admin/common/ak-flow-search/ak-flow-search";
+import "#components/ak-switch-input";
 import "#components/ak-text-input";
 import "#components/ak-textarea-input";
 
@@ -7,11 +8,7 @@ import { DEFAULT_CONFIG } from "#common/api/config";
 
 import { BaseStageForm } from "#admin/stages/BaseStageForm";
 
-import {
-    AccountLockdownStage,
-    FlowsInstancesListDesignationEnum,
-    StagesApi,
-} from "@goauthentik/api";
+import { AccountLockdownStage, FlowDesignationEnum, StagesApi } from "@goauthentik/api";
 
 import { msg } from "@lit/localize";
 import { html, TemplateResult } from "lit";
@@ -55,80 +52,36 @@ export class AccountLockdownStageForm extends BaseStageForm<AccountLockdownStage
             </ak-form-element-horizontal>
             <ak-form-group open label="${msg("Stage-specific settings")}">
                 <div class="pf-c-form">
-                    <ak-form-element-horizontal name="deactivateUser">
-                        <label class="pf-c-switch">
-                            <input
-                                class="pf-c-switch__input"
-                                type="checkbox"
-                                ?checked=${this.instance?.deactivateUser ?? true}
-                            />
-                            <span class="pf-c-switch__toggle">
-                                <span class="pf-c-switch__toggle-icon">
-                                    <i class="fas fa-check" aria-hidden="true"></i>
-                                </span>
-                            </span>
-                            <span class="pf-c-switch__label">${msg("Deactivate user")}</span>
-                        </label>
-                        <p class="pf-c-form__helper-text">
-                            ${msg("Deactivate the user account (set is_active to False).")}
-                        </p>
-                    </ak-form-element-horizontal>
-                    <ak-form-element-horizontal name="setUnusablePassword">
-                        <label class="pf-c-switch">
-                            <input
-                                class="pf-c-switch__input"
-                                type="checkbox"
-                                ?checked=${this.instance?.setUnusablePassword ?? true}
-                            />
-                            <span class="pf-c-switch__toggle">
-                                <span class="pf-c-switch__toggle-icon">
-                                    <i class="fas fa-check" aria-hidden="true"></i>
-                                </span>
-                            </span>
-                            <span class="pf-c-switch__label">${msg("Set unusable password")}</span>
-                        </label>
-                        <p class="pf-c-form__helper-text">
-                            ${msg("Set an unusable password for the user.")}
-                        </p>
-                    </ak-form-element-horizontal>
-                    <ak-form-element-horizontal name="deleteSessions">
-                        <label class="pf-c-switch">
-                            <input
-                                class="pf-c-switch__input"
-                                type="checkbox"
-                                ?checked=${this.instance?.deleteSessions ?? true}
-                            />
-                            <span class="pf-c-switch__toggle">
-                                <span class="pf-c-switch__toggle-icon">
-                                    <i class="fas fa-check" aria-hidden="true"></i>
-                                </span>
-                            </span>
-                            <span class="pf-c-switch__label">${msg("Delete sessions")}</span>
-                        </label>
-                        <p class="pf-c-form__helper-text">
-                            ${msg("Delete all active sessions for the user.")}
-                        </p>
-                    </ak-form-element-horizontal>
-                    <ak-form-element-horizontal name="revokeTokens">
-                        <label class="pf-c-switch">
-                            <input
-                                class="pf-c-switch__input"
-                                type="checkbox"
-                                ?checked=${this.instance?.revokeTokens ?? true}
-                            />
-                            <span class="pf-c-switch__toggle">
-                                <span class="pf-c-switch__toggle-icon">
-                                    <i class="fas fa-check" aria-hidden="true"></i>
-                                </span>
-                            </span>
-                            <span class="pf-c-switch__label">${msg("Revoke tokens")}</span>
-                        </label>
-                        <p class="pf-c-form__helper-text">
-                            ${msg(
-                                "Revoke all tokens for the user (API, app password, recovery, verification).",
-                            )}
-                        </p>
-                    </ak-form-element-horizontal>
+                    <ak-switch-input
+                        name="deactivateUser"
+                        label=${msg("Deactivate user")}
+                        ?checked=${this.instance?.deactivateUser ?? true}
+                        help=${msg("Deactivate the user account (set is_active to False).")}
+                    >
+                    </ak-switch-input>
+                    <ak-switch-input
+                        name="setUnusablePassword"
+                        label=${msg("Set unusable password")}
+                        ?checked=${this.instance?.setUnusablePassword ?? true}
+                        help=${msg("Set an unusable password for the user.")}
+                    >
+                    </ak-switch-input>
+                    <ak-switch-input
+                        name="deleteSessions"
+                        label=${msg("Delete sessions")}
+                        ?checked=${this.instance?.deleteSessions ?? true}
+                        help=${msg("Delete all active sessions for the user.")}
+                    >
+                    </ak-switch-input>
+                    <ak-switch-input
+                        name="revokeTokens"
+                        label=${msg("Revoke tokens")}
+                        ?checked=${this.instance?.revokeTokens ?? true}
+                        help=${msg(
+                            "Revoke all tokens for the user (API, app password, recovery, verification).",
+                        )}
+                    >
+                    </ak-switch-input>
                 </div>
             </ak-form-group>
             <ak-form-group label="${msg("Self-service completion")}">
@@ -144,7 +97,7 @@ export class AccountLockdownStageForm extends BaseStageForm<AccountLockdownStage
                     >
                         <ak-flow-search
                             placeholder=${msg("Select a completion flow...")}
-                            flowType=${FlowsInstancesListDesignationEnum.StageConfiguration}
+                            flowType=${FlowDesignationEnum.StageConfiguration}
                             .currentFlow=${this.instance?.selfServiceCompletionFlow}
                         ></ak-flow-search>
                         <p class="pf-c-form__helper-text">

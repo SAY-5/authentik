@@ -163,18 +163,7 @@ def get_lockdown_completion_html(result: dict | None) -> str:
 
 
 class AccountLockdownStage(Stage):
-    """Execute account lockdown actions within a flow.
-
-    This stage performs the following actions on a target user:
-    - Deactivate the user account
-    - Set an unusable password
-    - Delete all active sessions
-    - Revoke all API and app password tokens
-
-    The target user is read from a single-element PLAN_CONTEXT_LOCKDOWN_TARGETS list,
-    PLAN_CONTEXT_PENDING_USER, or the authenticated request user for direct self-service
-    execution.
-    The reason is read from prompt_data['reason'] or PLAN_CONTEXT_LOCKDOWN_REASON."""
+    """Lock down a target user account."""
 
     deactivate_user = models.BooleanField(
         default=True,
