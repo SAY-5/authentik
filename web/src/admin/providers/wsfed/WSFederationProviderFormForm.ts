@@ -27,12 +27,8 @@ import {
 } from "#admin/providers/saml/SAMLProviderOptions";
 
 import {
-<<<<<<< HEAD
     FlowsInstancesListDesignationEnum,
-=======
-    FlowDesignationEnum,
     KeyTypeEnum,
->>>>>>> db5a15423 (web/admin: Improve WS-Fed algo selection logic (#20881))
     PropertymappingsApi,
     SAMLNameIDPolicyEnum,
     SAMLPropertyMapping,
