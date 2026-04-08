@@ -142,6 +142,18 @@ export const Resizable: Story = {
     render: () => html` <ak-drawer expanded resizable> ${contentBlock} ${panelBlock} </ak-drawer> `,
 };
 
+export const ResizableLeft: Story = {
+    render: () => html`
+        <ak-drawer expanded resizable position="left"> ${contentBlock} ${panelBlock} </ak-drawer>
+    `,
+};
+
+export const ResizableBottom: Story = {
+    render: () => html`
+        <ak-drawer expanded resizable position="bottom"> ${contentBlock} ${panelBlock} </ak-drawer>
+    `,
+};
+
 export const CustomWidth: Story = {
     name: "Custom Width",
     render: () => html`
