@@ -63,13 +63,12 @@ USER_ATTRIBUTE_GENERATED = f"{_USER_ATTR_PREFIX}/generated"
 
 
 def _get_default_source_icon_themed_urls(icon_name: str) -> dict[str, str] | None:
-    for extension in ("svg", "png"):
-        themed_paths = {
-            "light": f"authentik/sources/{icon_name}/light.{extension}",
-            "dark": f"authentik/sources/{icon_name}/dark.{extension}",
-        }
-        if all(finders.find(path) for path in themed_paths.values()):
-            return {theme: static(path) for theme, path in themed_paths.items()}
+    themed_paths = {
+        "light": f"authentik/sources/{icon_name}/light.svg",
+        "dark": f"authentik/sources/{icon_name}/dark.svg",
+    }
+    if all(finders.find(path) for path in themed_paths.values()):
+        return {theme: static(path) for theme, path in themed_paths.items()}
 
     for extension in ("svg", "png"):
         legacy_path = f"authentik/sources/{icon_name}.{extension}"
