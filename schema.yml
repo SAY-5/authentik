@@ -40861,8 +40861,7 @@ components:
         icon_url:
           type: string
           nullable: true
-          description: Get the URL to the source icon. Only returns user-configured
-            icons.
+          description: Get the URL to the source icon.
           readOnly: true
         icon_themed_urls:
           allOf:
@@ -41554,8 +41553,7 @@ components:
         icon_url:
           type: string
           nullable: true
-          description: Get the URL to the source icon. Only returns user-configured
-            icons.
+          description: Get the URL to the source icon.
           readOnly: true
         icon_themed_urls:
           allOf:
@@ -43765,8 +43763,6 @@ components:
         icon_url:
           type: string
           nullable: true
-          description: Get the URL to the source icon. Only returns user-configured
-            icons.
           readOnly: true
         icon_themed_urls:
           allOf:
@@ -51125,8 +51121,7 @@ components:
         icon_url:
           type: string
           nullable: true
-          description: Get the URL to the source icon. Only returns user-configured
-            icons.
+          description: Get the URL to the source icon.
           readOnly: true
         icon_themed_urls:
           allOf:
@@ -53797,8 +53792,7 @@ components:
         icon_url:
           type: string
           nullable: true
-          description: Get the URL to the source icon. Only returns user-configured
-            icons.
+          description: Get the URL to the source icon.
           readOnly: true
         icon_themed_urls:
           allOf:
@@ -55454,8 +55448,7 @@ components:
         icon_url:
           type: string
           nullable: true
-          description: Get the URL to the source icon. Only returns user-configured
-            icons.
+          description: Get the URL to the source icon.
           readOnly: true
         icon_themed_urls:
           allOf:
@@ -56137,8 +56130,7 @@ components:
         icon_url:
           type: string
           nullable: true
-          description: Get the URL to the source icon. Only returns user-configured
-            icons.
+          description: Get the URL to the source icon.
           readOnly: true
         icon_themed_urls:
           allOf:

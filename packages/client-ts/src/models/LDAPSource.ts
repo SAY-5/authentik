@@ -139,7 +139,7 @@ export interface LDAPSource {
      */
     icon?: string;
     /**
-     * Get the URL to the source icon. Only returns user-configured icons.
+     * Get the URL to the source icon.
      * @type {string}
      * @memberof LDAPSource
      */

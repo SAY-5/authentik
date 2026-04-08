@@ -47,12 +47,11 @@ type OAuthSource struct {
 	// How the source determines if an existing user should be authenticated or a new user enrolled.
 	UserMatchingMode *UserMatchingModeEnum `json:"user_matching_mode,omitempty"`
 	// Objects that are managed by authentik. These objects are created and updated automatically. This flag only indicates that an object can be overwritten by migrations. You can still modify the objects via the API, but expect changes to be overwritten in a later update.
-	Managed          NullableString `json:"managed"`
-	UserPathTemplate *string        `json:"user_path_template,omitempty"`
-	Icon             *string        `json:"icon,omitempty"`
-	// Get the URL to the source icon. Only returns user-configured icons.
-	IconUrl        NullableString     `json:"icon_url"`
-	IconThemedUrls NullableThemedUrls `json:"icon_themed_urls"`
+	Managed          NullableString     `json:"managed"`
+	UserPathTemplate *string            `json:"user_path_template,omitempty"`
+	Icon             *string            `json:"icon,omitempty"`
+	IconUrl          NullableString     `json:"icon_url"`
+	IconThemedUrls   NullableThemedUrls `json:"icon_themed_urls"`
 	// How the source determines if an existing group should be used or a new group created.
 	GroupMatchingMode *GroupMatchingModeEnum `json:"group_matching_mode,omitempty"`
 	ProviderType      ProviderTypeEnum       `json:"provider_type"`

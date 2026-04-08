@@ -50,7 +50,7 @@ type KerberosSource struct {
 	Managed          NullableString `json:"managed"`
 	UserPathTemplate *string        `json:"user_path_template,omitempty"`
 	Icon             *string        `json:"icon,omitempty"`
-	// Get the URL to the source icon. Only returns user-configured icons.
+	// Get the URL to the source icon.
 	IconUrl        NullableString     `json:"icon_url"`
 	IconThemedUrls NullableThemedUrls `json:"icon_themed_urls"`
 	// How the source determines if an existing group should be used or a new group created.

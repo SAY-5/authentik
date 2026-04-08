@@ -80,7 +80,7 @@ pub struct TelegramSource {
     pub user_path_template: Option<String>,
     #[serde(rename = "icon", skip_serializing_if = "Option::is_none")]
     pub icon: Option<String>,
-    /// Get the URL to the source icon. Only returns user-configured icons.
+    /// Get the URL to the source icon.
     #[serde(rename = "icon_url", deserialize_with = "Option::deserialize")]
     pub icon_url: Option<String>,
     #[serde(rename = "icon_themed_urls", deserialize_with = "Option::deserialize")]
