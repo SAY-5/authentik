@@ -81,6 +81,13 @@ def _get_default_source_icon_themed_urls(icon_name: str) -> dict[str, str] | Non
     return None
 
 
+def _get_default_source_icon_url(icon_name: str) -> str | None:
+    themed_urls = _get_default_source_icon_themed_urls(icon_name)
+    if themed_urls:
+        return themed_urls["light"]
+    return None
+
+
 USER_ATTRIBUTE_EXPIRES = f"{_USER_ATTR_PREFIX}/expires"
 USER_ATTRIBUTE_DELETE_ON_LOGOUT = f"{_USER_ATTR_PREFIX}/delete-on-logout"
 USER_ATTRIBUTE_SOURCES = f"{_USER_ATTR_PREFIX}/sources"

@@ -16,6 +16,7 @@ from authentik.core.models import (
     Source,
     UserSourceConnection,
     _get_default_source_icon_themed_urls,
+    _get_default_source_icon_url,
 )
 from authentik.core.types import UILoginButton, UserSettingSerializer
 
@@ -125,10 +126,26 @@ class OAuthSource(NonCreatableType, Source):
         if urls:
             return urls
         try:
-            if self.provider_type:
-                return _get_default_source_icon_themed_urls(self.provider_type)
+            provider_type = self.provider_type
         except AttributeError:
-            pass
+            # Gracefully fall back when provider icon metadata is unavailable.
+            return None
+        if provider_type:
+            return _get_default_source_icon_themed_urls(provider_type)
+        return None
+
+    @property
+    def icon_url(self) -> str | None:
+        icon = super().icon_url
+        if icon:
+            return icon
+        try:
+            provider_type = self.provider_type
+        except AttributeError:
+            # Gracefully fall back when provider icon metadata is unavailable.
+            return None
+        if provider_type:
+            return _get_default_source_icon_url(provider_type)
         return None
 
     def ui_login_button(self, request: HttpRequest) -> UILoginButton:

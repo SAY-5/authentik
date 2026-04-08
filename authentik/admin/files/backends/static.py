@@ -3,7 +3,7 @@ from pathlib import Path
 
 from django.http.request import HttpRequest
 
-from authentik.admin.files.backends.base import Backend, THEME_VARIABLE
+from authentik.admin.files.backends.base import THEME_VARIABLE, Backend
 from authentik.admin.files.usage import FileUsage
 from authentik.lib.config import CONFIG
 
