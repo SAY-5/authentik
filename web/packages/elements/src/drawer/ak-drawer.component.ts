@@ -1,9 +1,20 @@
 import PFDrawer from "./component.scss";
+import { DrawerResizeController } from "./resizeController";
 
 import { html, LitElement, nothing, PropertyValues } from "lit";
 import { property } from "lit/decorators.js";
 
-export class Drawer extends LitElement {
+export class DrawerExpandRequest extends Event {
+    static readonly eventName = "ak-drawer-expand-request";
+    expanded: boolean | null = null;
+
+    constructor(expanded: boolean | null = null) {
+        super(DrawerExpandRequest.eventName, { bubbles: true, composed: true });
+        this.expanded = expanded;
+    }
+}
+
+export class AkDrawer extends LitElement {
     static readonly styles = [PFDrawer];
 
     @property({ type: Boolean })
@@ -11,6 +22,11 @@ export class Drawer extends LitElement {
 
     @property({ type: Boolean, reflect: true })
     public expanded = false;
+
+    @property({ type: Boolean, reflect: true })
+    public resizing = false;
+
+    private resize = new DrawerResizeController(this);
 
     onDrawerRequest = (ev: DrawerExpandRequest) => {
         ev.stopPropagation();
@@ -35,6 +51,10 @@ export class Drawer extends LitElement {
                         ${this.resizable
                             ? html` <div
                                   class="pf-v5-c-drawer__splitter"
+                                  part="drawer-splitter"
+                                  @mousedown=${this.resize.handleMouseDown}
+                                  @keydown=${this.resize.handleKeyDown}
+                                  @touchstart=${this.resize.handleTouchStart}
                                   role="separator"
                                   tabindex="0"
                               >
@@ -65,16 +85,6 @@ export class Drawer extends LitElement {
                 })
             );
         }
-    }
-}
-
-export class DrawerExpandRequest extends Event {
-    static readonly eventName = "ak-drawer-expand-request";
-    expanded: boolean | null = null;
-
-    constructor(expanded: boolean | null = null) {
-        super(DrawerExpandRequest.eventName, { bubbles: true, composed: true });
-        this.expanded = expanded;
     }
 }
 

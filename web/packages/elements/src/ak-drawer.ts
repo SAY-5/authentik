@@ -1,11 +1,11 @@
-import { Drawer } from "./drawer/ak-drawer.component.js";
+import { AkDrawer } from "./drawer/ak-drawer.component.js";
 
-export { Drawer };
+export { AkDrawer };
 
-window.customElements.define("ak-drawer", Drawer);
+window.customElements.define("ak-drawer", AkDrawer);
 
 declare global {
     interface HTMLElementTagNameMap {
-        "ak-drawer": Drawer;
+        "ak-drawer": AkDrawer;
     }
 }

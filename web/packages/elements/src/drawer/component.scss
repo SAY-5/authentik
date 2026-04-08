@@ -62,18 +62,61 @@ slot {
     flex-direction: column;
 }
 
-// Expanded
-// stylelint-disable selector-max-class
-:host([expanded]) .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
-    transform: translateX(-100%);
+:host(:not([inline], [static])) .#{cn.$drawer}__main {
+    position: relative;
 }
 
-:host([expanded][position="left"]) .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+:host(:not([inline], [static])) .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+    position: absolute;
+    inset-block-start: 0;
+    inset-block-end: 0;
+    inset-inline-end: 0;
+    max-width: var(--#{cn.$drawer}__panel--FlexBasis);
+
+    @include m.pf-v5-bidirectional-style(
+        $prop: transform,
+        $ltr-val: translateX(100%),
+        $rtl-val: translateX(#{f.pf-v5-calc-inverse(100%)})
+    );
+}
+
+// Overlay expanded — slide panel into view
+:host([expanded]:not([inline], [static])) .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
     transform: translateX(0);
 }
 
-:host([position="bottom"][expanded]) .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
-    transform: translate(0, -100%);
+// Left overlay: position on the left edge, hidden to the left
+:host([position="left"]:not([inline], [static])) .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+    inset-inline-end: auto;
+    inset-inline-start: 0;
+
+    @include m.pf-v5-bidirectional-style(
+        $prop: transform,
+        $ltr-val: translateX(-100%),
+        $rtl-val: translateX(#{f.pf-v5-calc-inverse(-100%)})
+    );
+}
+
+:host([expanded][position="left"]:not([inline], [static]))
+    .#{cn.$drawer}__main
+    > .#{cn.$drawer}__panel {
+    transform: translateX(0);
+}
+
+:host([position="bottom"]:not([inline], [static])) .#{cn.$drawer}__main > .#{cn.$drawer}__panel {
+    inset-inline-end: 0;
+    inset-inline-start: 0;
+    inset-block-start: auto;
+    inset-block-end: 0;
+    max-width: none;
+    max-height: var(--#{cn.$drawer}__panel--FlexBasis);
+    transform: translateY(100%);
+}
+
+:host([position="bottom"][expanded]:not([inline], [static]))
+    .#{cn.$drawer}__main
+    > .#{cn.$drawer}__panel {
+    transform: translateY(0);
 }
 // stylelint-enable
 
@@ -106,8 +149,10 @@ slot {
 }
 
 .#{cn.$drawer}__content {
-    min-width: 100%;
-    flex-shrink: 1;
+    z-index: var(--#{cn.$drawer}__content--ZIndex);
+    flex-basis: var(--#{cn.$drawer}__content--FlexBasis);
+    order: 0;
+    background-color: var(--#{cn.$drawer}__content--BackgroundColor);
 }
 
 .#{cn.$drawer}__panel {
@@ -146,17 +191,17 @@ slot {
     }
 
     @media screen and (min-width: v.$pf-v5-global--breakpoint--xl) {
-        --#{cn.$drawer}__panel--md--FlexBasis: var(--#{cn.$drawer}__panel--xl--FlexBasis);
+        :host(:not([width])) & {
+            --#{cn.$drawer}__panel--md--FlexBasis: var(--#{cn.$drawer}__panel--xl--FlexBasis);
+        }
     }
 }
 
-:host([position="bottom"]) {
+:host([position="bottom"]) .#{cn.$drawer}__panel {
     @media screen and (min-width: v.$pf-v5-global--breakpoint--xl) {
-        .#{cn.$drawer}.pf-m-panel-bottom & {
-            --#{cn.$drawer}__panel--md--FlexBasis: var(
-                --#{cn.$drawer}--m-panel-bottom__panel--xl--FlexBasis
-            );
-        }
+        --#{cn.$drawer}__panel--md--FlexBasis: var(
+            --#{cn.$drawer}--m-panel-bottom__panel--xl--FlexBasis
+        );
     }
 }
 
