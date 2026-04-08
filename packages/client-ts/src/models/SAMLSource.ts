@@ -150,11 +150,11 @@ export interface SAMLSource {
      */
     icon?: string;
     /**
-     *
+     * Get the URL to the source icon. Only returns user-configured icons.
      * @type {string}
      * @memberof SAMLSource
      */
-    readonly iconUrl: string;
+    readonly iconUrl: string | null;
     /**
      *
      * @type {ThemedUrls}

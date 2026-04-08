@@ -12,6 +12,9 @@
  * Do not edit the class manually.
  */
 
+import type { ThemedUrls } from "./ThemedUrls";
+import { ThemedUrlsFromJSON, ThemedUrlsToJSON } from "./ThemedUrls";
+
 /**
  * Serializer for User settings for stages and sources
  * @export
@@ -47,7 +50,13 @@ export interface UserSetting {
      * @type {string}
      * @memberof UserSetting
      */
-    iconUrl?: string;
+    iconUrl?: string | null;
+    /**
+     *
+     * @type {ThemedUrls}
+     * @memberof UserSetting
+     */
+    iconThemedUrls?: ThemedUrls | null;
 }
 
 /**
@@ -74,6 +83,10 @@ export function UserSettingFromJSONTyped(json: any, ignoreDiscriminator: boolean
         title: json["title"],
         configureUrl: json["configure_url"] == null ? undefined : json["configure_url"],
         iconUrl: json["icon_url"] == null ? undefined : json["icon_url"],
+        iconThemedUrls:
+            json["icon_themed_urls"] == null
+                ? undefined
+                : ThemedUrlsFromJSON(json["icon_themed_urls"]),
     };
 }
 
@@ -95,5 +108,6 @@ export function UserSettingToJSONTyped(
         title: value["title"],
         configure_url: value["configureUrl"],
         icon_url: value["iconUrl"],
+        icon_themed_urls: ThemedUrlsToJSON(value["iconThemedUrls"]),
     };
 }

@@ -150,7 +150,7 @@ export interface OAuthSource {
      */
     icon?: string;
     /**
-     *
+     * Get the URL to the source icon. Only returns user-configured icons.
      * @type {string}
      * @memberof OAuthSource
      */

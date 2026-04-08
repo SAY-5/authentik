@@ -10,11 +10,17 @@ use serde::{Deserialize, Serialize};
 
 use crate::models;
 
-/// LoginSource : Serializer for Login buttons of sources
+/// TypeCreate : Types of an object that can be created
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
-pub struct LoginSource {
+pub struct TypeCreate {
     #[serde(rename = "name")]
     pub name: String,
+    #[serde(rename = "description")]
+    pub description: String,
+    #[serde(rename = "component")]
+    pub component: String,
+    #[serde(rename = "model_name")]
+    pub model_name: String,
     #[serde(
         rename = "icon_url",
         default,
@@ -29,21 +35,32 @@ pub struct LoginSource {
         skip_serializing_if = "Option::is_none"
     )]
     pub icon_themed_urls: Option<Option<models::ThemedUrls>>,
-    #[serde(rename = "promoted", skip_serializing_if = "Option::is_none")]
-    pub promoted: Option<bool>,
-    #[serde(rename = "challenge")]
-    pub challenge: models::LoginChallengeTypes,
+    #[serde(
+        rename = "requires_enterprise",
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub requires_enterprise: Option<bool>,
+    #[serde(rename = "deprecated", skip_serializing_if = "Option::is_none")]
+    pub deprecated: Option<bool>,
 }
 
-impl LoginSource {
-    /// Serializer for Login buttons of sources
-    pub fn new(name: String, challenge: models::LoginChallengeTypes) -> LoginSource {
-        LoginSource {
+impl TypeCreate {
+    /// Types of an object that can be created
+    pub fn new(
+        name: String,
+        description: String,
+        component: String,
+        model_name: String,
+    ) -> TypeCreate {
+        TypeCreate {
             name,
+            description,
+            component,
+            model_name,
             icon_url: None,
             icon_themed_urls: None,
-            promoted: None,
-            challenge,
+            requires_enterprise: None,
+            deprecated: None,
         }
     }
 }

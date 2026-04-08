@@ -12,6 +12,9 @@
  * Do not edit the class manually.
  */
 
+import type { ThemedUrls } from "./ThemedUrls";
+import { ThemedUrlsFromJSON, ThemedUrlsToJSON } from "./ThemedUrls";
+
 /**
  * Types of an object that can be created
  * @export
@@ -47,7 +50,13 @@ export interface TypeCreate {
      * @type {string}
      * @memberof TypeCreate
      */
-    iconUrl?: string;
+    iconUrl?: string | null;
+    /**
+     *
+     * @type {ThemedUrls}
+     * @memberof TypeCreate
+     */
+    iconThemedUrls?: ThemedUrls | null;
     /**
      *
      * @type {boolean}
@@ -87,6 +96,10 @@ export function TypeCreateFromJSONTyped(json: any, ignoreDiscriminator: boolean)
         component: json["component"],
         modelName: json["model_name"],
         iconUrl: json["icon_url"] == null ? undefined : json["icon_url"],
+        iconThemedUrls:
+            json["icon_themed_urls"] == null
+                ? undefined
+                : ThemedUrlsFromJSON(json["icon_themed_urls"]),
         requiresEnterprise:
             json["requires_enterprise"] == null ? undefined : json["requires_enterprise"],
         deprecated: json["deprecated"] == null ? undefined : json["deprecated"],
@@ -111,6 +124,7 @@ export function TypeCreateToJSONTyped(
         component: value["component"],
         model_name: value["modelName"],
         icon_url: value["iconUrl"],
+        icon_themed_urls: ThemedUrlsToJSON(value["iconThemedUrls"]),
         requires_enterprise: value["requiresEnterprise"],
         deprecated: value["deprecated"],
     };

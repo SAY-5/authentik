@@ -10,11 +10,17 @@ use serde::{Deserialize, Serialize};
 
 use crate::models;
 
-/// LoginSource : Serializer for Login buttons of sources
+/// UserSetting : Serializer for User settings for stages and sources
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
-pub struct LoginSource {
-    #[serde(rename = "name")]
-    pub name: String,
+pub struct UserSetting {
+    #[serde(rename = "object_uid")]
+    pub object_uid: String,
+    #[serde(rename = "component")]
+    pub component: String,
+    #[serde(rename = "title")]
+    pub title: String,
+    #[serde(rename = "configure_url", skip_serializing_if = "Option::is_none")]
+    pub configure_url: Option<String>,
     #[serde(
         rename = "icon_url",
         default,
@@ -29,21 +35,18 @@ pub struct LoginSource {
         skip_serializing_if = "Option::is_none"
     )]
     pub icon_themed_urls: Option<Option<models::ThemedUrls>>,
-    #[serde(rename = "promoted", skip_serializing_if = "Option::is_none")]
-    pub promoted: Option<bool>,
-    #[serde(rename = "challenge")]
-    pub challenge: models::LoginChallengeTypes,
 }
 
-impl LoginSource {
-    /// Serializer for Login buttons of sources
-    pub fn new(name: String, challenge: models::LoginChallengeTypes) -> LoginSource {
-        LoginSource {
-            name,
+impl UserSetting {
+    /// Serializer for User settings for stages and sources
+    pub fn new(object_uid: String, component: String, title: String) -> UserSetting {
+        UserSetting {
+            object_uid,
+            component,
+            title,
+            configure_url: None,
             icon_url: None,
             icon_themed_urls: None,
-            promoted: None,
-            challenge,
         }
     }
 }
