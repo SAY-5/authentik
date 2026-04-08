@@ -63,10 +63,3 @@ ak-stage-identification.style-scope fieldset[name="login-sources"] {
         pointer-events: none;
     }
 }
-
-:host([theme="dark"]),
-ak-stage-identification[theme="dark"].style-scope {
-    fieldset[name="login-sources"] .pf-c-button__icon i[part="source-icon"] {
-        filter: invert(1);
-    }
-}
