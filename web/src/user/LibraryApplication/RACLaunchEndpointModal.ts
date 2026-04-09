@@ -1,6 +1,6 @@
 import { DEFAULT_CONFIG } from "#common/api/config";
 
-import { AKModal } from "#elements/modals/ak-modal";
+import { AKModal } from "#elements/dialogs/ak-modal";
 import { PaginatedResponse, Table, TableColumn } from "#elements/table/Table";
 import { SlottedTemplateResult } from "#elements/types";
 
