@@ -149,9 +149,9 @@ export class TypeCreateWizardPage extends WithLicenseSummary(WizardPage) {
                 @click=${() => {
                     if (disabled) return;
 
-                        this.selectedType = type;
-                        this.#selectDispatch(type);
-                    }}
+                    this.selectedType = type;
+                    this.#selectDispatch(type);
+                }}
             >
                 ${icon !== nothing
                     ? html`<div role="presentation" class="pf-c-card__header">

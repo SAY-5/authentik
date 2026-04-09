@@ -1,21 +1,12 @@
 import { PolicyBindingCheckTarget } from "#common/policies/utils";
 import { ResolvedUITheme } from "#common/theme";
 
+import { resolveThemedUrl } from "#elements/utils/images";
+
 import { ThemedUrls } from "@goauthentik/api";
 
 import { msg } from "@lit/localize";
 import { html, TemplateResult } from "lit";
-
-function resolveSourceIconUrl(
-    iconUrl: string | undefined | null,
-    iconThemedUrls: ThemedUrls | undefined | null,
-    theme: ResolvedUITheme | undefined,
-): string | undefined | null {
-    if (theme && iconThemedUrls?.[theme]) {
-        return iconThemedUrls[theme];
-    }
-    return iconUrl;
-}
 
 export function renderSourceIcon(
     name: string,
@@ -23,7 +14,7 @@ export function renderSourceIcon(
     iconThemedUrls?: ThemedUrls | null,
     theme?: ResolvedUITheme,
 ): TemplateResult {
-    const resolvedIconUrl = resolveSourceIconUrl(iconUrl, iconThemedUrls, theme);
+    const resolvedIconUrl = resolveThemedUrl(iconUrl, iconThemedUrls, theme);
     const icon = html`<i
         part="source-icon"
         role="img"

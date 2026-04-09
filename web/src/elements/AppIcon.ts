@@ -2,7 +2,7 @@ import { PFSize } from "#common/enums";
 
 import Styles from "#elements/AppIcon.css";
 import { AKElement } from "#elements/Base";
-import { FontAwesomeProtocol } from "#elements/utils/images";
+import { FontAwesomeProtocol, resolveThemedUrl } from "#elements/utils/images";
 
 import type { ThemedUrls } from "@goauthentik/api";
 
@@ -46,10 +46,11 @@ export class AppIcon extends AKElement implements IAppIcon {
     override render(): TemplateResult {
         const applicationName = this.name ?? msg("Application");
         const label = msg(str`${applicationName} Icon`);
+        const resolvedIcon = resolveThemedUrl(this.icon, this.iconThemedUrls, this.activeTheme);
 
         // Check for Font Awesome icons (fa://fa-icon-name)
-        if (this.icon?.startsWith(AppIcon.FontAwesomeProtocol)) {
-            const iconClass = this.icon.slice(AppIcon.FontAwesomeProtocol.length);
+        if (resolvedIcon?.startsWith(AppIcon.FontAwesomeProtocol)) {
+            const iconClass = resolvedIcon.slice(AppIcon.FontAwesomeProtocol.length);
             return this.#wrap(
                 html`<i
                     part="icon font-awesome"
@@ -64,8 +65,6 @@ export class AppIcon extends AKElement implements IAppIcon {
 
         // Check for image URLs (http://, https://, or file paths)
         // Use themed URL if available, otherwise fall back to icon
-        const resolvedIcon =
-            (this.iconThemedUrls as Record<string, string> | null)?.[this.activeTheme] ?? this.icon;
         if (resolvedIcon) {
             return this.#wrap(
                 html`<img

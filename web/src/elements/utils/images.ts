@@ -12,6 +12,18 @@ import { html, nothing } from "lit";
 
 export const FontAwesomeProtocol = "fa://";
 
+export function resolveThemedUrl(
+    src: string | undefined | null,
+    themedUrls: ThemedUrls | undefined | null,
+    theme: ResolvedUITheme | undefined,
+): string | undefined | null {
+    if (theme && themedUrls?.[theme]) {
+        return themedUrls[theme];
+    }
+
+    return src;
+}
+
 export interface ThemedImageProps extends ImgHTMLAttributes<HTMLImageElement> {
     /**
      * The image path (base URL, may contain %(theme)s for display purposes only)
@@ -46,7 +58,7 @@ export const ThemedImage: LitFC<ThemedImageProps> = ({
     }
 
     // Use themed URL if available, otherwise use src directly
-    const resolvedSrc = (themedUrls as Record<string, string> | null)?.[theme] ?? src;
+    const resolvedSrc = resolveThemedUrl(src, themedUrls, theme);
 
     return html`<img src=${resolvedSrc} class=${ifPresent(className)} ${spread(props)} />`;
 };
