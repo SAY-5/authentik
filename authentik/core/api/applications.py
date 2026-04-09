@@ -116,6 +116,7 @@ class ApplicationSerializer(ModelSerializer):
             "meta_publisher",
             "policy_engine_mode",
             "group",
+            "meta_hide",
         ]
         extra_kwargs = {
             "backchannel_providers": {"required": False},
@@ -279,6 +280,7 @@ class ApplicationViewSet(UsedByMixin, ModelViewSet):
         ).lower()
 
         queryset = self._filter_queryset_for_list(self.get_queryset())
+        queryset = queryset.exclude(meta_hide=True)
         paginator: Pagination = self.paginator
         paginated_apps = paginator.paginate_queryset(queryset, request)
 
