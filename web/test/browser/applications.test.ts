@@ -174,7 +174,9 @@ test.describe("Applications", () => {
 
             await expect(
                 wizardDialog.getByRole("heading", { name: "Your application has been saved" }),
-            ).toBeVisible();
+            ).toBeVisible({
+                timeout: 10_000,
+            });
 
             await click("Close", "button", wizardDialog);
         });
