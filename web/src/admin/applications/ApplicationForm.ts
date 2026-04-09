@@ -199,6 +199,15 @@ export class ApplicationForm extends WithCapabilitiesConfig(ModelForm<Applicatio
                         )}
                     >
                     </ak-switch-input>
+                    <ak-switch-input
+                        name="metaHide"
+                        ?checked=${this.instance?.metaHide ?? false}
+                        label=${msg("Hide from user dashboard")}
+                        help=${msg(
+                            "If checked, this application will not be shown on the user's application library.",
+                        )}
+                    >
+                    </ak-switch-input>
                     <ak-file-search-input
                         name="metaIcon"
                         label=${msg("Icon")}
