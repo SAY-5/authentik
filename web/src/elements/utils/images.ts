@@ -8,7 +8,7 @@ import type { ThemedUrls } from "@goauthentik/api";
 import { spread } from "@open-wc/lit-helpers";
 import { ImgHTMLAttributes } from "react";
 
-import { html, nothing } from "lit";
+import { html, nothing, TemplateResult } from "lit";
 
 export const FontAwesomeProtocol = "fa://";
 
@@ -37,6 +37,15 @@ export interface ThemedImageProps extends ImgHTMLAttributes<HTMLImageElement> {
     themedUrls?: ThemedUrls | null;
 }
 
+export interface RenderIconOptions {
+    alt?: string;
+    ariaHidden?: boolean;
+    ariaLabel?: string;
+    className?: string;
+    fallback?: TemplateResult | typeof nothing;
+    part?: string;
+}
+
 export const ThemedImage: LitFC<ThemedImageProps> = ({
     src,
     className,
@@ -62,6 +71,48 @@ export const ThemedImage: LitFC<ThemedImageProps> = ({
 
     return html`<img src=${resolvedSrc} class=${ifPresent(className)} ${spread(props)} />`;
 };
+
+export function renderIcon(
+    src: string | undefined | null,
+    themedUrls: ThemedUrls | undefined | null,
+    theme: ResolvedUITheme | undefined,
+    {
+        alt = "",
+        ariaHidden = false,
+        ariaLabel,
+        className,
+        fallback = nothing,
+        part,
+    }: RenderIconOptions = {},
+): TemplateResult | typeof nothing {
+    const resolvedSrc = resolveThemedUrl(src, themedUrls, theme);
+    if (!resolvedSrc) {
+        return fallback;
+    }
+
+    if (resolvedSrc.startsWith(FontAwesomeProtocol)) {
+        const classes = [className, "fas", resolvedSrc.slice(FontAwesomeProtocol.length)]
+            .filter(Boolean)
+            .join(" ");
+
+        return html`<i
+            part=${ifPresent(part)}
+            role=${ifPresent(ariaHidden ? undefined : "img")}
+            aria-label=${ifPresent(ariaLabel)}
+            class=${classes}
+            ?aria-hidden=${ariaHidden}
+        ></i>`;
+    }
+
+    return html`<img
+        part=${ifPresent(part)}
+        class=${ifPresent(className)}
+        src=${resolvedSrc}
+        alt=${alt}
+        aria-label=${ifPresent(ariaLabel)}
+        ?aria-hidden=${ariaHidden}
+    />`;
+}
 
 export function isDefaultAvatar(path?: string | null): boolean {
     return !!path?.endsWith("user_default.png");

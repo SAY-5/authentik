@@ -1,12 +1,12 @@
 import { PolicyBindingCheckTarget } from "#common/policies/utils";
 import { ResolvedUITheme } from "#common/theme";
 
-import { resolveThemedUrl } from "#elements/utils/images";
+import { renderIcon } from "#elements/utils/images";
 
 import { ThemedUrls } from "@goauthentik/api";
 
 import { msg } from "@lit/localize";
-import { html, TemplateResult } from "lit";
+import { html, nothing, TemplateResult } from "lit";
 
 export function renderSourceIcon(
     name: string,
@@ -14,21 +14,19 @@ export function renderSourceIcon(
     iconThemedUrls?: ThemedUrls | null,
     theme?: ResolvedUITheme,
 ): TemplateResult {
-    const resolvedIconUrl = resolveThemedUrl(iconUrl, iconThemedUrls, theme);
-    const icon = html`<i
+    const fallback = html`<i
         part="source-icon"
         role="img"
         class="fas fa-share-square"
         title="${name}"
     ></i>`;
-    if (resolvedIconUrl) {
-        if (resolvedIconUrl.startsWith("fa://")) {
-            const url = resolvedIconUrl.replaceAll("fa://", "");
-            return html`<i part="source-icon" role="img" class="fas ${url}" title="${name}"></i>`;
-        }
-        return html`<img part="source-icon" src="${resolvedIconUrl}" alt="${name}" />`;
-    }
-    return icon;
+    const icon = renderIcon(iconUrl, iconThemedUrls, theme, {
+        alt: name,
+        ariaLabel: name,
+        fallback,
+        part: "source-icon",
+    });
+    return icon === nothing ? fallback : icon;
 }
 
 export function sourceBindingTypeNotices() {
