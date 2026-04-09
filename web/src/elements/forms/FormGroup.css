@@ -23,9 +23,9 @@ details {
 
     & > summary {
         list-style-position: outside;
-        margin-inline-start: 2em;
+        margin-inline-start: var(--pf-global--spacer--sm);
         padding-inline-start: calc(var(--pf-global--spacer--md) + 0.25rem);
-        padding-block: var(--pf-global--spacer--sm);
+        padding-block: var(--pf-global--spacer-xs);
         padding-inline: var(--pf-global--spacer--md);
         list-style-type: "\f105";
         cursor: pointer;
@@ -35,6 +35,8 @@ details {
 
         @media (prefers-contrast: more) {
             text-decoration: underline;
+            margin-inline-start: var(--pf-global--spacer--lg);
+            padding-block: var(--pf-global--spacer--sm);
         }
 
         &::marker {
@@ -47,10 +49,6 @@ details {
         &:hover::marker {
             color: var(--marker-color-hover, var(--pf-global--Color--100));
         }
-    }
-
-    &:not([open]) summary {
-        padding-block: var(--pf-global--spacer--xs);
     }
 
     &[open] summary {

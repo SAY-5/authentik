@@ -1,5 +1,6 @@
 import { AKElement } from "#elements/Base";
-import { AKControlElement, isControlElement } from "#elements/ControlElement";
+import { isControlElement } from "#elements/ControlElement";
+import { FormField, isFormField } from "#elements/forms/form-associated-element";
 import { isNameableElement, NamedElement } from "#elements/utils/inputs";
 
 import { AKFormErrors, ErrorProp } from "#components/ak-field-errors";
@@ -68,12 +69,12 @@ export class HorizontalFormElement extends AKElement {
 
     //#endregion
 
-    #controlledElement: AKControlElement | NamedElement | null = null;
+    #controlledElement: FormField | NamedElement | null = null;
 
     /**
      * The element that should be focused when the form is submitted.
      */
-    public get focusTarget(): AKControlElement | NamedElement<HTMLElement> | null {
+    public get focusTarget(): FormField | NamedElement<HTMLElement> | null {
         if (!(this.#controlledElement instanceof HTMLElement)) {
             return null;
         }
@@ -109,7 +110,8 @@ export class HorizontalFormElement extends AKElement {
 
         for (const element of this.querySelectorAll("*")) {
             // Is this element capable of being named?
-            if (!isControlElement(element) && !isNameableElement(element)) continue;
+            if (!isControlElement(element) && !isFormField(element) && !isNameableElement(element))
+                continue;
 
             this.#controlledElement = element;
 
