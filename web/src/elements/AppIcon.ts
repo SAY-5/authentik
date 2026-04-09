@@ -2,7 +2,7 @@ import { PFSize } from "#common/enums";
 
 import Styles from "#elements/AppIcon.css";
 import { AKElement } from "#elements/Base";
-import { FontAwesomeProtocol, resolveThemedUrl } from "#elements/utils/images";
+import { FontAwesomeProtocol, resolveThemedUrl, ThemedImage } from "#elements/utils/images";
 
 import type { ThemedUrls } from "@goauthentik/api";
 
@@ -47,36 +47,25 @@ export class AppIcon extends AKElement implements IAppIcon {
         const applicationName = this.name ?? msg("Application");
         const label = msg(str`${applicationName} Icon`);
         const resolvedIcon = resolveThemedUrl(this.icon, this.iconThemedUrls, this.activeTheme);
+        const part = resolvedIcon?.startsWith(AppIcon.FontAwesomeProtocol)
+            ? "icon font-awesome"
+            : "icon image";
 
-        // Check for Font Awesome icons (fa://fa-icon-name)
-        if (resolvedIcon?.startsWith(AppIcon.FontAwesomeProtocol)) {
-            const iconClass = resolvedIcon.slice(AppIcon.FontAwesomeProtocol.length);
+        if (resolvedIcon) {
             return this.#wrap(
-                html`<i
-                    part="icon font-awesome"
-                    role="img"
-                    aria-label=${label}
-                    class="icon fas ${iconClass}"
-                ></i>`,
+                html`${ThemedImage({
+                    "aria-label": label,
+                    "alt": this.name?.charAt(0).toUpperCase() ?? "�",
+                    "className": "icon",
+                    part,
+                    "role": "img",
+                    "src": resolvedIcon,
+                    "theme": this.activeTheme,
+                })}`,
             );
         }
 
         const insignia = this.name?.charAt(0).toUpperCase() ?? "�";
-
-        // Check for image URLs (http://, https://, or file paths)
-        // Use themed URL if available, otherwise fall back to icon
-        if (resolvedIcon) {
-            return this.#wrap(
-                html`<img
-                    part="icon image"
-                    role="img"
-                    aria-label=${label}
-                    class="icon"
-                    src=${resolvedIcon}
-                    alt=${insignia}
-                />`,
-            );
-        }
 
         // Fallback to first letter insignia
         return this.#wrap(

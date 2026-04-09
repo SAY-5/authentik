@@ -35,6 +35,8 @@ export interface ThemedImageProps extends ImgHTMLAttributes<HTMLImageElement> {
      * When provided, these are used instead of src.
      */
     themedUrls?: ThemedUrls | null;
+    part?: string;
+    role?: string;
 }
 
 export interface RenderIconOptions {
@@ -68,6 +70,9 @@ export const ThemedImage: LitFC<ThemedImageProps> = ({
 
     // Use themed URL if available, otherwise use src directly
     const resolvedSrc = resolveThemedUrl(src, themedUrls, theme);
+    if (!resolvedSrc) {
+        return nothing;
+    }
 
     return html`<img src=${resolvedSrc} class=${ifPresent(className)} ${spread(props)} />`;
 };
@@ -90,28 +95,16 @@ export function renderIcon(
         return fallback;
     }
 
-    if (resolvedSrc.startsWith(FontAwesomeProtocol)) {
-        const classes = [className, "fas", resolvedSrc.slice(FontAwesomeProtocol.length)]
-            .filter(Boolean)
-            .join(" ");
-
-        return html`<i
-            part=${ifPresent(part)}
-            role=${ifPresent(ariaHidden ? undefined : "img")}
-            aria-label=${ifPresent(ariaLabel)}
-            class=${classes}
-            ?aria-hidden=${ariaHidden}
-        ></i>`;
-    }
-
-    return html`<img
-        part=${ifPresent(part)}
-        class=${ifPresent(className)}
-        src=${resolvedSrc}
-        alt=${alt}
-        aria-label=${ifPresent(ariaLabel)}
-        ?aria-hidden=${ariaHidden}
-    />`;
+    return html`${ThemedImage({
+        "src": resolvedSrc,
+        alt,
+        "aria-hidden": ariaHidden,
+        "aria-label": ariaLabel,
+        className,
+        part,
+        "role": ariaHidden ? undefined : "img",
+        "theme": theme ?? "light",
+    })}`;
 }
 
 export function isDefaultAvatar(path?: string | null): boolean {
