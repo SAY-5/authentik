@@ -5215,6 +5215,11 @@
                     "type": "string",
                     "title": "Group"
                 },
+                "meta_hide": {
+                    "type": "boolean",
+                    "title": "Meta hide",
+                    "description": "Hide this application from the user dashboard."
+                },
                 "icon": {
                     "type": "string",
                     "minLength": 1,
