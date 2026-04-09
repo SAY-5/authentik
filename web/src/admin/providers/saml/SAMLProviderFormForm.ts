@@ -129,8 +129,8 @@ function renderHasSlsUrl(
         </ak-radio-input>`;
 }
 export interface SAMLProviderFormProps {
-    provider?: Partial<SAMLProvider>;
-    errors?: ValidationError;
+    provider?: Partial<SAMLProvider> | null;
+    errors?: ValidationError | null;
     setHasSigningKp: (ev: InputEvent) => void;
     hasSigningKp: boolean;
     signingKeyType: KeyTypeEnum | null;
@@ -143,8 +143,8 @@ export interface SAMLProviderFormProps {
 }
 
 export function renderForm({
-    provider = {},
-    errors = {},
+    provider,
+    errors,
     setHasSigningKp,
     hasSigningKp,
     signingKeyType,
@@ -155,6 +155,9 @@ export function renderForm({
     logoutMethod,
     setLogoutMethod,
 }: SAMLProviderFormProps) {
+    provider ||= {};
+    errors ||= {};
+
     // Get available hash algorithms for the selected key type
     const keyType = signingKeyType ?? KeyTypeEnum.Rsa;
 

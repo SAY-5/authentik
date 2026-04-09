@@ -9,8 +9,8 @@ import "@patternfly/elements/pf-tooltip/pf-tooltip.js";
 
 import { DEFAULT_CONFIG } from "#common/api/config";
 
+import { renderModal } from "#elements/dialogs";
 import { AKFormSubmitEvent, Form } from "#elements/forms/Form";
-import { renderModal } from "#elements/modals/utils";
 import { PaginatedResponse, Table, TableColumn } from "#elements/table/Table";
 import { SlottedTemplateResult } from "#elements/types";
 import { ifPresent } from "#elements/utils/attributes";
@@ -27,8 +27,8 @@ import { customElement, property, state } from "lit/decorators.js";
 
 @customElement("ak-add-related-role-form")
 export class AddRelatedRoleForm extends Form<{ roles: string[] }> {
-    public override entitySingular = msg("Role");
-    public override entityPlural = msg("Roles");
+    public static override verboseName = msg("Role");
+    public static override verboseNamePlural = msg("Roles");
 
     #api = new RbacApi(DEFAULT_CONFIG);
 
@@ -245,7 +245,7 @@ export class RelatedRoleTable extends Table<Role> {
             html`<button
                 class="pf-c-button pf-m-plain"
                 type="button"
-                ${RoleForm.asEditModalInvoker(item.pk)}
+                ${RoleForm.asInstanceInvoker(item.pk)}
             >
                 <pf-tooltip position="top" content=${msg("Edit")}>
                     <i class="fas fa-edit" aria-hidden="true"></i>

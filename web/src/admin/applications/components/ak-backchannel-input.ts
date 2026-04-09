@@ -5,8 +5,8 @@ import "#elements/chips/ChipGroup";
 import "#elements/forms/Form";
 
 import { AKElement } from "#elements/Base";
+import { renderModal } from "#elements/dialogs";
 import { AKFormSubmitEvent } from "#elements/forms/Form";
-import { renderModal } from "#elements/modals/utils";
 import { SlottedTemplateResult } from "#elements/types";
 
 import { Provider } from "@goauthentik/api";

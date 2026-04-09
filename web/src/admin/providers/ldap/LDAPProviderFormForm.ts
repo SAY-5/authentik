@@ -39,12 +39,14 @@ import { ifDefined } from "lit/directives/if-defined.js";
 // Authentication flows, but we're storing them in the Authorization field of the target Provider.
 
 export interface LDAPProviderFormProps {
-    provider?: Partial<LDAPProvider>;
+    provider?: Partial<LDAPProvider> | null;
     errors?: ValidationError;
     brand?: CurrentBrand;
 }
 
-export function renderForm({ provider = {}, errors = {}, brand }: LDAPProviderFormProps) {
+export function renderForm({ provider, errors = {}, brand }: LDAPProviderFormProps) {
+    provider ||= {};
+
     return html`
         <ak-text-input
             name="name"

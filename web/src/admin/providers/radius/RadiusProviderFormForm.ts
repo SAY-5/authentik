@@ -36,9 +36,9 @@ const clientNetworksHelp = msg(
 );
 
 export interface RADIUSProviderFormProps {
-    provider?: Partial<RadiusProvider>;
-    errors?: ValidationError;
-    brand?: CurrentBrand;
+    provider?: Partial<RadiusProvider> | null;
+    errors?: ValidationError | null;
+    brand?: CurrentBrand | null;
 }
 
 // All Provider objects have an Authorization flow, but not all providers have an Authentication
@@ -48,7 +48,10 @@ export interface RADIUSProviderFormProps {
 // weird-- we're looking up Authentication flows, but we're storing them in the Authorization
 // field of the target Provider.
 
-export function renderForm({ provider = {}, errors = {}, brand }: RADIUSProviderFormProps) {
+export function renderForm({ provider, errors, brand }: RADIUSProviderFormProps) {
+    provider ||= {};
+    errors ||= {};
+
     return html`
         <ak-text-input
             name="name"

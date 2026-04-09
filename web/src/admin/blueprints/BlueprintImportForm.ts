@@ -4,6 +4,7 @@ import "#elements/forms/HorizontalFormElement";
 import "#components/ak-toggle-group";
 
 import { DEFAULT_CONFIG } from "#common/api/config";
+import { PFSize } from "#common/enums";
 
 import { Form } from "#elements/forms/Form";
 import { PreventFormSubmit } from "#elements/forms/helpers";
@@ -33,6 +34,12 @@ import PFDescriptionList from "@patternfly/patternfly/components/DescriptionList
 @customElement("ak-blueprint-import-form")
 export class BlueprintImportForm extends Form<ManagedBlueprintsImportCreateRequest> {
     static styles: CSSResult[] = [...super.styles, PFDescriptionList, PFBanner];
+
+    public static override verboseName = msg("Blueprint");
+    public static override verboseNamePlural = msg("Blueprints");
+    public static override createLabel = msg("Import");
+
+    public override size = PFSize.Medium;
 
     @state()
     protected result: BlueprintImportResult | null = null;
@@ -98,6 +105,11 @@ export class BlueprintImportForm extends Form<ManagedBlueprintsImportCreateReque
             </ak-toggle-group>
             ${this.source === BlueprintSource.Upload
                 ? html`
+                      ${this.findSlotted("banner-warning")
+                          ? html`<div class="pf-c-banner pf-m-warning" slot="above-form">
+                                <slot name="banner-warning"></slot>
+                            </div>`
+                          : null}
                       <ak-form-element-horizontal name="blueprint">
                           ${AKLabel(
                               {
@@ -123,24 +135,20 @@ export class BlueprintImportForm extends Form<ManagedBlueprintsImportCreateReque
                                       ".yaml files, which can be found in the Example Flows documentation",
                                   )}
                               </p>
-                              ${this.hasSlotted("read-more-link")
+                              ${this.findSlotted("read-more-link")
                                   ? html`<p class="pf-c-form__helper-text">
                                         ${msg("Read more about")}&nbsp;
                                         <slot name="read-more-link"></slot>
                                     </p>`
-                                  : nothing}
+                                  : null}
                           </div>
                       </ak-form-element-horizontal>
-                      ${this.hasSlotted("banner-warning")
-                          ? html`<div class="pf-c-banner pf-m-warning" slot="above-form">
-                                <slot name="banner-warning"></slot>
-                            </div>`
-                          : nothing}
                   `
-                : nothing}
+                : null}
             ${this.source === BlueprintSource.File
                 ? html`<ak-form-element-horizontal label=${msg("Path")} name="path">
                       <ak-search-select
+                          placeholder=${msg("Select a blueprint...")}
                           .fetchObjects=${async (query?: string): Promise<BlueprintFile[]> => {
                               const items = await new ManagedApi(
                                   DEFAULT_CONFIG,

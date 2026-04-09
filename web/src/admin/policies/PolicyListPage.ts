@@ -1,5 +1,5 @@
 import "#admin/policies/PolicyTestForm";
-import "#admin/policies/PolicyWizard";
+import "#admin/policies/ak-policy-wizard";
 import "#admin/policies/dummy/DummyPolicyForm";
 import "#admin/policies/event_matcher/EventMatcherPolicyForm";
 import "#admin/policies/expiry/ExpiryPolicyForm";
@@ -15,14 +15,17 @@ import "@patternfly/elements/pf-tooltip/pf-tooltip.js";
 
 import { DEFAULT_CONFIG } from "#common/api/config";
 
-import { CustomFormElementTagName } from "#elements/forms/unsafe";
+import { IconEditButtonByTagName, modalInvoker } from "#elements/dialogs";
+import { IconPermissionButton } from "#elements/dialogs/components/IconPermissionButton";
 import { PFColor } from "#elements/Label";
 import { PaginatedResponse, TableColumn } from "#elements/table/Table";
 import { TablePage } from "#elements/table/TablePage";
 import { SlottedTemplateResult } from "#elements/types";
-import { StrictUnsafe } from "#elements/utils/unsafe";
 
-import { PoliciesApi, Policy } from "@goauthentik/api";
+import { PolicyWizard } from "#admin/policies/ak-policy-wizard";
+import { PolicyTestForm } from "#admin/policies/PolicyTestForm";
+
+import { ModelEnum, PoliciesApi, Policy } from "@goauthentik/api";
 
 import { msg, str } from "@lit/localize";
 import { html, TemplateResult } from "lit";
@@ -65,34 +68,28 @@ export class PolicyListPage extends TablePage<Policy> {
                           ${msg("Warning: Policy is not assigned.")}
                       </ak-label>`}`,
             html`${item.verboseName}`,
-            html`<ak-forms-modal>
-                    ${StrictUnsafe<CustomFormElementTagName>(item.component, {
-                        slot: "form",
-                        instancePk: item.pk,
-                        submitLabel: msg("Save Changes"),
-                        headline: msg(str`Update ${item.verboseName}`, {
-                            id: "form.headline.update",
-                        }),
-                    })}
-                    <button slot="trigger" class="pf-c-button pf-m-plain">
-                        <pf-tooltip position="top" content=${msg("Edit")}>
-                            <i class="fas fa-edit" aria-hidden="true"></i>
-                        </pf-tooltip>
-                    </button>
-                </ak-forms-modal>
+            html`<div class="ak-c-table__actions">
+                ${IconEditButtonByTagName(item.component, item.pk)}
+                ${IconPermissionButton(item.name, {
+                    model: item.metaModelName as ModelEnum,
+                    objectPk: item.pk,
+                })}
 
-                <ak-rbac-object-permission-modal model=${item.metaModelName} objectPk=${item.pk}>
-                </ak-rbac-object-permission-modal>
-                <ak-forms-modal .closeAfterSuccessfulSubmit=${false}>
-                    <span slot="submit">${msg("Test")}</span>
-                    <span slot="header">${msg("Test Policy")}</span>
-                    <ak-policy-test-form slot="form" .policy=${item}> </ak-policy-test-form>
-                    <button slot="trigger" class="pf-c-button pf-m-plain">
-                        <pf-tooltip position="top" content=${msg("Test")}>
-                            <i class="fas fa-vial" aria-hidden="true"></i>
-                        </pf-tooltip>
-                    </button>
-                </ak-forms-modal>`,
+                <button
+                    class="pf-c-button pf-m-plain"
+                    ${modalInvoker(
+                        PolicyTestForm,
+                        { policy: item },
+                        {
+                            closedBy: "closerequest",
+                        },
+                    )}
+                >
+                    <pf-tooltip position="top" content=${msg("Test")}>
+                        <i class="fas fa-vial" aria-hidden="true"></i>
+                    </pf-tooltip>
+                </button>
+            </div>`,
         ];
     }
 
@@ -118,8 +115,17 @@ export class PolicyListPage extends TablePage<Policy> {
         </ak-forms-delete-bulk>`;
     }
 
-    renderObjectCreate(): TemplateResult {
-        return html`<ak-policy-wizard> </ak-policy-wizard>`;
+    protected override renderObjectCreate(): SlottedTemplateResult {
+        return html`
+            <button
+                class="pf-c-button pf-m-primary"
+                type="button"
+                aria-description="${msg("Open the wizard to create a new policy.")}"
+                ${PolicyWizard.asModalInvoker()}
+            >
+                ${msg("New Policy")}
+            </button>
+        `;
     }
 
     renderToolbar(): TemplateResult {

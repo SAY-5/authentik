@@ -132,8 +132,10 @@ export class AkSlugInput extends HorizontalLightComponent<string> {
             id=${ifDefined(this.fieldID)}
             @input=${(ev: Event) => this.handleTouch(ev)}
             type="text"
+            spellcheck="false"
+            autocomplete="off"
             value=${ifDefined(this.value)}
-            class="pf-c-form-control"
+            class="pf-c-form-control pf-m-monospace"
             ?required=${this.required}
             placeholder=${ifPresent(this.placeholder)}
         />`;

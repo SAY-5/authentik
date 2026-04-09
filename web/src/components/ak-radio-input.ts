@@ -5,11 +5,13 @@ import { HorizontalLightComponent } from "./HorizontalLightComponent.js";
 import { RadioChangeEventDetail, RadioOption } from "#elements/forms/Radio";
 import { SlottedTemplateResult } from "#elements/types";
 
+import type { Jsonifiable } from "type-fest";
+
 import { html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
 @customElement("ak-radio-input")
-export class AkRadioInput<T> extends HorizontalLightComponent<T> {
+export class AkRadioInput<T extends Jsonifiable> extends HorizontalLightComponent<T> {
     public override role = "radiogroup";
 
     @property({ type: Object })
@@ -42,7 +44,7 @@ export class AkRadioInput<T> extends HorizontalLightComponent<T> {
 
 declare global {
     interface HTMLElementTagNameMap {
-        "ak-radio-input": AkRadioInput<unknown>;
+        "ak-radio-input": AkRadioInput<Jsonifiable>;
     }
 }
 

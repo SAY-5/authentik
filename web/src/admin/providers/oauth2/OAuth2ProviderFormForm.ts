@@ -135,8 +135,8 @@ type ShowClientSecret = (show: boolean) => void;
 type ShowLogoutMethod = (show: boolean) => void;
 
 export interface OAuth2ProviderFormProps {
-    provider?: Partial<OAuth2Provider>;
-    errors?: ValidationError;
+    provider?: Partial<OAuth2Provider> | null;
+    errors?: ValidationError | null;
     showClientSecret?: boolean;
     showClientSecretCallback?: ShowClientSecret;
     showLogoutMethod: boolean;
@@ -144,13 +144,15 @@ export interface OAuth2ProviderFormProps {
 }
 
 export function renderForm({
-    provider = {},
-    errors = {},
+    provider,
+    errors,
     showClientSecret = false,
     showClientSecretCallback = (_show) => undefined,
     showLogoutMethod = false,
     showLogoutMethodCallback = (_show) => undefined,
 }: OAuth2ProviderFormProps) {
+    provider ||= {};
+    errors ||= {};
     return html` <ak-text-input
             name="name"
             placeholder=${msg("Type a provider name...")}

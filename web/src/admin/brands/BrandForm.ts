@@ -36,6 +36,9 @@ import { customElement } from "lit/decorators.js";
 
 @customElement("ak-brand-form")
 export class BrandForm extends ModelForm<Brand, string> {
+    public static override verboseName = msg("Brand");
+    public static override verboseNamePlural = msg("Brands");
+
     loadInstance(pk: string): Promise<Brand> {
         return new CoreApi(DEFAULT_CONFIG).coreBrandsRetrieve({
             brandUuid: pk,

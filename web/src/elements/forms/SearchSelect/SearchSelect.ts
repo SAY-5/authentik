@@ -30,7 +30,7 @@ export interface ISearchSelectBase<T> {
     query?: string;
     objects?: T[];
     selectedObject: T | null;
-    name?: string;
+    name?: string | null;
     placeholder: string | null;
     emptyOption?: string;
 }
@@ -128,8 +128,8 @@ export abstract class SearchSelectBase<T>
      * Used to inform the form of the name of the object
      * @property
      */
-    @property()
-    public name?: string;
+    @property({ type: String })
+    public name: string | null = null;
 
     /**
      * A unique ID to associate with the input and label.

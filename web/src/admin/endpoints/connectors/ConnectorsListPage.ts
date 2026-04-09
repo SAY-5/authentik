@@ -7,15 +7,16 @@ import "#elements/forms/ModalForm";
 
 import { DEFAULT_CONFIG } from "#common/api/config";
 
-import { CustomFormElementTagName } from "#elements/forms/unsafe";
+import { IconEditButtonByTagName } from "#elements/dialogs";
 import { PaginatedResponse, TableColumn } from "#elements/table/Table";
 import { TablePage } from "#elements/table/TablePage";
 import { SlottedTemplateResult } from "#elements/types";
-import { StrictUnsafe } from "#elements/utils/unsafe";
+
+import { AKEndpointConnectorWizard } from "#admin/endpoints/connectors/ConnectorWizard";
 
 import { Connector, EndpointsApi } from "@goauthentik/api";
 
-import { msg, str } from "@lit/localize";
+import { msg } from "@lit/localize";
 import { html } from "lit";
 import { customElement } from "lit/decorators.js";
 
@@ -45,32 +46,25 @@ export class ConnectorsListPage extends TablePage<Connector> {
     row(item: Connector): SlottedTemplateResult[] {
         return [
             html`<a href="#/endpoints/connectors/${item.connectorUuid}">${item.name}</a>`,
-            html`${item.verboseName}`,
-            html`<div>
-                <ak-forms-modal>
-                    ${StrictUnsafe<CustomFormElementTagName>(item.component, {
-                        slot: "form",
-                        instancePk: item.connectorUuid,
-                        submitLabel: msg("Save Changes"),
-                        headline: msg(str`Update ${item.verboseName}`, {
-                            id: "form.headline.update",
-                        }),
-                    })}
-                    <button slot="trigger" class="pf-c-button pf-m-plain">
-                        <pf-tooltip position="top" content=${msg("Edit")}>
-                            <i class="fas fa-edit" aria-hidden="true"></i>
-                        </pf-tooltip>
-                    </button>
-                </ak-forms-modal>
+            item.verboseName,
+            html`<div class="ak-c-table__actions">
+                ${IconEditButtonByTagName(item.component, item.connectorUuid, item.verboseName)}
             </div>`,
         ];
     }
 
-    renderObjectCreate() {
-        return html`<ak-endpoint-connector-wizard></ak-endpoint-connector-wizard> `;
+    protected override renderObjectCreate(): SlottedTemplateResult {
+        return html`<button
+            class="pf-c-button pf-m-primary"
+            type="button"
+            aria-description="${msg("Open the wizard to create a new connector.")}"
+            ${AKEndpointConnectorWizard.asModalInvoker()}
+        >
+            ${msg("New Connector")}
+        </button>`;
     }
 
-    renderToolbarSelected() {
+    protected override renderToolbarSelected() {
         const disabled = this.selectedElements.length < 1;
         return html`<ak-forms-delete-bulk
             object-label=${msg("Connector(s)")}

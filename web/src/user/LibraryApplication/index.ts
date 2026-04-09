@@ -3,7 +3,7 @@ import "#user/LibraryApplication/RACLaunchEndpointModal";
 
 import { PFSize } from "#common/enums";
 
-import { renderModal } from "#elements/modals/utils";
+import { renderModal } from "#elements/dialogs";
 import { LitFC } from "#elements/types";
 import { ifPresent } from "#elements/utils/attributes";
 

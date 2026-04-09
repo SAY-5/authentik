@@ -1,5 +1,6 @@
 import "#components/ak-file-search-input";
 import "#components/ak-slug-input";
+import "#components/ak-text-input";
 import "#components/ak-switch-input";
 import "#elements/forms/FormGroup";
 import "#elements/forms/HorizontalFormElement";
@@ -35,48 +36,55 @@ import { ifDefined } from "lit/directives/if-defined.js";
  */
 @customElement("ak-flow-form")
 export class FlowForm extends WithCapabilitiesConfig(ModelForm<Flow, string>) {
-    async loadInstance(pk: string): Promise<Flow> {
-        return new FlowsApi(DEFAULT_CONFIG).flowsInstancesRetrieve({
+    public static override verboseName = msg("Flow");
+    public static override verboseNamePlural = msg("Flows");
+
+    #api = new FlowsApi(DEFAULT_CONFIG);
+
+    protected override async loadInstance(pk: string): Promise<Flow> {
+        return this.#api.flowsInstancesRetrieve({
             slug: pk,
         });
     }
 
-    getSuccessMessage(): string {
+    public override getSuccessMessage(): string {
         return this.instance
             ? msg("Successfully updated flow.")
             : msg("Successfully created flow.");
     }
 
-    async send(data: Flow): Promise<void | Flow> {
+    protected override async send(data: Flow): Promise<void | Flow> {
         if (this.instance) {
-            return new FlowsApi(DEFAULT_CONFIG).flowsInstancesUpdate({
+            return this.#api.flowsInstancesUpdate({
                 slug: this.instance.slug,
                 flowRequest: data,
             });
         }
-        return new FlowsApi(DEFAULT_CONFIG).flowsInstancesCreate({
+
+        return this.#api.flowsInstancesCreate({
             flowRequest: data,
         });
     }
 
     protected override renderForm(): TemplateResult {
-        return html` <ak-form-element-horizontal label=${msg("Name")} required name="name">
-                <input
-                    type="text"
-                    value="${ifDefined(this.instance?.name)}"
-                    class="pf-c-form-control"
-                    required
-                />
-            </ak-form-element-horizontal>
-            <ak-form-element-horizontal label=${msg("Title")} required name="title">
-                <input
-                    type="text"
-                    value="${ifDefined(this.instance?.title)}"
-                    class="pf-c-form-control"
-                    required
-                />
-                <p class="pf-c-form__helper-text">${msg("Shown as the Title in Flow pages.")}</p>
-            </ak-form-element-horizontal>
+        return html`<ak-text-input
+                label=${msg("Flow Name")}
+                placeholder=${msg("Type a name for this flow...")}
+                autofocus
+                autocomplete="off"
+                required
+                name="name"
+                value="${ifDefined(this.instance?.name)}"
+            ></ak-text-input>
+            <ak-text-input
+                label=${msg("Title")}
+                placeholder=${msg("Type a title for this flow...")}
+                help=${msg("Shown as the Title in Flow pages.")}
+                autocomplete="off"
+                required
+                name="title"
+                value="${ifDefined(this.instance?.title)}"
+            ></ak-text-input>
 
             <ak-slug-input
                 name="slug"
@@ -89,9 +97,7 @@ export class FlowForm extends WithCapabilitiesConfig(ModelForm<Flow, string>) {
 
             <ak-form-element-horizontal label=${msg("Designation")} required name="designation">
                 <select class="pf-c-form-control">
-                    <option value="" ?selected=${this.instance?.designation === undefined}>
-                        ---------
-                    </option>
+                    <option value="" ?selected=${!this.instance?.designation}>---------</option>
                     <option
                         value=${FlowDesignationEnum.Authentication}
                         ?selected=${this.instance?.designation ===
