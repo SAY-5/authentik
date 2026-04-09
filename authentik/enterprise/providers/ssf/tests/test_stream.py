@@ -96,7 +96,7 @@ class TestStream(APITestCase):
         )
         self.assertEqual(res.status_code, 204)
         stream.refresh_from_db()
-        self.assertEqual(stream.status, StreamStatus.DISABLED)
+        self.assertEqual(stream.status, StreamStatus.DISABLED_DELETED)
 
     def test_stream_get(self):
         """get stream"""

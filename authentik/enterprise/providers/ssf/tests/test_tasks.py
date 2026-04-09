@@ -81,7 +81,7 @@ class TestTasks(APITestCase):
             delivery_method=DeliveryMethods.RFC_PUSH,
             endpoint_url="http://localhost/ssf-push",
             authorization_header=auth,
-            status=StreamStatus.DISABLED,
+            status=StreamStatus.DISABLED_DELETED,
         )
         event_data = stream.prepare_event_payload(
             EventTypes.SET_VERIFICATION,
