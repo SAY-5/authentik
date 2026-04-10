@@ -304,6 +304,46 @@
                     ],
                     "properties": {
                         "model": {
+                            "const": "authentik_core.objectattribute"
+                        },
+                        "id": {
+                            "type": "string"
+                        },
+                        "state": {
+                            "type": "string",
+                            "enum": [
+                                "absent",
+                                "created",
+                                "must_created",
+                                "present"
+                            ],
+                            "default": "present"
+                        },
+                        "conditions": {
+                            "type": "array",
+                            "items": {
+                                "type": "boolean"
+                            }
+                        },
+                        "permissions": {
+                            "$ref": "#/$defs/model_authentik_core.objectattribute_permissions"
+                        },
+                        "attrs": {
+                            "$ref": "#/$defs/model_authentik_core.objectattribute"
+                        },
+                        "identifiers": {
+                            "$ref": "#/$defs/model_authentik_core.objectattribute"
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "model",
+                        "identifiers"
+                    ],
+                    "properties": {
+                        "model": {
                             "const": "authentik_core.token"
                         },
                         "id": {
@@ -5370,6 +5410,92 @@
                 }
             }
         },
+        "model_authentik_core.objectattribute": {
+            "type": "object",
+            "properties": {
+                "attribute_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "title": "Attribute id"
+                },
+                "managed": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "minLength": 1,
+                    "title": "Managed by authentik",
+                    "description": "Objects that are managed by authentik. These objects are created and updated automatically. This flag only indicates that an object can be overwritten by migrations. You can still modify the objects via the API, but expect changes to be overwritten in a later update."
+                },
+                "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "Label"
+                },
+                "key": {
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "Key"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "text",
+                        "number",
+                        "boolean"
+                    ],
+                    "title": "Type"
+                },
+                "flag_unique": {
+                    "type": "boolean",
+                    "title": "Flag unique"
+                },
+                "flag_required": {
+                    "type": "boolean",
+                    "title": "Flag required"
+                },
+                "regex": {
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "Regex"
+                },
+                "is_array": {
+                    "type": "boolean",
+                    "title": "Is array"
+                },
+                "object_type": {
+                    "type": "integer",
+                    "title": "Object type"
+                }
+            },
+            "required": []
+        },
+        "model_authentik_core.objectattribute_permissions": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "permission"
+                ],
+                "properties": {
+                    "permission": {
+                        "type": "string",
+                        "enum": [
+                            "add_objectattribute",
+                            "change_objectattribute",
+                            "delete_objectattribute",
+                            "view_objectattribute"
+                        ]
+                    },
+                    "user": {
+                        "type": "integer"
+                    },
+                    "role": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "model_authentik_core.token": {
             "type": "object",
             "properties": {
@@ -5552,6 +5678,7 @@
                             "authentik_core.add_groupancestrynode",
                             "authentik_core.add_groupparentagenode",
                             "authentik_core.add_groupsourceconnection",
+                            "authentik_core.add_objectattribute",
                             "authentik_core.add_propertymapping",
                             "authentik_core.add_provider",
                             "authentik_core.add_source",
@@ -5566,6 +5693,7 @@
                             "authentik_core.change_groupancestrynode",
                             "authentik_core.change_groupparentagenode",
                             "authentik_core.change_groupsourceconnection",
+                            "authentik_core.change_objectattribute",
                             "authentik_core.change_propertymapping",
                             "authentik_core.change_provider",
                             "authentik_core.change_source",
@@ -5579,6 +5707,7 @@
                             "authentik_core.delete_groupancestrynode",
                             "authentik_core.delete_groupparentagenode",
                             "authentik_core.delete_groupsourceconnection",
+                            "authentik_core.delete_objectattribute",
                             "authentik_core.delete_propertymapping",
                             "authentik_core.delete_provider",
                             "authentik_core.delete_source",
@@ -5599,6 +5728,7 @@
                             "authentik_core.view_groupancestrynode",
                             "authentik_core.view_groupparentagenode",
                             "authentik_core.view_groupsourceconnection",
+                            "authentik_core.view_objectattribute",
                             "authentik_core.view_propertymapping",
                             "authentik_core.view_provider",
                             "authentik_core.view_source",
@@ -8954,6 +9084,7 @@
                         "authentik_core.application",
                         "authentik_core.applicationentitlement",
                         "authentik_core.token",
+                        "authentik_core.objectattribute",
                         "authentik_crypto.certificatekeypair",
                         "authentik_endpoints.deviceuserbinding",
                         "authentik_endpoints.deviceaccessgroup",
@@ -11219,6 +11350,7 @@
                             "authentik_core.add_groupancestrynode",
                             "authentik_core.add_groupparentagenode",
                             "authentik_core.add_groupsourceconnection",
+                            "authentik_core.add_objectattribute",
                             "authentik_core.add_propertymapping",
                             "authentik_core.add_provider",
                             "authentik_core.add_source",
@@ -11233,6 +11365,7 @@
                             "authentik_core.change_groupancestrynode",
                             "authentik_core.change_groupparentagenode",
                             "authentik_core.change_groupsourceconnection",
+                            "authentik_core.change_objectattribute",
                             "authentik_core.change_propertymapping",
                             "authentik_core.change_provider",
                             "authentik_core.change_source",
@@ -11246,6 +11379,7 @@
                             "authentik_core.delete_groupancestrynode",
                             "authentik_core.delete_groupparentagenode",
                             "authentik_core.delete_groupsourceconnection",
+                            "authentik_core.delete_objectattribute",
                             "authentik_core.delete_propertymapping",
                             "authentik_core.delete_provider",
                             "authentik_core.delete_source",
@@ -11266,6 +11400,7 @@
                             "authentik_core.view_groupancestrynode",
                             "authentik_core.view_groupparentagenode",
                             "authentik_core.view_groupsourceconnection",
+                            "authentik_core.view_objectattribute",
                             "authentik_core.view_propertymapping",
                             "authentik_core.view_provider",
                             "authentik_core.view_source",

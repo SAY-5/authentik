@@ -11,13 +11,21 @@ import { DEFAULT_CONFIG } from "#common/api/config";
 import { ModelForm } from "#elements/forms/ModelForm";
 import { RadioOption } from "#elements/forms/Radio";
 
-import { CoreApi, Group, RbacApi, Role, User, UserTypeEnum } from "@goauthentik/api";
-
-import YAML from "yaml";
+import {
+    CoreApi,
+    Group,
+    ModelEnum,
+    ObjectAttribute,
+    ObjectAttributeTypeEnum,
+    RbacApi,
+    Role,
+    User,
+    UserTypeEnum,
+} from "@goauthentik/api";
 
 import { msg, str } from "@lit/localize";
 import { css, CSSResult, html, TemplateResult } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 
 const UserTypeOptions: readonly RadioOption<UserTypeEnum>[] = [
@@ -42,6 +50,7 @@ const UserTypeOptions: readonly RadioOption<UserTypeEnum>[] = [
         description: html`${msg("Machine-to-machine authentication or other automations.")}`,
     },
 ];
+
 @customElement("ak-user-form")
 export class UserForm extends ModelForm<User, number> {
     public override entitySingular = msg("User");
@@ -55,6 +64,9 @@ export class UserForm extends ModelForm<User, number> {
 
     @property()
     defaultPath: string = "users";
+
+    @state()
+    objAttributes: ObjectAttribute[] = [];
 
     static get defaultUserAttributes(): { [key: string]: unknown } {
         return {};
@@ -72,7 +84,14 @@ export class UserForm extends ModelForm<User, number> {
         `,
     ];
 
-    loadInstance(pk: number): Promise<User> {
+    async loadInstance(pk: number): Promise<User> {
+        const [app, model] = ModelEnum.AuthentikCoreUser.split(".");
+        this.objAttributes = (
+            await new CoreApi(DEFAULT_CONFIG).coreObjectAttributesList({
+                objectTypeAppLabel: app,
+                objectTypeModel: model,
+            })
+        ).results;
         return new CoreApi(DEFAULT_CONFIG).coreUsersRetrieve({
             id: pk,
         });
@@ -193,6 +212,23 @@ export class UserForm extends ModelForm<User, number> {
             >
             </ak-switch-input>
 
+            ${this.objAttributes.map((attr) => {
+                switch (attr.type) {
+                    case ObjectAttributeTypeEnum.Text:
+                        return html`<ak-text-input
+                            name="attributes.${attr.key}"
+                            label=${attr.label}
+                            autocomplete="off"
+                            value="${ifDefined((this.instance?.attributes || {})[attr.key])}"
+                            input-hint="code"
+                            ?required=${attr.flagRequired}
+                        ></ak-text-input>`;
+                    case ObjectAttributeTypeEnum.Number:
+                        return html``;
+                }
+                return html``;
+            })}
+
             <ak-text-input
                 name="path"
                 label=${msg("Path")}
@@ -211,20 +247,7 @@ export class UserForm extends ModelForm<User, number> {
                             "Paths may not start or end with a slash, but they can contain any other character as path segments. The paths are currently purely used for organization, it does not affect their permissions, group memberships, or anything else.",
                         )}
                     </p>`}
-            ></ak-text-input>
-
-            <ak-form-element-horizontal label=${msg("Attributes")} name="attributes">
-                <ak-codemirror
-                    mode="yaml"
-                    value="${YAML.stringify(
-                        this.instance?.attributes ?? UserForm.defaultUserAttributes,
-                    )}"
-                >
-                </ak-codemirror>
-                <p class="pf-c-form__helper-text">
-                    ${msg("Set custom attributes using YAML or JSON.")}
-                </p>
-            </ak-form-element-horizontal>`;
+            ></ak-text-input>`;
     }
 }
 

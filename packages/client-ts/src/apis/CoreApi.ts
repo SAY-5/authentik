@@ -28,11 +28,14 @@ import type {
     ImpersonationRequest,
     IntentEnum,
     Link,
+    ObjectAttribute,
+    ObjectAttributeRequest,
     PaginatedApplicationEntitlementList,
     PaginatedApplicationList,
     PaginatedAuthenticatedSessionList,
     PaginatedBrandList,
     PaginatedGroupList,
+    PaginatedObjectAttributeList,
     PaginatedTokenList,
     PaginatedUserConsentList,
     PaginatedUserList,
@@ -40,6 +43,7 @@ import type {
     PatchedApplicationRequest,
     PatchedBrandRequest,
     PatchedGroupRequest,
+    PatchedObjectAttributeRequest,
     PatchedTokenRequest,
     PatchedUserRequest,
     PolicyTestResult,
@@ -78,11 +82,14 @@ import {
     GroupRequestToJSON,
     ImpersonationRequestToJSON,
     LinkFromJSON,
+    ObjectAttributeFromJSON,
+    ObjectAttributeRequestToJSON,
     PaginatedApplicationEntitlementListFromJSON,
     PaginatedApplicationListFromJSON,
     PaginatedAuthenticatedSessionListFromJSON,
     PaginatedBrandListFromJSON,
     PaginatedGroupListFromJSON,
+    PaginatedObjectAttributeListFromJSON,
     PaginatedTokenListFromJSON,
     PaginatedUserConsentListFromJSON,
     PaginatedUserListFromJSON,
@@ -90,6 +97,7 @@ import {
     PatchedApplicationRequestToJSON,
     PatchedBrandRequestToJSON,
     PatchedGroupRequestToJSON,
+    PatchedObjectAttributeRequestToJSON,
     PatchedTokenRequestToJSON,
     PatchedUserRequestToJSON,
     PolicyTestResultFromJSON,
@@ -325,6 +333,41 @@ export interface CoreGroupsUpdateRequest {
 
 export interface CoreGroupsUsedByListRequest {
     groupUuid: string;
+}
+
+export interface CoreObjectAttributesCreateRequest {
+    objectAttributeRequest: ObjectAttributeRequest;
+}
+
+export interface CoreObjectAttributesDestroyRequest {
+    attributeId: string;
+}
+
+export interface CoreObjectAttributesListRequest {
+    objectTypeAppLabel?: string;
+    objectTypeModel?: string;
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+}
+
+export interface CoreObjectAttributesPartialUpdateRequest {
+    attributeId: string;
+    patchedObjectAttributeRequest?: PatchedObjectAttributeRequest;
+}
+
+export interface CoreObjectAttributesRetrieveRequest {
+    attributeId: string;
+}
+
+export interface CoreObjectAttributesUpdateRequest {
+    attributeId: string;
+    objectAttributeRequest: ObjectAttributeRequest;
+}
+
+export interface CoreObjectAttributesUsedByListRequest {
+    attributeId: string;
 }
 
 export interface CoreTokensCreateRequest {
@@ -3216,6 +3259,502 @@ export class CoreApi extends runtime.BaseAPI {
         initOverrides?: RequestInit | runtime.InitOverrideFunction,
     ): Promise<Array<UsedBy>> {
         const response = await this.coreGroupsUsedByListRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for coreObjectAttributesCreate without sending the request
+     */
+    async coreObjectAttributesCreateRequestOpts(
+        requestParameters: CoreObjectAttributesCreateRequest,
+    ): Promise<runtime.RequestOpts> {
+        if (requestParameters["objectAttributeRequest"] == null) {
+            throw new runtime.RequiredError(
+                "objectAttributeRequest",
+                'Required parameter "objectAttributeRequest" was null or undefined when calling coreObjectAttributesCreate().',
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters["Content-Type"] = "application/json";
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("authentik", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/core/object_attributes/`;
+
+        return {
+            path: urlPath,
+            method: "POST",
+            headers: headerParameters,
+            query: queryParameters,
+            body: ObjectAttributeRequestToJSON(requestParameters["objectAttributeRequest"]),
+        };
+    }
+
+    /**
+     * Mixin to add a used_by endpoint to return a list of all objects using this object
+     */
+    async coreObjectAttributesCreateRaw(
+        requestParameters: CoreObjectAttributesCreateRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<runtime.ApiResponse<ObjectAttribute>> {
+        const requestOptions = await this.coreObjectAttributesCreateRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) =>
+            ObjectAttributeFromJSON(jsonValue),
+        );
+    }
+
+    /**
+     * Mixin to add a used_by endpoint to return a list of all objects using this object
+     */
+    async coreObjectAttributesCreate(
+        requestParameters: CoreObjectAttributesCreateRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<ObjectAttribute> {
+        const response = await this.coreObjectAttributesCreateRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for coreObjectAttributesDestroy without sending the request
+     */
+    async coreObjectAttributesDestroyRequestOpts(
+        requestParameters: CoreObjectAttributesDestroyRequest,
+    ): Promise<runtime.RequestOpts> {
+        if (requestParameters["attributeId"] == null) {
+            throw new runtime.RequiredError(
+                "attributeId",
+                'Required parameter "attributeId" was null or undefined when calling coreObjectAttributesDestroy().',
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("authentik", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/core/object_attributes/{attribute_id}/`;
+        urlPath = urlPath.replace(
+            `{${"attribute_id"}}`,
+            encodeURIComponent(String(requestParameters["attributeId"])),
+        );
+
+        return {
+            path: urlPath,
+            method: "DELETE",
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Mixin to add a used_by endpoint to return a list of all objects using this object
+     */
+    async coreObjectAttributesDestroyRaw(
+        requestParameters: CoreObjectAttributesDestroyRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<runtime.ApiResponse<void>> {
+        const requestOptions = await this.coreObjectAttributesDestroyRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Mixin to add a used_by endpoint to return a list of all objects using this object
+     */
+    async coreObjectAttributesDestroy(
+        requestParameters: CoreObjectAttributesDestroyRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<void> {
+        await this.coreObjectAttributesDestroyRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Creates request options for coreObjectAttributesList without sending the request
+     */
+    async coreObjectAttributesListRequestOpts(
+        requestParameters: CoreObjectAttributesListRequest,
+    ): Promise<runtime.RequestOpts> {
+        const queryParameters: any = {};
+
+        if (requestParameters["objectTypeAppLabel"] != null) {
+            queryParameters["object_type__app_label"] = requestParameters["objectTypeAppLabel"];
+        }
+
+        if (requestParameters["objectTypeModel"] != null) {
+            queryParameters["object_type__model"] = requestParameters["objectTypeModel"];
+        }
+
+        if (requestParameters["ordering"] != null) {
+            queryParameters["ordering"] = requestParameters["ordering"];
+        }
+
+        if (requestParameters["page"] != null) {
+            queryParameters["page"] = requestParameters["page"];
+        }
+
+        if (requestParameters["pageSize"] != null) {
+            queryParameters["page_size"] = requestParameters["pageSize"];
+        }
+
+        if (requestParameters["search"] != null) {
+            queryParameters["search"] = requestParameters["search"];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("authentik", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/core/object_attributes/`;
+
+        return {
+            path: urlPath,
+            method: "GET",
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Mixin to add a used_by endpoint to return a list of all objects using this object
+     */
+    async coreObjectAttributesListRaw(
+        requestParameters: CoreObjectAttributesListRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<runtime.ApiResponse<PaginatedObjectAttributeList>> {
+        const requestOptions = await this.coreObjectAttributesListRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) =>
+            PaginatedObjectAttributeListFromJSON(jsonValue),
+        );
+    }
+
+    /**
+     * Mixin to add a used_by endpoint to return a list of all objects using this object
+     */
+    async coreObjectAttributesList(
+        requestParameters: CoreObjectAttributesListRequest = {},
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<PaginatedObjectAttributeList> {
+        const response = await this.coreObjectAttributesListRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for coreObjectAttributesPartialUpdate without sending the request
+     */
+    async coreObjectAttributesPartialUpdateRequestOpts(
+        requestParameters: CoreObjectAttributesPartialUpdateRequest,
+    ): Promise<runtime.RequestOpts> {
+        if (requestParameters["attributeId"] == null) {
+            throw new runtime.RequiredError(
+                "attributeId",
+                'Required parameter "attributeId" was null or undefined when calling coreObjectAttributesPartialUpdate().',
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters["Content-Type"] = "application/json";
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("authentik", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/core/object_attributes/{attribute_id}/`;
+        urlPath = urlPath.replace(
+            `{${"attribute_id"}}`,
+            encodeURIComponent(String(requestParameters["attributeId"])),
+        );
+
+        return {
+            path: urlPath,
+            method: "PATCH",
+            headers: headerParameters,
+            query: queryParameters,
+            body: PatchedObjectAttributeRequestToJSON(
+                requestParameters["patchedObjectAttributeRequest"],
+            ),
+        };
+    }
+
+    /**
+     * Mixin to add a used_by endpoint to return a list of all objects using this object
+     */
+    async coreObjectAttributesPartialUpdateRaw(
+        requestParameters: CoreObjectAttributesPartialUpdateRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<runtime.ApiResponse<ObjectAttribute>> {
+        const requestOptions =
+            await this.coreObjectAttributesPartialUpdateRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) =>
+            ObjectAttributeFromJSON(jsonValue),
+        );
+    }
+
+    /**
+     * Mixin to add a used_by endpoint to return a list of all objects using this object
+     */
+    async coreObjectAttributesPartialUpdate(
+        requestParameters: CoreObjectAttributesPartialUpdateRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<ObjectAttribute> {
+        const response = await this.coreObjectAttributesPartialUpdateRaw(
+            requestParameters,
+            initOverrides,
+        );
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for coreObjectAttributesRetrieve without sending the request
+     */
+    async coreObjectAttributesRetrieveRequestOpts(
+        requestParameters: CoreObjectAttributesRetrieveRequest,
+    ): Promise<runtime.RequestOpts> {
+        if (requestParameters["attributeId"] == null) {
+            throw new runtime.RequiredError(
+                "attributeId",
+                'Required parameter "attributeId" was null or undefined when calling coreObjectAttributesRetrieve().',
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("authentik", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/core/object_attributes/{attribute_id}/`;
+        urlPath = urlPath.replace(
+            `{${"attribute_id"}}`,
+            encodeURIComponent(String(requestParameters["attributeId"])),
+        );
+
+        return {
+            path: urlPath,
+            method: "GET",
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Mixin to add a used_by endpoint to return a list of all objects using this object
+     */
+    async coreObjectAttributesRetrieveRaw(
+        requestParameters: CoreObjectAttributesRetrieveRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<runtime.ApiResponse<ObjectAttribute>> {
+        const requestOptions =
+            await this.coreObjectAttributesRetrieveRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) =>
+            ObjectAttributeFromJSON(jsonValue),
+        );
+    }
+
+    /**
+     * Mixin to add a used_by endpoint to return a list of all objects using this object
+     */
+    async coreObjectAttributesRetrieve(
+        requestParameters: CoreObjectAttributesRetrieveRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<ObjectAttribute> {
+        const response = await this.coreObjectAttributesRetrieveRaw(
+            requestParameters,
+            initOverrides,
+        );
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for coreObjectAttributesUpdate without sending the request
+     */
+    async coreObjectAttributesUpdateRequestOpts(
+        requestParameters: CoreObjectAttributesUpdateRequest,
+    ): Promise<runtime.RequestOpts> {
+        if (requestParameters["attributeId"] == null) {
+            throw new runtime.RequiredError(
+                "attributeId",
+                'Required parameter "attributeId" was null or undefined when calling coreObjectAttributesUpdate().',
+            );
+        }
+
+        if (requestParameters["objectAttributeRequest"] == null) {
+            throw new runtime.RequiredError(
+                "objectAttributeRequest",
+                'Required parameter "objectAttributeRequest" was null or undefined when calling coreObjectAttributesUpdate().',
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters["Content-Type"] = "application/json";
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("authentik", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/core/object_attributes/{attribute_id}/`;
+        urlPath = urlPath.replace(
+            `{${"attribute_id"}}`,
+            encodeURIComponent(String(requestParameters["attributeId"])),
+        );
+
+        return {
+            path: urlPath,
+            method: "PUT",
+            headers: headerParameters,
+            query: queryParameters,
+            body: ObjectAttributeRequestToJSON(requestParameters["objectAttributeRequest"]),
+        };
+    }
+
+    /**
+     * Mixin to add a used_by endpoint to return a list of all objects using this object
+     */
+    async coreObjectAttributesUpdateRaw(
+        requestParameters: CoreObjectAttributesUpdateRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<runtime.ApiResponse<ObjectAttribute>> {
+        const requestOptions = await this.coreObjectAttributesUpdateRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) =>
+            ObjectAttributeFromJSON(jsonValue),
+        );
+    }
+
+    /**
+     * Mixin to add a used_by endpoint to return a list of all objects using this object
+     */
+    async coreObjectAttributesUpdate(
+        requestParameters: CoreObjectAttributesUpdateRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<ObjectAttribute> {
+        const response = await this.coreObjectAttributesUpdateRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for coreObjectAttributesUsedByList without sending the request
+     */
+    async coreObjectAttributesUsedByListRequestOpts(
+        requestParameters: CoreObjectAttributesUsedByListRequest,
+    ): Promise<runtime.RequestOpts> {
+        if (requestParameters["attributeId"] == null) {
+            throw new runtime.RequiredError(
+                "attributeId",
+                'Required parameter "attributeId" was null or undefined when calling coreObjectAttributesUsedByList().',
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("authentik", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/core/object_attributes/{attribute_id}/used_by/`;
+        urlPath = urlPath.replace(
+            `{${"attribute_id"}}`,
+            encodeURIComponent(String(requestParameters["attributeId"])),
+        );
+
+        return {
+            path: urlPath,
+            method: "GET",
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Get a list of all objects that use this object
+     */
+    async coreObjectAttributesUsedByListRaw(
+        requestParameters: CoreObjectAttributesUsedByListRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<runtime.ApiResponse<Array<UsedBy>>> {
+        const requestOptions =
+            await this.coreObjectAttributesUsedByListRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(UsedByFromJSON));
+    }
+
+    /**
+     * Get a list of all objects that use this object
+     */
+    async coreObjectAttributesUsedByList(
+        requestParameters: CoreObjectAttributesUsedByListRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<Array<UsedBy>> {
+        const response = await this.coreObjectAttributesUsedByListRaw(
+            requestParameters,
+            initOverrides,
+        );
         return await response.value();
     }
 

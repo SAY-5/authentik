@@ -27,6 +27,7 @@ const (
 	MODELENUM_AUTHENTIK_CORE_APPLICATION                                                  ModelEnum = "authentik_core.application"
 	MODELENUM_AUTHENTIK_CORE_APPLICATIONENTITLEMENT                                       ModelEnum = "authentik_core.applicationentitlement"
 	MODELENUM_AUTHENTIK_CORE_TOKEN                                                        ModelEnum = "authentik_core.token"
+	MODELENUM_AUTHENTIK_CORE_OBJECTATTRIBUTE                                              ModelEnum = "authentik_core.objectattribute"
 	MODELENUM_AUTHENTIK_CRYPTO_CERTIFICATEKEYPAIR                                         ModelEnum = "authentik_crypto.certificatekeypair"
 	MODELENUM_AUTHENTIK_ENDPOINTS_DEVICEUSERBINDING                                       ModelEnum = "authentik_endpoints.deviceuserbinding"
 	MODELENUM_AUTHENTIK_ENDPOINTS_DEVICEACCESSGROUP                                       ModelEnum = "authentik_endpoints.deviceaccessgroup"
@@ -152,6 +153,7 @@ var AllowedModelEnumEnumValues = []ModelEnum{
 	"authentik_core.application",
 	"authentik_core.applicationentitlement",
 	"authentik_core.token",
+	"authentik_core.objectattribute",
 	"authentik_crypto.certificatekeypair",
 	"authentik_endpoints.deviceuserbinding",
 	"authentik_endpoints.deviceaccessgroup",

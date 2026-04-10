@@ -13,6 +13,7 @@ from deepmerge import always_merger
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import AbstractUser, Permission
 from django.contrib.auth.models import UserManager as DjangoUserManager
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.sessions.base_session import AbstractBaseSession
 from django.core.validators import validate_slug
 from django.db import models
@@ -1345,3 +1346,38 @@ class AuthenticatedSession(SerializerModel):
             session=Session.objects.filter(session_key=request.session.session_key).first(),
             user=user,
         )
+
+
+class ObjectAttribute(SerializerModel, ManagedModel, CreatedUpdatedModel):
+    """User-defined schema for models' `attributes` JSON field."""
+
+    class AttributeType(models.TextChoices):
+        TEXT = "text"
+        NUMBER = "number"
+        BOOLEAN = "boolean"
+
+    attribute_id = models.UUIDField(default=uuid4, primary_key=True)
+
+    object_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    label = models.TextField()
+    key = models.TextField()
+
+    type = models.TextField(choices=AttributeType.choices)
+    flag_unique = models.BooleanField(default=False)
+    flag_required = models.BooleanField(default=False)
+    regex = models.TextField()
+    is_array = models.BooleanField(default=False)
+
+    @property
+    def serializer(self) -> type[Serializer]:
+        from authentik.core.api.object_attributes import ObjectAttributeSerializer
+
+        return ObjectAttributeSerializer
+
+    def __str__(self):
+        return f"Object attribute '{self.key}' for content type {self.object_type_id}"
+
+    class Meta:
+        verbose_name = _("Object Attribute")
+        verbose_name_plural = _("Object Attributes")
+        unique_together = (("object_type", "key"),)

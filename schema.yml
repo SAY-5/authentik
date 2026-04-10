@@ -3715,6 +3715,209 @@ paths:
           $ref: '#/components/responses/ValidationErrorResponse'
         '403':
           $ref: '#/components/responses/GenericErrorResponse'
+  /core/object_attributes/:
+    get:
+      operationId: core_object_attributes_list
+      description: Mixin to add a used_by endpoint to return a list of all objects
+        using this object
+      parameters:
+      - in: query
+        name: object_type__app_label
+        schema:
+          type: string
+      - in: query
+        name: object_type__model
+        schema:
+          type: string
+      - $ref: '#/components/parameters/QueryPaginationOrdering'
+      - $ref: '#/components/parameters/QueryPaginationPage'
+      - $ref: '#/components/parameters/QueryPaginationPageSize'
+      - $ref: '#/components/parameters/QuerySearch'
+      tags:
+      - core
+      security:
+      - authentik: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedObjectAttributeList'
+          description: ''
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
+        '403':
+          $ref: '#/components/responses/GenericErrorResponse'
+    post:
+      operationId: core_object_attributes_create
+      description: Mixin to add a used_by endpoint to return a list of all objects
+        using this object
+      tags:
+      - core
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ObjectAttributeRequest'
+        required: true
+      security:
+      - authentik: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectAttribute'
+          description: ''
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
+        '403':
+          $ref: '#/components/responses/GenericErrorResponse'
+  /core/object_attributes/{attribute_id}/:
+    get:
+      operationId: core_object_attributes_retrieve
+      description: Mixin to add a used_by endpoint to return a list of all objects
+        using this object
+      parameters:
+      - in: path
+        name: attribute_id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Object Attribute.
+        required: true
+      tags:
+      - core
+      security:
+      - authentik: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectAttribute'
+          description: ''
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
+        '403':
+          $ref: '#/components/responses/GenericErrorResponse'
+    put:
+      operationId: core_object_attributes_update
+      description: Mixin to add a used_by endpoint to return a list of all objects
+        using this object
+      parameters:
+      - in: path
+        name: attribute_id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Object Attribute.
+        required: true
+      tags:
+      - core
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ObjectAttributeRequest'
+        required: true
+      security:
+      - authentik: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectAttribute'
+          description: ''
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
+        '403':
+          $ref: '#/components/responses/GenericErrorResponse'
+    patch:
+      operationId: core_object_attributes_partial_update
+      description: Mixin to add a used_by endpoint to return a list of all objects
+        using this object
+      parameters:
+      - in: path
+        name: attribute_id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Object Attribute.
+        required: true
+      tags:
+      - core
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedObjectAttributeRequest'
+      security:
+      - authentik: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectAttribute'
+          description: ''
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
+        '403':
+          $ref: '#/components/responses/GenericErrorResponse'
+    delete:
+      operationId: core_object_attributes_destroy
+      description: Mixin to add a used_by endpoint to return a list of all objects
+        using this object
+      parameters:
+      - in: path
+        name: attribute_id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Object Attribute.
+        required: true
+      tags:
+      - core
+      security:
+      - authentik: []
+      responses:
+        '204':
+          description: No response body
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
+        '403':
+          $ref: '#/components/responses/GenericErrorResponse'
+  /core/object_attributes/{attribute_id}/used_by/:
+    get:
+      operationId: core_object_attributes_used_by_list
+      description: Get a list of all objects that use this object
+      parameters:
+      - in: path
+        name: attribute_id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Object Attribute.
+        required: true
+      tags:
+      - core
+      security:
+      - authentik: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UsedBy'
+          description: ''
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
+        '403':
+          $ref: '#/components/responses/GenericErrorResponse'
   /core/tokens/:
     get:
       operationId: core_tokens_list
@@ -42723,6 +42926,7 @@ components:
       - authentik_core.application
       - authentik_core.applicationentitlement
       - authentik_core.token
+      - authentik_core.objectattribute
       - authentik_crypto.certificatekeypair
       - authentik_endpoints.deviceuserbinding
       - authentik_endpoints.deviceaccessgroup
@@ -43994,6 +44198,103 @@ components:
       - name
       - provider_type
       - slug
+    ObjectAttribute:
+      type: object
+      properties:
+        attribute_id:
+          type: string
+          format: uuid
+        content_type:
+          allOf:
+          - $ref: '#/components/schemas/ContentType'
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        last_updated:
+          type: string
+          format: date-time
+          readOnly: true
+        managed:
+          type: string
+          nullable: true
+          title: Managed by authentik
+          description: Objects that are managed by authentik. These objects are created
+            and updated automatically. This flag only indicates that an object can
+            be overwritten by migrations. You can still modify the objects via the
+            API, but expect changes to be overwritten in a later update.
+        label:
+          type: string
+        key:
+          type: string
+        type:
+          $ref: '#/components/schemas/ObjectAttributeTypeEnum'
+        flag_unique:
+          type: boolean
+        flag_required:
+          type: boolean
+        regex:
+          type: string
+        is_array:
+          type: boolean
+        object_type:
+          type: integer
+      required:
+      - content_type
+      - created
+      - key
+      - label
+      - last_updated
+      - object_type
+      - regex
+      - type
+    ObjectAttributeRequest:
+      type: object
+      properties:
+        attribute_id:
+          type: string
+          format: uuid
+        managed:
+          type: string
+          nullable: true
+          minLength: 1
+          title: Managed by authentik
+          description: Objects that are managed by authentik. These objects are created
+            and updated automatically. This flag only indicates that an object can
+            be overwritten by migrations. You can still modify the objects via the
+            API, but expect changes to be overwritten in a later update.
+        label:
+          type: string
+          minLength: 1
+        key:
+          type: string
+          minLength: 1
+        type:
+          $ref: '#/components/schemas/ObjectAttributeTypeEnum'
+        flag_unique:
+          type: boolean
+        flag_required:
+          type: boolean
+        regex:
+          type: string
+          minLength: 1
+        is_array:
+          type: boolean
+        object_type:
+          type: integer
+      required:
+      - key
+      - label
+      - object_type
+      - regex
+      - type
+    ObjectAttributeTypeEnum:
+      enum:
+      - text
+      - number
+      - boolean
+      type: string
     OpenIDConnectConfiguration:
       type: object
       description: rest_framework Serializer for OIDC Configuration
@@ -45508,6 +45809,21 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/OAuthSourcePropertyMapping'
+        autocomplete:
+          $ref: '#/components/schemas/Autocomplete'
+      required:
+      - autocomplete
+      - pagination
+      - results
+    PaginatedObjectAttributeList:
+      type: object
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ObjectAttribute'
         autocomplete:
           $ref: '#/components/schemas/Autocomplete'
       required:
@@ -49225,6 +49541,40 @@ components:
           - $ref: '#/components/schemas/AuthorizationCodeAuthMethodEnum'
           description: How to perform authentication during an authorization_code
             token request flow
+    PatchedObjectAttributeRequest:
+      type: object
+      properties:
+        attribute_id:
+          type: string
+          format: uuid
+        managed:
+          type: string
+          nullable: true
+          minLength: 1
+          title: Managed by authentik
+          description: Objects that are managed by authentik. These objects are created
+            and updated automatically. This flag only indicates that an object can
+            be overwritten by migrations. You can still modify the objects via the
+            API, but expect changes to be overwritten in a later update.
+        label:
+          type: string
+          minLength: 1
+        key:
+          type: string
+          minLength: 1
+        type:
+          $ref: '#/components/schemas/ObjectAttributeTypeEnum'
+        flag_unique:
+          type: boolean
+        flag_required:
+          type: boolean
+        regex:
+          type: string
+          minLength: 1
+        is_array:
+          type: boolean
+        object_type:
+          type: integer
     PatchedOutpostRequest:
       type: object
       description: Outpost Serializer
