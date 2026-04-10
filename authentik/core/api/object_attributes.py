@@ -28,7 +28,7 @@ class ContentTypeSerializer(ModelSerializer):
 class ObjectAttributeSerializer(ModelSerializer):
 
     object_type = CharField()
-    object_type_obj = ContentTypeSerializer(read_only=True)
+    object_type_obj = ContentTypeSerializer(read_only=True, source="object_type")
 
     def validate_object_type(self, fqm: str) -> ContentType:
         app_label, _, model = fqm.partition(".")

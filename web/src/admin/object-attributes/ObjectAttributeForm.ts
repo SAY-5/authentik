@@ -87,7 +87,7 @@ export class ObjectAttributeForm extends ModelForm<ObjectAttribute, string> {
                 >
                 </ak-radio>
             </ak-form-element-horizontal>
-            <ak-form-element-horizontal label="Object type" name="contentType" required>
+            <ak-form-element-horizontal label="Object type" name="objectType" required>
                 <ak-search-select
                     .fetchObjects=${async (): Promise<App[]> => {
                         const args: AdminModelsListRequest = {
@@ -102,8 +102,7 @@ export class ObjectAttributeForm extends ModelForm<ObjectAttribute, string> {
                         return app?.name;
                     }}
                     .selected=${(app: App): boolean => {
-                        const fqm = `${this.instance?.contentType.appLabel}.${this.instance?.contentType.model}`;
-                        return app.name === fqm;
+                        return app.name === this.instance?.objectTypeObj.fullyQualifiedModel;
                     }}
                 >
                 </ak-search-select>

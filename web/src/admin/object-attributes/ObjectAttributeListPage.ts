@@ -10,11 +10,24 @@ import { PaginatedResponse, TableColumn } from "#elements/table/Table";
 import { TablePage } from "#elements/table/TablePage";
 import { SlottedTemplateResult } from "#elements/types";
 
-import { CoreApi, ObjectAttribute } from "@goauthentik/api";
+import { CoreApi, ObjectAttribute, ObjectAttributeTypeEnum } from "@goauthentik/api";
 
 import { msg } from "@lit/localize";
 import { html, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
+
+export function objectAttributeTypeToLabel(type?: ObjectAttributeTypeEnum): string {
+    if (!type) return "";
+    switch (type) {
+        case ObjectAttributeTypeEnum.Text:
+            return msg("Text");
+        case ObjectAttributeTypeEnum.Number:
+            return msg("Number");
+        case ObjectAttributeTypeEnum.Boolean:
+            return msg("Boolean");
+    }
+    return msg("Unknown type");
+}
 
 @customElement("ak-object-attribute-list")
 export class ObjectAttributeListPage extends TablePage<ObjectAttribute> {
@@ -84,9 +97,9 @@ export class ObjectAttributeListPage extends TablePage<ObjectAttribute> {
     row(item: ObjectAttribute): SlottedTemplateResult[] {
         return [
             html`${item.label}`,
-            html`${item.key}`,
-            html`${item.type}`,
-            html`${item.objectType}`,
+            html`<code>${item.key}</code>`,
+            html`${objectAttributeTypeToLabel(item.type)}`,
+            html`${item.objectTypeObj.verboseNamePlural}`,
             html`<ak-forms-modal>
                 <span slot="submit">${msg("Save Changes")}</span>
                 <span slot="header">${msg("Update Attribute")}</span>
