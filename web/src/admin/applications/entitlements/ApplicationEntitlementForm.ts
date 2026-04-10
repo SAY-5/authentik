@@ -1,4 +1,3 @@
-import "#elements/CodeMirror";
 import "#elements/forms/HorizontalFormElement";
 import "#elements/forms/Radio";
 import "#elements/forms/SearchSelect/index";
@@ -7,18 +6,31 @@ import { DEFAULT_CONFIG } from "#common/api/config";
 
 import { ModelForm } from "#elements/forms/ModelForm";
 
-import { ApplicationEntitlement, CoreApi } from "@goauthentik/api";
+import { renderObjectAttributes } from "#admin/object-attributes/renderAttributes";
 
-import YAML from "yaml";
+import { ApplicationEntitlement, CoreApi, ModelEnum, ObjectAttribute } from "@goauthentik/api";
 
 import { msg } from "@lit/localize";
 import { CSSResult, html, TemplateResult } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 
 import PFContent from "@patternfly/patternfly/components/Content/content.css";
 
 @customElement("ak-application-entitlement-form")
 export class ApplicationEntitlementForm extends ModelForm<ApplicationEntitlement, string> {
+    @state()
+    objAttributes: ObjectAttribute[] = [];
+
+    async load() {
+        const [app, model] = ModelEnum.AuthentikCoreApplicationentitlement.split(".");
+        this.objAttributes = (
+            await new CoreApi(DEFAULT_CONFIG).coreObjectAttributesList({
+                objectTypeAppLabel: app,
+                objectTypeModel: model,
+            })
+        ).results;
+    }
+
     async loadInstance(pk: string): Promise<ApplicationEntitlement> {
         return new CoreApi(DEFAULT_CONFIG).coreApplicationEntitlementsRetrieve({
             pbmUuid: pk,
@@ -61,16 +73,7 @@ export class ApplicationEntitlementForm extends ModelForm<ApplicationEntitlement
                     required
                 />
             </ak-form-element-horizontal>
-            <ak-form-element-horizontal label=${msg("Attributes")} name="attributes">
-                <ak-codemirror
-                    mode="yaml"
-                    value="${YAML.stringify(this.instance?.attributes ?? {})}"
-                >
-                </ak-codemirror>
-                <p class="pf-c-form__helper-text">
-                    ${msg("Set custom attributes using YAML or JSON.")}
-                </p>
-            </ak-form-element-horizontal>`;
+            ${renderObjectAttributes(this.objAttributes, this.instance)}`;
     }
 }
 

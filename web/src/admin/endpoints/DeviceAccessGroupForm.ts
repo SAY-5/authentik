@@ -6,11 +6,20 @@ import { DEFAULT_CONFIG } from "#common/api/config";
 import { ModelForm } from "#elements/forms/ModelForm";
 import { WithBrandConfig } from "#elements/mixins/branding";
 
-import { DeviceAccessGroup, DeviceAccessGroupRequest, EndpointsApi } from "@goauthentik/api";
+import { renderObjectAttributes } from "#admin/object-attributes/renderAttributes";
+
+import {
+    CoreApi,
+    DeviceAccessGroup,
+    DeviceAccessGroupRequest,
+    EndpointsApi,
+    ModelEnum,
+    ObjectAttribute,
+} from "@goauthentik/api";
 
 import { msg } from "@lit/localize";
 import { html } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, state } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 
 /**
@@ -20,6 +29,19 @@ import { ifDefined } from "lit/directives/if-defined.js";
  */
 @customElement("ak-endpoints-device-access-groups-form")
 export class DeviceAccessGroupForm extends WithBrandConfig(ModelForm<DeviceAccessGroup, string>) {
+    @state()
+    objAttributes: ObjectAttribute[] = [];
+
+    async load() {
+        const [app, model] = ModelEnum.AuthentikEndpointsDeviceaccessgroup.split(".");
+        this.objAttributes = (
+            await new CoreApi(DEFAULT_CONFIG).coreObjectAttributesList({
+                objectTypeAppLabel: app,
+                objectTypeModel: model,
+            })
+        ).results;
+    }
+
     loadInstance(pk: string): Promise<DeviceAccessGroup> {
         return new EndpointsApi(DEFAULT_CONFIG).endpointsDeviceAccessGroupsRetrieve({
             pbmUuid: pk,
@@ -46,12 +68,13 @@ export class DeviceAccessGroupForm extends WithBrandConfig(ModelForm<DeviceAcces
 
     renderForm() {
         return html`<ak-text-input
-            name="name"
-            placeholder=${msg("Group name...")}
-            label=${msg("Group name")}
-            value=${ifDefined(this.instance?.name)}
-            required
-        ></ak-text-input>`;
+                name="name"
+                placeholder=${msg("Group name...")}
+                label=${msg("Group name")}
+                value=${ifDefined(this.instance?.name)}
+                required
+            ></ak-text-input>
+            ${renderObjectAttributes(this.objAttributes, this.instance)}`;
     }
 }
 

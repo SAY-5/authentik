@@ -1,25 +1,33 @@
 import "#admin/groups/ak-group-member-table";
+import "#components/ak-switch-input";
+import "#components/ak-text-input";
 import "#elements/CodeMirror";
 import "#elements/ak-dual-select/ak-dual-select-provider";
 import "#elements/chips/Chip";
 import "#elements/chips/ChipGroup";
 import "#elements/forms/HorizontalFormElement";
 import "#elements/forms/SearchSelect/index";
-import "#components/ak-text-input";
-import "#components/ak-switch-input";
 
 import { DEFAULT_CONFIG } from "#common/api/config";
 
 import { DataProvision, DualSelectPair } from "#elements/ak-dual-select/types";
 import { ModelForm } from "#elements/forms/ModelForm";
 
-import { CoreApi, Group, RbacApi, RelatedGroup, Role } from "@goauthentik/api";
+import { renderObjectAttributes } from "#admin/object-attributes/renderAttributes";
 
-import YAML from "yaml";
+import {
+    CoreApi,
+    Group,
+    ModelEnum,
+    ObjectAttribute,
+    RbacApi,
+    RelatedGroup,
+    Role,
+} from "@goauthentik/api";
 
 import { msg } from "@lit/localize";
 import { css, CSSResult, html, TemplateResult } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, state } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 
 export function coreGroupPair(item: Group | RelatedGroup): DualSelectPair {
@@ -45,6 +53,9 @@ export class GroupForm extends ModelForm<Group, string> {
 
     public entitySingular = msg("Group");
     public entityPlural = msg("Groups");
+
+    @state()
+    objAttributes: ObjectAttribute[] = [];
 
     #fetchGroups = (page: number, search?: string): Promise<DataProvision> => {
         return new CoreApi(DEFAULT_CONFIG)
@@ -72,6 +83,16 @@ export class GroupForm extends ModelForm<Group, string> {
                 };
             });
     };
+
+    async load() {
+        const [app, model] = ModelEnum.AuthentikCoreGroup.split(".");
+        this.objAttributes = (
+            await new CoreApi(DEFAULT_CONFIG).coreObjectAttributesList({
+                objectTypeAppLabel: app,
+                objectTypeModel: model,
+            })
+        ).results;
+    }
 
     loadInstance(pk: string): Promise<Group> {
         return new CoreApi(DEFAULT_CONFIG).coreGroupsRetrieve({
@@ -144,16 +165,7 @@ export class GroupForm extends ModelForm<Group, string> {
                     )}
                 </p>
             </ak-form-element-horizontal>
-            <ak-form-element-horizontal label=${msg("Attributes")} name="attributes">
-                <ak-codemirror
-                    mode="yaml"
-                    value="${YAML.stringify(this.instance?.attributes ?? {})}"
-                >
-                </ak-codemirror>
-                <p class="pf-c-form__helper-text">
-                    ${msg("Set custom attributes using YAML or JSON.")}
-                </p>
-            </ak-form-element-horizontal>`;
+            ${renderObjectAttributes(this.objAttributes, this.instance)}`;
     }
 }
 

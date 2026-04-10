@@ -85,7 +85,7 @@ export class UserForm extends ModelForm<User, number> {
         `,
     ];
 
-    async loadInstance(pk: number): Promise<User> {
+    async load() {
         const [app, model] = ModelEnum.AuthentikCoreUser.split(".");
         this.objAttributes = (
             await new CoreApi(DEFAULT_CONFIG).coreObjectAttributesList({
@@ -93,6 +93,9 @@ export class UserForm extends ModelForm<User, number> {
                 objectTypeModel: model,
             })
         ).results;
+    }
+
+    async loadInstance(pk: number): Promise<User> {
         return new CoreApi(DEFAULT_CONFIG).coreUsersRetrieve({
             id: pk,
         });
