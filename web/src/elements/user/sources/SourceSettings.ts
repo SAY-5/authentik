@@ -158,11 +158,7 @@ export class UserSourceSettingsPage extends AKElement {
             <div class="pf-c-data-list__item-row">
                 <div class="pf-c-data-list__item-content">
                     <div class="pf-c-data-list__cell">
-                        ${renderSourceIcon(
-                            source.title,
-                            source.iconUrl,
-                            this.activeTheme,
-                        )}
+                        ${renderSourceIcon(source.title, source.iconUrl, this.activeTheme)}
                         ${source.title}
                     </div>
                     <div class="pf-c-data-list__cell">${this.renderSourceSettings(source)}</div>

@@ -1,8 +1,8 @@
 import { PolicyBindingCheckTarget } from "#common/policies/utils";
 import { ResolvedUITheme } from "#common/theme";
 
-import { renderDynamicIcon } from "#elements/utils/images";
 import type { VariantUrls } from "#elements/utils/images";
+import { renderDynamicIcon } from "#elements/utils/images";
 
 import { msg } from "@lit/localize";
 import { html, nothing, TemplateResult } from "lit";

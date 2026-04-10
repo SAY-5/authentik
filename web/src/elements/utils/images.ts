@@ -136,9 +136,11 @@ export function renderIcon(
     })}`;
 }
 
-export function renderDynamicIcon(
-    { urls, theme, ...options }: RenderDynamicIconOptions,
-): TemplateResult | typeof nothing {
+export function renderDynamicIcon({
+    urls,
+    theme,
+    ...options
+}: RenderDynamicIconOptions): TemplateResult | typeof nothing {
     const resolvedSrc = resolveVariantUrl(urls, theme);
     return renderIcon(resolvedSrc, null, theme, options);
 }
