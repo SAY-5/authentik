@@ -30,12 +30,12 @@ pub fn install() -> Result<()> {
     }
 
     if config.debug {
-        let console_layer = console_subscriber::ConsoleLayer::builder()
-            .server_addr(config.listen.debug_tokio)
-            .spawn();
+        // let console_layer = console_subscriber::ConsoleLayer::builder()
+        //     .server_addr(config.listen.debug_tokio)
+        //     .spawn();
         tracing_subscriber::registry()
             .with(ErrorLayer::default())
-            .with(console_layer)
+            // .with(console_layer)
             .with(
                 fmt::layer()
                     .compact()

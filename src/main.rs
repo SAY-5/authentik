@@ -8,6 +8,8 @@ use eyre::{Result, eyre};
 use tracing::{error, info, trace};
 
 mod metrics;
+#[cfg(feature = "proxy")]
+mod outpost;
 #[cfg(feature = "core")]
 mod server;
 #[cfg(feature = "core")]
@@ -25,6 +27,8 @@ struct Cli {
 enum Command {
     #[cfg(feature = "core")]
     Worker(worker::Cli),
+    #[cfg(feature = "proxy")]
+    Proxy(outpost::proxy::Cli),
 }
 
 fn main() -> Result<()> {
@@ -36,6 +40,8 @@ fn main() -> Result<()> {
     match &cli.command {
         #[cfg(feature = "core")]
         Command::Worker(_) => Mode::set(Mode::Worker)?,
+        #[cfg(feature = "proxy")]
+        Command::Proxy(_) => Mode::set(Mode::Proxy)?,
     }
 
     trace!("installing error formatting");
@@ -83,6 +89,10 @@ fn main() -> Result<()> {
                 Command::Worker(args) => {
                     let workers = worker::run(args, &mut tasks)?;
                     metrics.workers.store(Some(workers));
+                }
+                #[cfg(feature = "proxy")]
+                Command::Proxy(args) => {
+                    outpost::run::<outpost::proxy::ProxyOutpost>(args, &mut tasks).await?;
                 }
             }
 

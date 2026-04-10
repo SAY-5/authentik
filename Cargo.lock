@@ -188,6 +188,7 @@ dependencies = [
  "arc-swap",
  "argh",
  "authentik-axum",
+ "authentik-client",
  "authentik-common",
  "axum",
  "color-eyre",
@@ -200,6 +201,7 @@ dependencies = [
  "pyo3",
  "sqlx",
  "tokio",
+ "tokio-retry2",
  "tracing",
  "uuid",
 ]
@@ -3894,6 +3896,16 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "tokio-retry2"
+version = "0.9.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0266d56e57e6b29becbfce5daa6add8730941ca8192ddd7c24d25bf90c32a743"
+dependencies = [
+ "pin-project",
+ "tokio",
 ]
 
 [[package]]
