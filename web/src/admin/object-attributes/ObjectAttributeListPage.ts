@@ -1,8 +1,5 @@
 import "#admin/rbac/ObjectPermissionModal";
 import "#admin/object-attributes/ObjectAttributeForm";
-import "#components/ak-status-label";
-import "#elements/buttons/Dropdown";
-import "#elements/buttons/TokenCopyButton/index";
 import "#elements/forms/DeleteBulkForm";
 import "#elements/forms/ModalForm";
 import "@patternfly/elements/pf-tooltip/pf-tooltip.js";
@@ -13,7 +10,7 @@ import { PaginatedResponse, TableColumn } from "#elements/table/Table";
 import { TablePage } from "#elements/table/TablePage";
 import { SlottedTemplateResult } from "#elements/types";
 
-import { CoreApi, ObjectAttribute, Token } from "@goauthentik/api";
+import { CoreApi, ObjectAttribute } from "@goauthentik/api";
 
 import { msg } from "@lit/localize";
 import { html, TemplateResult } from "lit";
@@ -23,8 +20,8 @@ import { customElement, property } from "lit/decorators.js";
 export class ObjectAttributeListPage extends TablePage<ObjectAttribute> {
     protected override searchEnabled = true;
     public pageTitle = msg("Object attributes");
-    public pageDescription = "TODO";
-    public pageIcon = "pf-icon pf-icon-security";
+    public pageDescription = "Configure attributes on objects such as users and groups.";
+    public pageIcon = "pf-icon pf-icon-flavor";
 
     protected override rowLabel(item: ObjectAttribute): string | null {
         return item.attributeId ?? null;
@@ -34,7 +31,7 @@ export class ObjectAttributeListPage extends TablePage<ObjectAttribute> {
     clearOnRefresh = true;
 
     @property()
-    order = "expires";
+    order = "key";
 
     async apiEndpoint(): Promise<PaginatedResponse<ObjectAttribute>> {
         return new CoreApi(DEFAULT_CONFIG).coreObjectAttributesList(
@@ -47,24 +44,23 @@ export class ObjectAttributeListPage extends TablePage<ObjectAttribute> {
         [msg("Key"), "key"],
         [msg("Type"), "type"],
         [msg("Object type"), "object_type"],
+        [msg("Actions"), null, msg("Row Actions")],
     ];
 
     renderToolbarSelected(): TemplateResult {
         const disabled = this.selectedElements.length < 1;
         return html`<ak-forms-delete-bulk
-            object-label=${msg("Token(s)")}
+            object-label=${msg("Object Attribute(s)")}
             .objects=${this.selectedElements}
-            .metadata=${(item: Token) => {
-                return [{ key: msg("Identifier"), value: item.identifier }];
+            .metadata=${(item: ObjectAttribute) => {
+                return [
+                    { key: msg("Label"), value: item.label },
+                    { key: msg("Key"), value: item.key },
+                ];
             }}
-            .usedBy=${(item: Token) => {
-                return new CoreApi(DEFAULT_CONFIG).coreTokensUsedByList({
-                    identifier: item.identifier,
-                });
-            }}
-            .delete=${(item: Token) => {
-                return new CoreApi(DEFAULT_CONFIG).coreTokensDestroy({
-                    identifier: item.identifier,
+            .delete=${(item: ObjectAttribute) => {
+                return new CoreApi(DEFAULT_CONFIG).coreObjectAttributesDestroy({
+                    attributeId: item.attributeId!,
                 });
             }}
         >

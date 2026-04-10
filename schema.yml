@@ -134,6 +134,12 @@ paths:
     get:
       operationId: admin_models_list
       description: Read-only view list all installed models
+      parameters:
+      - in: query
+        name: filter_has_attributes
+        schema:
+          type: boolean
+          nullable: true
       tags:
       - admin
       security:
@@ -36378,8 +36384,12 @@ components:
         verbose_name_plural:
           type: string
           readOnly: true
+        fully_qualified_model:
+          type: string
+          readOnly: true
       required:
       - app_label
+      - fully_qualified_model
       - id
       - model
       - verbose_name_plural
@@ -44201,10 +44211,14 @@ components:
     ObjectAttribute:
       type: object
       properties:
-        attribute_id:
+        pk:
           type: string
           format: uuid
-        content_type:
+          readOnly: true
+          title: Attribute id
+        object_type:
+          type: string
+        object_type_obj:
           allOf:
           - $ref: '#/components/schemas/ContentType'
           readOnly: true
@@ -44212,82 +44226,69 @@ components:
           type: string
           format: date-time
           readOnly: true
+        key:
+          type: string
+        label:
+          type: string
         last_updated:
           type: string
           format: date-time
           readOnly: true
+        regex:
+          type: string
+        type:
+          $ref: '#/components/schemas/ObjectAttributeTypeEnum'
         managed:
           type: string
+          readOnly: true
           nullable: true
           title: Managed by authentik
           description: Objects that are managed by authentik. These objects are created
             and updated automatically. This flag only indicates that an object can
             be overwritten by migrations. You can still modify the objects via the
             API, but expect changes to be overwritten in a later update.
-        label:
-          type: string
-        key:
-          type: string
-        type:
-          $ref: '#/components/schemas/ObjectAttributeTypeEnum'
         flag_unique:
           type: boolean
         flag_required:
           type: boolean
-        regex:
-          type: string
         is_array:
           type: boolean
-        object_type:
-          type: integer
       required:
-      - content_type
       - created
       - key
       - label
       - last_updated
+      - managed
       - object_type
-      - regex
+      - object_type_obj
+      - pk
       - type
     ObjectAttributeRequest:
       type: object
       properties:
-        attribute_id:
-          type: string
-          format: uuid
-        managed:
-          type: string
-          nullable: true
-          minLength: 1
-          title: Managed by authentik
-          description: Objects that are managed by authentik. These objects are created
-            and updated automatically. This flag only indicates that an object can
-            be overwritten by migrations. You can still modify the objects via the
-            API, but expect changes to be overwritten in a later update.
-        label:
+        object_type:
           type: string
           minLength: 1
         key:
           type: string
           minLength: 1
+        label:
+          type: string
+          minLength: 1
+        regex:
+          type: string
         type:
           $ref: '#/components/schemas/ObjectAttributeTypeEnum'
         flag_unique:
           type: boolean
         flag_required:
           type: boolean
-        regex:
-          type: string
-          minLength: 1
         is_array:
           type: boolean
-        object_type:
-          type: integer
       required:
       - key
       - label
       - object_type
-      - regex
       - type
     ObjectAttributeTypeEnum:
       enum:
@@ -49544,37 +49545,25 @@ components:
     PatchedObjectAttributeRequest:
       type: object
       properties:
-        attribute_id:
-          type: string
-          format: uuid
-        managed:
-          type: string
-          nullable: true
-          minLength: 1
-          title: Managed by authentik
-          description: Objects that are managed by authentik. These objects are created
-            and updated automatically. This flag only indicates that an object can
-            be overwritten by migrations. You can still modify the objects via the
-            API, but expect changes to be overwritten in a later update.
-        label:
+        object_type:
           type: string
           minLength: 1
         key:
           type: string
           minLength: 1
+        label:
+          type: string
+          minLength: 1
+        regex:
+          type: string
         type:
           $ref: '#/components/schemas/ObjectAttributeTypeEnum'
         flag_unique:
           type: boolean
         flag_required:
           type: boolean
-        regex:
-          type: string
-          minLength: 1
         is_array:
           type: boolean
-        object_type:
-          type: integer
     PatchedOutpostRequest:
       type: object
       description: Outpost Serializer

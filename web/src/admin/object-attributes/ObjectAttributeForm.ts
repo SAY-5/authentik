@@ -4,13 +4,19 @@ import "#elements/forms/Radio";
 import "#elements/forms/SearchSelect/index";
 import "#components/ak-text-input";
 import "#components/ak-switch-input";
-import "#components/ak-radio-input";
 
 import { DEFAULT_CONFIG } from "#common/api/config";
 
 import { ModelForm } from "#elements/forms/ModelForm";
 
-import { CoreApi, ModelEnum, ObjectAttribute, ObjectAttributeTypeEnum } from "@goauthentik/api";
+import {
+    AdminApi,
+    AdminModelsListRequest,
+    App,
+    CoreApi,
+    ObjectAttribute,
+    ObjectAttributeTypeEnum,
+} from "@goauthentik/api";
 
 import { msg } from "@lit/localize";
 import { html, TemplateResult } from "lit";
@@ -31,9 +37,10 @@ export class ObjectAttributeForm extends ModelForm<ObjectAttribute, string> {
     }
 
     async send(data: ObjectAttribute): Promise<ObjectAttribute> {
-        if (this.instance?.attributeId) {
+        data.regex = data.regex !== "" ? data.regex : undefined;
+        if (this.instance?.pk) {
             return new CoreApi(DEFAULT_CONFIG).coreObjectAttributesUpdate({
-                attributeId: this.instance.attributeId,
+                attributeId: this.instance.pk,
                 objectAttributeRequest: data,
             });
         }
@@ -46,14 +53,14 @@ export class ObjectAttributeForm extends ModelForm<ObjectAttribute, string> {
 
     protected override renderForm(): TemplateResult {
         return html`<ak-text-input
-                name="Label"
+                name="label"
                 value="${this.instance?.label ?? ""}"
-                label=${msg("Identifier")}
-                placeholder=${msg("Type a unique identifier...")}
+                label=${msg("Label")}
+                placeholder=${msg("Type a human-readable name...")}
                 required
             ></ak-text-input>
             <ak-text-input
-                name="Key"
+                name="key"
                 value="${this.instance?.type ?? ""}"
                 label=${msg("Key")}
                 placeholder=${msg("Type a unique identifier...")}
@@ -71,39 +78,62 @@ export class ObjectAttributeForm extends ModelForm<ObjectAttribute, string> {
                             label: msg("Number"),
                             value: ObjectAttributeTypeEnum.Number,
                         },
+                        {
+                            label: msg("Boolean"),
+                            value: ObjectAttributeTypeEnum.Boolean,
+                        },
                     ]}
                     .value=${this.instance?.type}
                 >
                 </ak-radio>
             </ak-form-element-horizontal>
-            <ak-radio-input
-                label=${msg("Object type")}
-                name="contentType"
-                required
-                .value=${this.instance?.contentType}
-                .options=${[
-                    {
-                        value: ModelEnum.AuthentikCoreUser,
-                        label: msg("User"),
-                        default: true,
-                    },
-                    {
-                        value: ModelEnum.AuthentikCoreGroup,
-                        label: msg("Group"),
-                    },
-                ]}
-            ></ak-radio-input>
+            <ak-form-element-horizontal label="Object type" name="contentType" required>
+                <ak-search-select
+                    .fetchObjects=${async (): Promise<App[]> => {
+                        const args: AdminModelsListRequest = {
+                            filterHasAttributes: true,
+                        };
+                        return await new AdminApi(DEFAULT_CONFIG).adminModelsList(args);
+                    }}
+                    .renderElement=${(app: App): string => {
+                        return app.label;
+                    }}
+                    .value=${(app: App | undefined): string | undefined => {
+                        return app?.name;
+                    }}
+                    .selected=${(app: App): boolean => {
+                        const fqm = `${this.instance?.contentType.appLabel}.${this.instance?.contentType.model}`;
+                        return app.name === fqm;
+                    }}
+                >
+                </ak-search-select>
+            </ak-form-element-horizontal>
 
-            <ak-switch-input
-                name="flagRequired"
-                label=${msg("Mark as required")}
-                ?checked=${this.instance?.flagRequired}
-            ></ak-switch-input>
-            <ak-switch-input
-                name="flagUnique"
-                label=${msg("Mask as unique")}
-                ?checked=${this.instance?.flagUnique}
-            ></ak-switch-input>`;
+            <ak-form-group label=${msg("Validation")} open>
+                <div class="pf-c-form">
+                    <ak-switch-input
+                        name="flagRequired"
+                        label=${msg("Attribute is required")}
+                        ?checked=${this.instance?.flagRequired}
+                        help=${msg("Value of the attribute cannot be empty.")}
+                    ></ak-switch-input>
+                    <ak-switch-input
+                        name="flagUnique"
+                        label=${msg("Attribute is unique")}
+                        ?checked=${this.instance?.flagUnique}
+                        help=${msg(
+                            "Value of the attribute must be unique across all instances of the selected object type.",
+                        )}
+                    ></ak-switch-input>
+                    <ak-text-input
+                        name="regex"
+                        value="${this.instance?.regex ?? ""}"
+                        label=${msg("RegEx")}
+                        input-hint="code"
+                        placeholder=${msg("Enter a regex for validation...")}
+                    ></ak-text-input>
+                </div>
+            </ak-form-group>`;
     }
 
     //#endregion

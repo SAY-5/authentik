@@ -31,7 +31,7 @@ export interface ObjectAttribute {
      * @type {string}
      * @memberof ObjectAttribute
      */
-    attributeId?: string;
+    readonly pk: string;
     /**
      *
      * @type {ContentType}
@@ -46,16 +46,10 @@ export interface ObjectAttribute {
     readonly created: Date;
     /**
      *
-     * @type {Date}
-     * @memberof ObjectAttribute
-     */
-    readonly lastUpdated: Date;
-    /**
-     * Objects that are managed by authentik. These objects are created and updated automatically. This flag only indicates that an object can be overwritten by migrations. You can still modify the objects via the API, but expect changes to be overwritten in a later update.
      * @type {string}
      * @memberof ObjectAttribute
      */
-    managed?: string | null;
+    key: string;
     /**
      *
      * @type {string}
@@ -64,16 +58,34 @@ export interface ObjectAttribute {
     label: string;
     /**
      *
+     * @type {Date}
+     * @memberof ObjectAttribute
+     */
+    readonly lastUpdated: Date;
+    /**
+     *
+     * @type {number}
+     * @memberof ObjectAttribute
+     */
+    objectType: number;
+    /**
+     *
      * @type {string}
      * @memberof ObjectAttribute
      */
-    key: string;
+    regex?: string;
     /**
      *
      * @type {ObjectAttributeTypeEnum}
      * @memberof ObjectAttribute
      */
     type: ObjectAttributeTypeEnum;
+    /**
+     * Objects that are managed by authentik. These objects are created and updated automatically. This flag only indicates that an object can be overwritten by migrations. You can still modify the objects via the API, but expect changes to be overwritten in a later update.
+     * @type {string}
+     * @memberof ObjectAttribute
+     */
+    readonly managed: string | null;
     /**
      *
      * @type {boolean}
@@ -88,36 +100,25 @@ export interface ObjectAttribute {
     flagRequired?: boolean;
     /**
      *
-     * @type {string}
-     * @memberof ObjectAttribute
-     */
-    regex: string;
-    /**
-     *
      * @type {boolean}
      * @memberof ObjectAttribute
      */
     isArray?: boolean;
-    /**
-     *
-     * @type {number}
-     * @memberof ObjectAttribute
-     */
-    objectType: number;
 }
 
 /**
  * Check if a given object implements the ObjectAttribute interface.
  */
 export function instanceOfObjectAttribute(value: object): value is ObjectAttribute {
+    if (!("pk" in value) || value["pk"] === undefined) return false;
     if (!("contentType" in value) || value["contentType"] === undefined) return false;
     if (!("created" in value) || value["created"] === undefined) return false;
-    if (!("lastUpdated" in value) || value["lastUpdated"] === undefined) return false;
-    if (!("label" in value) || value["label"] === undefined) return false;
     if (!("key" in value) || value["key"] === undefined) return false;
-    if (!("type" in value) || value["type"] === undefined) return false;
-    if (!("regex" in value) || value["regex"] === undefined) return false;
+    if (!("label" in value) || value["label"] === undefined) return false;
+    if (!("lastUpdated" in value) || value["lastUpdated"] === undefined) return false;
     if (!("objectType" in value) || value["objectType"] === undefined) return false;
+    if (!("type" in value) || value["type"] === undefined) return false;
+    if (!("managed" in value) || value["managed"] === undefined) return false;
     return true;
 }
 
@@ -133,19 +134,19 @@ export function ObjectAttributeFromJSONTyped(
         return json;
     }
     return {
-        attributeId: json["attribute_id"] == null ? undefined : json["attribute_id"],
+        pk: json["pk"],
         contentType: ContentTypeFromJSON(json["content_type"]),
         created: new Date(json["created"]),
-        lastUpdated: new Date(json["last_updated"]),
-        managed: json["managed"] == null ? undefined : json["managed"],
-        label: json["label"],
         key: json["key"],
+        label: json["label"],
+        lastUpdated: new Date(json["last_updated"]),
+        objectType: json["object_type"],
+        regex: json["regex"] == null ? undefined : json["regex"],
         type: ObjectAttributeTypeEnumFromJSON(json["type"]),
+        managed: json["managed"],
         flagUnique: json["flag_unique"] == null ? undefined : json["flag_unique"],
         flagRequired: json["flag_required"] == null ? undefined : json["flag_required"],
-        regex: json["regex"],
         isArray: json["is_array"] == null ? undefined : json["is_array"],
-        objectType: json["object_type"],
     };
 }
 
@@ -154,7 +155,10 @@ export function ObjectAttributeToJSON(json: any): ObjectAttribute {
 }
 
 export function ObjectAttributeToJSONTyped(
-    value?: Omit<ObjectAttribute, "content_type" | "created" | "last_updated"> | null,
+    value?: Omit<
+        ObjectAttribute,
+        "pk" | "content_type" | "created" | "last_updated" | "managed"
+    > | null,
     ignoreDiscriminator: boolean = false,
 ): any {
     if (value == null) {
@@ -162,15 +166,13 @@ export function ObjectAttributeToJSONTyped(
     }
 
     return {
-        attribute_id: value["attributeId"],
-        managed: value["managed"],
-        label: value["label"],
         key: value["key"],
+        label: value["label"],
+        object_type: value["objectType"],
+        regex: value["regex"],
         type: ObjectAttributeTypeEnumToJSON(value["type"]),
         flag_unique: value["flagUnique"],
         flag_required: value["flagRequired"],
-        regex: value["regex"],
         is_array: value["isArray"],
-        object_type: value["objectType"],
     };
 }

@@ -5413,29 +5413,24 @@
         "model_authentik_core.objectattribute": {
             "type": "object",
             "properties": {
-                "attribute_id": {
+                "object_type": {
                     "type": "string",
-                    "format": "uuid",
-                    "title": "Attribute id"
-                },
-                "managed": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
                     "minLength": 1,
-                    "title": "Managed by authentik",
-                    "description": "Objects that are managed by authentik. These objects are created and updated automatically. This flag only indicates that an object can be overwritten by migrations. You can still modify the objects via the API, but expect changes to be overwritten in a later update."
+                    "title": "Object type"
+                },
+                "key": {
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "Key"
                 },
                 "label": {
                     "type": "string",
                     "minLength": 1,
                     "title": "Label"
                 },
-                "key": {
+                "regex": {
                     "type": "string",
-                    "minLength": 1,
-                    "title": "Key"
+                    "title": "Regex"
                 },
                 "type": {
                     "type": "string",
@@ -5454,18 +5449,9 @@
                     "type": "boolean",
                     "title": "Flag required"
                 },
-                "regex": {
-                    "type": "string",
-                    "minLength": 1,
-                    "title": "Regex"
-                },
                 "is_array": {
                     "type": "boolean",
                     "title": "Is array"
-                },
-                "object_type": {
-                    "type": "integer",
-                    "title": "Object type"
                 }
             },
             "required": []

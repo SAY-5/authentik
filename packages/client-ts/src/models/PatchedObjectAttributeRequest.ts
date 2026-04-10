@@ -29,13 +29,7 @@ export interface PatchedObjectAttributeRequest {
      * @type {string}
      * @memberof PatchedObjectAttributeRequest
      */
-    attributeId?: string;
-    /**
-     * Objects that are managed by authentik. These objects are created and updated automatically. This flag only indicates that an object can be overwritten by migrations. You can still modify the objects via the API, but expect changes to be overwritten in a later update.
-     * @type {string}
-     * @memberof PatchedObjectAttributeRequest
-     */
-    managed?: string | null;
+    key?: string;
     /**
      *
      * @type {string}
@@ -44,10 +38,16 @@ export interface PatchedObjectAttributeRequest {
     label?: string;
     /**
      *
+     * @type {number}
+     * @memberof PatchedObjectAttributeRequest
+     */
+    objectType?: number;
+    /**
+     *
      * @type {string}
      * @memberof PatchedObjectAttributeRequest
      */
-    key?: string;
+    regex?: string;
     /**
      *
      * @type {ObjectAttributeTypeEnum}
@@ -68,22 +68,10 @@ export interface PatchedObjectAttributeRequest {
     flagRequired?: boolean;
     /**
      *
-     * @type {string}
-     * @memberof PatchedObjectAttributeRequest
-     */
-    regex?: string;
-    /**
-     *
      * @type {boolean}
      * @memberof PatchedObjectAttributeRequest
      */
     isArray?: boolean;
-    /**
-     *
-     * @type {number}
-     * @memberof PatchedObjectAttributeRequest
-     */
-    objectType?: number;
 }
 
 /**
@@ -107,16 +95,14 @@ export function PatchedObjectAttributeRequestFromJSONTyped(
         return json;
     }
     return {
-        attributeId: json["attribute_id"] == null ? undefined : json["attribute_id"],
-        managed: json["managed"] == null ? undefined : json["managed"],
-        label: json["label"] == null ? undefined : json["label"],
         key: json["key"] == null ? undefined : json["key"],
+        label: json["label"] == null ? undefined : json["label"],
+        objectType: json["object_type"] == null ? undefined : json["object_type"],
+        regex: json["regex"] == null ? undefined : json["regex"],
         type: json["type"] == null ? undefined : ObjectAttributeTypeEnumFromJSON(json["type"]),
         flagUnique: json["flag_unique"] == null ? undefined : json["flag_unique"],
         flagRequired: json["flag_required"] == null ? undefined : json["flag_required"],
-        regex: json["regex"] == null ? undefined : json["regex"],
         isArray: json["is_array"] == null ? undefined : json["is_array"],
-        objectType: json["object_type"] == null ? undefined : json["object_type"],
     };
 }
 
@@ -133,15 +119,13 @@ export function PatchedObjectAttributeRequestToJSONTyped(
     }
 
     return {
-        attribute_id: value["attributeId"],
-        managed: value["managed"],
-        label: value["label"],
         key: value["key"],
+        label: value["label"],
+        object_type: value["objectType"],
+        regex: value["regex"],
         type: ObjectAttributeTypeEnumToJSON(value["type"]),
         flag_unique: value["flagUnique"],
         flag_required: value["flagRequired"],
-        regex: value["regex"],
         is_array: value["isArray"],
-        object_type: value["objectType"],
     };
 }

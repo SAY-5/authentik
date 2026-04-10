@@ -29,13 +29,7 @@ export interface ObjectAttributeRequest {
      * @type {string}
      * @memberof ObjectAttributeRequest
      */
-    attributeId?: string;
-    /**
-     * Objects that are managed by authentik. These objects are created and updated automatically. This flag only indicates that an object can be overwritten by migrations. You can still modify the objects via the API, but expect changes to be overwritten in a later update.
-     * @type {string}
-     * @memberof ObjectAttributeRequest
-     */
-    managed?: string | null;
+    key: string;
     /**
      *
      * @type {string}
@@ -44,10 +38,16 @@ export interface ObjectAttributeRequest {
     label: string;
     /**
      *
+     * @type {number}
+     * @memberof ObjectAttributeRequest
+     */
+    objectType: number;
+    /**
+     *
      * @type {string}
      * @memberof ObjectAttributeRequest
      */
-    key: string;
+    regex?: string;
     /**
      *
      * @type {ObjectAttributeTypeEnum}
@@ -68,33 +68,20 @@ export interface ObjectAttributeRequest {
     flagRequired?: boolean;
     /**
      *
-     * @type {string}
-     * @memberof ObjectAttributeRequest
-     */
-    regex: string;
-    /**
-     *
      * @type {boolean}
      * @memberof ObjectAttributeRequest
      */
     isArray?: boolean;
-    /**
-     *
-     * @type {number}
-     * @memberof ObjectAttributeRequest
-     */
-    objectType: number;
 }
 
 /**
  * Check if a given object implements the ObjectAttributeRequest interface.
  */
 export function instanceOfObjectAttributeRequest(value: object): value is ObjectAttributeRequest {
-    if (!("label" in value) || value["label"] === undefined) return false;
     if (!("key" in value) || value["key"] === undefined) return false;
-    if (!("type" in value) || value["type"] === undefined) return false;
-    if (!("regex" in value) || value["regex"] === undefined) return false;
+    if (!("label" in value) || value["label"] === undefined) return false;
     if (!("objectType" in value) || value["objectType"] === undefined) return false;
+    if (!("type" in value) || value["type"] === undefined) return false;
     return true;
 }
 
@@ -110,16 +97,14 @@ export function ObjectAttributeRequestFromJSONTyped(
         return json;
     }
     return {
-        attributeId: json["attribute_id"] == null ? undefined : json["attribute_id"],
-        managed: json["managed"] == null ? undefined : json["managed"],
-        label: json["label"],
         key: json["key"],
+        label: json["label"],
+        objectType: json["object_type"],
+        regex: json["regex"] == null ? undefined : json["regex"],
         type: ObjectAttributeTypeEnumFromJSON(json["type"]),
         flagUnique: json["flag_unique"] == null ? undefined : json["flag_unique"],
         flagRequired: json["flag_required"] == null ? undefined : json["flag_required"],
-        regex: json["regex"],
         isArray: json["is_array"] == null ? undefined : json["is_array"],
-        objectType: json["object_type"],
     };
 }
 
@@ -136,15 +121,13 @@ export function ObjectAttributeRequestToJSONTyped(
     }
 
     return {
-        attribute_id: value["attributeId"],
-        managed: value["managed"],
-        label: value["label"],
         key: value["key"],
+        label: value["label"],
+        object_type: value["objectType"],
+        regex: value["regex"],
         type: ObjectAttributeTypeEnumToJSON(value["type"]),
         flag_unique: value["flagUnique"],
         flag_required: value["flagRequired"],
-        regex: value["regex"],
         is_array: value["isArray"],
-        object_type: value["objectType"],
     };
 }

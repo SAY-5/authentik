@@ -21,17 +21,14 @@ var _ MappedNullable = &ObjectAttributeRequest{}
 
 // ObjectAttributeRequest struct for ObjectAttributeRequest
 type ObjectAttributeRequest struct {
-	AttributeId *string `json:"attribute_id,omitempty"`
-	// Objects that are managed by authentik. These objects are created and updated automatically. This flag only indicates that an object can be overwritten by migrations. You can still modify the objects via the API, but expect changes to be overwritten in a later update.
-	Managed              NullableString          `json:"managed,omitempty"`
-	Label                string                  `json:"label"`
 	Key                  string                  `json:"key"`
+	Label                string                  `json:"label"`
+	ObjectType           int32                   `json:"object_type"`
+	Regex                *string                 `json:"regex,omitempty"`
 	Type                 ObjectAttributeTypeEnum `json:"type"`
 	FlagUnique           *bool                   `json:"flag_unique,omitempty"`
 	FlagRequired         *bool                   `json:"flag_required,omitempty"`
-	Regex                string                  `json:"regex"`
 	IsArray              *bool                   `json:"is_array,omitempty"`
-	ObjectType           int32                   `json:"object_type"`
 	AdditionalProperties map[string]interface{}
 }
 
@@ -41,13 +38,12 @@ type _ObjectAttributeRequest ObjectAttributeRequest
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewObjectAttributeRequest(label string, key string, type_ ObjectAttributeTypeEnum, regex string, objectType int32) *ObjectAttributeRequest {
+func NewObjectAttributeRequest(key string, label string, objectType int32, type_ ObjectAttributeTypeEnum) *ObjectAttributeRequest {
 	this := ObjectAttributeRequest{}
-	this.Label = label
 	this.Key = key
-	this.Type = type_
-	this.Regex = regex
+	this.Label = label
 	this.ObjectType = objectType
+	this.Type = type_
 	return &this
 }
 
@@ -59,79 +55,28 @@ func NewObjectAttributeRequestWithDefaults() *ObjectAttributeRequest {
 	return &this
 }
 
-// GetAttributeId returns the AttributeId field value if set, zero value otherwise.
-func (o *ObjectAttributeRequest) GetAttributeId() string {
-	if o == nil || IsNil(o.AttributeId) {
+// GetKey returns the Key field value
+func (o *ObjectAttributeRequest) GetKey() string {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.AttributeId
+
+	return o.Key
 }
 
-// GetAttributeIdOk returns a tuple with the AttributeId field value if set, nil otherwise
+// GetKeyOk returns a tuple with the Key field value
 // and a boolean to check if the value has been set.
-func (o *ObjectAttributeRequest) GetAttributeIdOk() (*string, bool) {
-	if o == nil || IsNil(o.AttributeId) {
-		return nil, false
-	}
-	return o.AttributeId, true
-}
-
-// HasAttributeId returns a boolean if a field has been set.
-func (o *ObjectAttributeRequest) HasAttributeId() bool {
-	if o != nil && !IsNil(o.AttributeId) {
-		return true
-	}
-
-	return false
-}
-
-// SetAttributeId gets a reference to the given string and assigns it to the AttributeId field.
-func (o *ObjectAttributeRequest) SetAttributeId(v string) {
-	o.AttributeId = &v
-}
-
-// GetManaged returns the Managed field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *ObjectAttributeRequest) GetManaged() string {
-	if o == nil || IsNil(o.Managed.Get()) {
-		var ret string
-		return ret
-	}
-	return *o.Managed.Get()
-}
-
-// GetManagedOk returns a tuple with the Managed field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *ObjectAttributeRequest) GetManagedOk() (*string, bool) {
+func (o *ObjectAttributeRequest) GetKeyOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.Managed.Get(), o.Managed.IsSet()
+	return &o.Key, true
 }
 
-// HasManaged returns a boolean if a field has been set.
-func (o *ObjectAttributeRequest) HasManaged() bool {
-	if o != nil && o.Managed.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetManaged gets a reference to the given NullableString and assigns it to the Managed field.
-func (o *ObjectAttributeRequest) SetManaged(v string) {
-	o.Managed.Set(&v)
-}
-
-// SetManagedNil sets the value for Managed to be an explicit nil
-func (o *ObjectAttributeRequest) SetManagedNil() {
-	o.Managed.Set(nil)
-}
-
-// UnsetManaged ensures that no value is present for Managed, not even an explicit nil
-func (o *ObjectAttributeRequest) UnsetManaged() {
-	o.Managed.Unset()
+// SetKey sets field value
+func (o *ObjectAttributeRequest) SetKey(v string) {
+	o.Key = v
 }
 
 // GetLabel returns the Label field value
@@ -158,28 +103,60 @@ func (o *ObjectAttributeRequest) SetLabel(v string) {
 	o.Label = v
 }
 
-// GetKey returns the Key field value
-func (o *ObjectAttributeRequest) GetKey() string {
+// GetObjectType returns the ObjectType field value
+func (o *ObjectAttributeRequest) GetObjectType() int32 {
 	if o == nil {
-		var ret string
+		var ret int32
 		return ret
 	}
 
-	return o.Key
+	return o.ObjectType
 }
 
-// GetKeyOk returns a tuple with the Key field value
+// GetObjectTypeOk returns a tuple with the ObjectType field value
 // and a boolean to check if the value has been set.
-func (o *ObjectAttributeRequest) GetKeyOk() (*string, bool) {
+func (o *ObjectAttributeRequest) GetObjectTypeOk() (*int32, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.Key, true
+	return &o.ObjectType, true
 }
 
-// SetKey sets field value
-func (o *ObjectAttributeRequest) SetKey(v string) {
-	o.Key = v
+// SetObjectType sets field value
+func (o *ObjectAttributeRequest) SetObjectType(v int32) {
+	o.ObjectType = v
+}
+
+// GetRegex returns the Regex field value if set, zero value otherwise.
+func (o *ObjectAttributeRequest) GetRegex() string {
+	if o == nil || IsNil(o.Regex) {
+		var ret string
+		return ret
+	}
+	return *o.Regex
+}
+
+// GetRegexOk returns a tuple with the Regex field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ObjectAttributeRequest) GetRegexOk() (*string, bool) {
+	if o == nil || IsNil(o.Regex) {
+		return nil, false
+	}
+	return o.Regex, true
+}
+
+// HasRegex returns a boolean if a field has been set.
+func (o *ObjectAttributeRequest) HasRegex() bool {
+	if o != nil && !IsNil(o.Regex) {
+		return true
+	}
+
+	return false
+}
+
+// SetRegex gets a reference to the given string and assigns it to the Regex field.
+func (o *ObjectAttributeRequest) SetRegex(v string) {
+	o.Regex = &v
 }
 
 // GetType returns the Type field value
@@ -270,30 +247,6 @@ func (o *ObjectAttributeRequest) SetFlagRequired(v bool) {
 	o.FlagRequired = &v
 }
 
-// GetRegex returns the Regex field value
-func (o *ObjectAttributeRequest) GetRegex() string {
-	if o == nil {
-		var ret string
-		return ret
-	}
-
-	return o.Regex
-}
-
-// GetRegexOk returns a tuple with the Regex field value
-// and a boolean to check if the value has been set.
-func (o *ObjectAttributeRequest) GetRegexOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.Regex, true
-}
-
-// SetRegex sets field value
-func (o *ObjectAttributeRequest) SetRegex(v string) {
-	o.Regex = v
-}
-
 // GetIsArray returns the IsArray field value if set, zero value otherwise.
 func (o *ObjectAttributeRequest) GetIsArray() bool {
 	if o == nil || IsNil(o.IsArray) {
@@ -326,30 +279,6 @@ func (o *ObjectAttributeRequest) SetIsArray(v bool) {
 	o.IsArray = &v
 }
 
-// GetObjectType returns the ObjectType field value
-func (o *ObjectAttributeRequest) GetObjectType() int32 {
-	if o == nil {
-		var ret int32
-		return ret
-	}
-
-	return o.ObjectType
-}
-
-// GetObjectTypeOk returns a tuple with the ObjectType field value
-// and a boolean to check if the value has been set.
-func (o *ObjectAttributeRequest) GetObjectTypeOk() (*int32, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.ObjectType, true
-}
-
-// SetObjectType sets field value
-func (o *ObjectAttributeRequest) SetObjectType(v int32) {
-	o.ObjectType = v
-}
-
 func (o ObjectAttributeRequest) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -360,14 +289,12 @@ func (o ObjectAttributeRequest) MarshalJSON() ([]byte, error) {
 
 func (o ObjectAttributeRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.AttributeId) {
-		toSerialize["attribute_id"] = o.AttributeId
-	}
-	if o.Managed.IsSet() {
-		toSerialize["managed"] = o.Managed.Get()
-	}
-	toSerialize["label"] = o.Label
 	toSerialize["key"] = o.Key
+	toSerialize["label"] = o.Label
+	toSerialize["object_type"] = o.ObjectType
+	if !IsNil(o.Regex) {
+		toSerialize["regex"] = o.Regex
+	}
 	toSerialize["type"] = o.Type
 	if !IsNil(o.FlagUnique) {
 		toSerialize["flag_unique"] = o.FlagUnique
@@ -375,11 +302,9 @@ func (o ObjectAttributeRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.FlagRequired) {
 		toSerialize["flag_required"] = o.FlagRequired
 	}
-	toSerialize["regex"] = o.Regex
 	if !IsNil(o.IsArray) {
 		toSerialize["is_array"] = o.IsArray
 	}
-	toSerialize["object_type"] = o.ObjectType
 
 	for key, value := range o.AdditionalProperties {
 		toSerialize[key] = value
@@ -393,11 +318,10 @@ func (o *ObjectAttributeRequest) UnmarshalJSON(data []byte) (err error) {
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
-		"label",
 		"key",
-		"type",
-		"regex",
+		"label",
 		"object_type",
+		"type",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -427,16 +351,14 @@ func (o *ObjectAttributeRequest) UnmarshalJSON(data []byte) (err error) {
 	additionalProperties := make(map[string]interface{})
 
 	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "attribute_id")
-		delete(additionalProperties, "managed")
-		delete(additionalProperties, "label")
 		delete(additionalProperties, "key")
+		delete(additionalProperties, "label")
+		delete(additionalProperties, "object_type")
+		delete(additionalProperties, "regex")
 		delete(additionalProperties, "type")
 		delete(additionalProperties, "flag_unique")
 		delete(additionalProperties, "flag_required")
-		delete(additionalProperties, "regex")
 		delete(additionalProperties, "is_array")
-		delete(additionalProperties, "object_type")
 		o.AdditionalProperties = additionalProperties
 	}
 

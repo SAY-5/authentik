@@ -713,8 +713,14 @@ func (a *AdminAPIService) AdminFileUsedByListExecute(r ApiAdminFileUsedByListReq
 }
 
 type ApiAdminModelsListRequest struct {
-	ctx        context.Context
-	ApiService *AdminAPIService
+	ctx                 context.Context
+	ApiService          *AdminAPIService
+	filterHasAttributes *bool
+}
+
+func (r ApiAdminModelsListRequest) FilterHasAttributes(filterHasAttributes bool) ApiAdminModelsListRequest {
+	r.filterHasAttributes = &filterHasAttributes
+	return r
 }
 
 func (r ApiAdminModelsListRequest) Execute() ([]App, *http.Response, error) {
@@ -758,6 +764,9 @@ func (a *AdminAPIService) AdminModelsListExecute(r ApiAdminModelsListRequest) ([
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.filterHasAttributes != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "filter_has_attributes", r.filterHasAttributes, "form", "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 

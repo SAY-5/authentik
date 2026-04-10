@@ -58,6 +58,10 @@ export interface AdminFileUsedByListRequest {
     name?: string;
 }
 
+export interface AdminModelsListRequest {
+    filterHasAttributes?: boolean | null;
+}
+
 export interface AdminSettingsPartialUpdateRequest {
     patchedSettingsRequest?: PatchedSettingsRequest;
 }
@@ -400,8 +404,14 @@ export class AdminApi extends runtime.BaseAPI {
     /**
      * Creates request options for adminModelsList without sending the request
      */
-    async adminModelsListRequestOpts(): Promise<runtime.RequestOpts> {
+    async adminModelsListRequestOpts(
+        requestParameters: AdminModelsListRequest,
+    ): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
+
+        if (requestParameters["filterHasAttributes"] != null) {
+            queryParameters["filter_has_attributes"] = requestParameters["filterHasAttributes"];
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -428,9 +438,10 @@ export class AdminApi extends runtime.BaseAPI {
      * Read-only view list all installed models
      */
     async adminModelsListRaw(
+        requestParameters: AdminModelsListRequest,
         initOverrides?: RequestInit | runtime.InitOverrideFunction,
     ): Promise<runtime.ApiResponse<Array<App>>> {
-        const requestOptions = await this.adminModelsListRequestOpts();
+        const requestOptions = await this.adminModelsListRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(AppFromJSON));
@@ -440,9 +451,10 @@ export class AdminApi extends runtime.BaseAPI {
      * Read-only view list all installed models
      */
     async adminModelsList(
+        requestParameters: AdminModelsListRequest = {},
         initOverrides?: RequestInit | runtime.InitOverrideFunction,
     ): Promise<Array<App>> {
-        const response = await this.adminModelsListRaw(initOverrides);
+        const response = await this.adminModelsListRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

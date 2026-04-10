@@ -12,49 +12,35 @@ use crate::models;
 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct PatchedObjectAttributeRequest {
-    #[serde(rename = "attribute_id", skip_serializing_if = "Option::is_none")]
-    pub attribute_id: Option<uuid::Uuid>,
-    /// Objects that are managed by authentik. These objects are created and updated automatically.
-    /// This flag only indicates that an object can be overwritten by migrations. You can still
-    /// modify the objects via the API, but expect changes to be overwritten in a later update.
-    #[serde(
-        rename = "managed",
-        default,
-        with = "::serde_with::rust::double_option",
-        skip_serializing_if = "Option::is_none"
-    )]
-    pub managed: Option<Option<String>>,
-    #[serde(rename = "label", skip_serializing_if = "Option::is_none")]
-    pub label: Option<String>,
     #[serde(rename = "key", skip_serializing_if = "Option::is_none")]
     pub key: Option<String>,
+    #[serde(rename = "label", skip_serializing_if = "Option::is_none")]
+    pub label: Option<String>,
+    #[serde(rename = "object_type", skip_serializing_if = "Option::is_none")]
+    pub object_type: Option<i32>,
+    #[serde(rename = "regex", skip_serializing_if = "Option::is_none")]
+    pub regex: Option<String>,
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub r#type: Option<models::ObjectAttributeTypeEnum>,
     #[serde(rename = "flag_unique", skip_serializing_if = "Option::is_none")]
     pub flag_unique: Option<bool>,
     #[serde(rename = "flag_required", skip_serializing_if = "Option::is_none")]
     pub flag_required: Option<bool>,
-    #[serde(rename = "regex", skip_serializing_if = "Option::is_none")]
-    pub regex: Option<String>,
     #[serde(rename = "is_array", skip_serializing_if = "Option::is_none")]
     pub is_array: Option<bool>,
-    #[serde(rename = "object_type", skip_serializing_if = "Option::is_none")]
-    pub object_type: Option<i32>,
 }
 
 impl PatchedObjectAttributeRequest {
     pub fn new() -> PatchedObjectAttributeRequest {
         PatchedObjectAttributeRequest {
-            attribute_id: None,
-            managed: None,
-            label: None,
             key: None,
+            label: None,
+            object_type: None,
+            regex: None,
             r#type: None,
             flag_unique: None,
             flag_required: None,
-            regex: None,
             is_array: None,
-            object_type: None,
         }
     }
 }

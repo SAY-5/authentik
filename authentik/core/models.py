@@ -1365,7 +1365,7 @@ class ObjectAttribute(SerializerModel, ManagedModel, CreatedUpdatedModel):
     type = models.TextField(choices=AttributeType.choices)
     flag_unique = models.BooleanField(default=False)
     flag_required = models.BooleanField(default=False)
-    regex = models.TextField()
+    regex = models.TextField(blank=True)
     is_array = models.BooleanField(default=False)
 
     @property

@@ -12,67 +12,63 @@ use crate::models;
 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ObjectAttribute {
-    #[serde(rename = "attribute_id", skip_serializing_if = "Option::is_none")]
-    pub attribute_id: Option<uuid::Uuid>,
+    #[serde(rename = "pk")]
+    pub pk: uuid::Uuid,
     #[serde(rename = "content_type")]
     pub content_type: models::ContentType,
     #[serde(rename = "created")]
     pub created: String,
+    #[serde(rename = "key")]
+    pub key: String,
+    #[serde(rename = "label")]
+    pub label: String,
     #[serde(rename = "last_updated")]
     pub last_updated: String,
+    #[serde(rename = "object_type")]
+    pub object_type: i32,
+    #[serde(rename = "regex", skip_serializing_if = "Option::is_none")]
+    pub regex: Option<String>,
+    #[serde(rename = "type")]
+    pub r#type: models::ObjectAttributeTypeEnum,
     /// Objects that are managed by authentik. These objects are created and updated automatically.
     /// This flag only indicates that an object can be overwritten by migrations. You can still
     /// modify the objects via the API, but expect changes to be overwritten in a later update.
-    #[serde(
-        rename = "managed",
-        default,
-        with = "::serde_with::rust::double_option",
-        skip_serializing_if = "Option::is_none"
-    )]
-    pub managed: Option<Option<String>>,
-    #[serde(rename = "label")]
-    pub label: String,
-    #[serde(rename = "key")]
-    pub key: String,
-    #[serde(rename = "type")]
-    pub r#type: models::ObjectAttributeTypeEnum,
+    #[serde(rename = "managed", deserialize_with = "Option::deserialize")]
+    pub managed: Option<String>,
     #[serde(rename = "flag_unique", skip_serializing_if = "Option::is_none")]
     pub flag_unique: Option<bool>,
     #[serde(rename = "flag_required", skip_serializing_if = "Option::is_none")]
     pub flag_required: Option<bool>,
-    #[serde(rename = "regex")]
-    pub regex: String,
     #[serde(rename = "is_array", skip_serializing_if = "Option::is_none")]
     pub is_array: Option<bool>,
-    #[serde(rename = "object_type")]
-    pub object_type: i32,
 }
 
 impl ObjectAttribute {
     pub fn new(
+        pk: uuid::Uuid,
         content_type: models::ContentType,
         created: String,
-        last_updated: String,
-        label: String,
         key: String,
-        r#type: models::ObjectAttributeTypeEnum,
-        regex: String,
+        label: String,
+        last_updated: String,
         object_type: i32,
+        r#type: models::ObjectAttributeTypeEnum,
+        managed: Option<String>,
     ) -> ObjectAttribute {
         ObjectAttribute {
-            attribute_id: None,
+            pk,
             content_type,
             created,
-            last_updated,
-            managed: None,
-            label,
             key,
+            label,
+            last_updated,
+            object_type,
+            regex: None,
             r#type,
+            managed,
             flag_unique: None,
             flag_required: None,
-            regex,
             is_array: None,
-            object_type,
         }
     }
 }
