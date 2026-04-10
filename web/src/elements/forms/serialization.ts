@@ -4,6 +4,8 @@ import { AKElement } from "#elements/Base";
 import { isControlElement } from "#elements/ControlElement";
 import { isNamedElement, NamedElement } from "#elements/utils/inputs";
 
+import { deepmerge } from "deepmerge-ts";
+
 function isIgnored<T extends Element>(element: T) {
     if (!(element instanceof HTMLElement)) return false;
 
@@ -21,7 +23,7 @@ function assignValue(
     let parent = destination;
 
     if (!element.name?.includes(".")) {
-        parent[element.name] = value;
+        parent[element.name] = deepmerge(parent[element.name], value);
         return;
     }
 
