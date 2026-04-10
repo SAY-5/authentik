@@ -11,12 +11,13 @@ import { DEFAULT_CONFIG } from "#common/api/config";
 import { ModelForm } from "#elements/forms/ModelForm";
 import { RadioOption } from "#elements/forms/Radio";
 
+import { renderObjectAttributes } from "#admin/object-attributes/renderAttributes";
+
 import {
     CoreApi,
     Group,
     ModelEnum,
     ObjectAttribute,
-    ObjectAttributeTypeEnum,
     RbacApi,
     Role,
     User,
@@ -212,22 +213,7 @@ export class UserForm extends ModelForm<User, number> {
             >
             </ak-switch-input>
 
-            ${this.objAttributes.map((attr) => {
-                switch (attr.type) {
-                    case ObjectAttributeTypeEnum.Text:
-                        return html`<ak-text-input
-                            name="attributes.${attr.key}"
-                            label=${attr.label}
-                            autocomplete="off"
-                            value="${ifDefined((this.instance?.attributes || {})[attr.key])}"
-                            input-hint="code"
-                            ?required=${attr.flagRequired}
-                        ></ak-text-input>`;
-                    case ObjectAttributeTypeEnum.Number:
-                        return html``;
-                }
-                return html``;
-            })}
+            ${renderObjectAttributes(this.objAttributes, this.instance)}
 
             <ak-text-input
                 name="path"
