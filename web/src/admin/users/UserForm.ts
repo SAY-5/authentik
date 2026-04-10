@@ -212,9 +212,6 @@ export class UserForm extends ModelForm<User, number> {
                 )}
             >
             </ak-switch-input>
-
-            ${renderObjectAttributes(this.objAttributes, this.instance)}
-
             <ak-text-input
                 name="path"
                 label=${msg("Path")}
@@ -233,7 +230,9 @@ export class UserForm extends ModelForm<User, number> {
                             "Paths may not start or end with a slash, but they can contain any other character as path segments. The paths are currently purely used for organization, it does not affect their permissions, group memberships, or anything else.",
                         )}
                     </p>`}
-            ></ak-text-input>`;
+            ></ak-text-input>
+
+            ${renderObjectAttributes(this.objAttributes, this.instance)}`;
     }
 }
 
