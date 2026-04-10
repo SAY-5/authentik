@@ -29,6 +29,12 @@ export interface ObjectAttributeRequest {
      * @type {string}
      * @memberof ObjectAttributeRequest
      */
+    objectType: string;
+    /**
+     *
+     * @type {string}
+     * @memberof ObjectAttributeRequest
+     */
     key: string;
     /**
      *
@@ -36,12 +42,6 @@ export interface ObjectAttributeRequest {
      * @memberof ObjectAttributeRequest
      */
     label: string;
-    /**
-     *
-     * @type {number}
-     * @memberof ObjectAttributeRequest
-     */
-    objectType: number;
     /**
      *
      * @type {string}
@@ -78,9 +78,9 @@ export interface ObjectAttributeRequest {
  * Check if a given object implements the ObjectAttributeRequest interface.
  */
 export function instanceOfObjectAttributeRequest(value: object): value is ObjectAttributeRequest {
+    if (!("objectType" in value) || value["objectType"] === undefined) return false;
     if (!("key" in value) || value["key"] === undefined) return false;
     if (!("label" in value) || value["label"] === undefined) return false;
-    if (!("objectType" in value) || value["objectType"] === undefined) return false;
     if (!("type" in value) || value["type"] === undefined) return false;
     return true;
 }
@@ -97,9 +97,9 @@ export function ObjectAttributeRequestFromJSONTyped(
         return json;
     }
     return {
+        objectType: json["object_type"],
         key: json["key"],
         label: json["label"],
-        objectType: json["object_type"],
         regex: json["regex"] == null ? undefined : json["regex"],
         type: ObjectAttributeTypeEnumFromJSON(json["type"]),
         flagUnique: json["flag_unique"] == null ? undefined : json["flag_unique"],
@@ -121,9 +121,9 @@ export function ObjectAttributeRequestToJSONTyped(
     }
 
     return {
+        object_type: value["objectType"],
         key: value["key"],
         label: value["label"],
-        object_type: value["objectType"],
         regex: value["regex"],
         type: ObjectAttributeTypeEnumToJSON(value["type"]),
         flag_unique: value["flagUnique"],

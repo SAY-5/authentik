@@ -12,12 +12,12 @@ use crate::models;
 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ObjectAttributeRequest {
+    #[serde(rename = "object_type")]
+    pub object_type: String,
     #[serde(rename = "key")]
     pub key: String,
     #[serde(rename = "label")]
     pub label: String,
-    #[serde(rename = "object_type")]
-    pub object_type: i32,
     #[serde(rename = "regex", skip_serializing_if = "Option::is_none")]
     pub regex: Option<String>,
     #[serde(rename = "type")]
@@ -32,15 +32,15 @@ pub struct ObjectAttributeRequest {
 
 impl ObjectAttributeRequest {
     pub fn new(
+        object_type: String,
         key: String,
         label: String,
-        object_type: i32,
         r#type: models::ObjectAttributeTypeEnum,
     ) -> ObjectAttributeRequest {
         ObjectAttributeRequest {
+            object_type,
             key,
             label,
-            object_type,
             regex: None,
             r#type,
             flag_unique: None,

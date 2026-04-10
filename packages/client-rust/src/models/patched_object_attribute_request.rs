@@ -12,12 +12,12 @@ use crate::models;
 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct PatchedObjectAttributeRequest {
+    #[serde(rename = "object_type", skip_serializing_if = "Option::is_none")]
+    pub object_type: Option<String>,
     #[serde(rename = "key", skip_serializing_if = "Option::is_none")]
     pub key: Option<String>,
     #[serde(rename = "label", skip_serializing_if = "Option::is_none")]
     pub label: Option<String>,
-    #[serde(rename = "object_type", skip_serializing_if = "Option::is_none")]
-    pub object_type: Option<i32>,
     #[serde(rename = "regex", skip_serializing_if = "Option::is_none")]
     pub regex: Option<String>,
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
@@ -33,9 +33,9 @@ pub struct PatchedObjectAttributeRequest {
 impl PatchedObjectAttributeRequest {
     pub fn new() -> PatchedObjectAttributeRequest {
         PatchedObjectAttributeRequest {
+            object_type: None,
             key: None,
             label: None,
-            object_type: None,
             regex: None,
             r#type: None,
             flag_unique: None,

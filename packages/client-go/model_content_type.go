@@ -25,6 +25,7 @@ type ContentType struct {
 	AppLabel             string `json:"app_label"`
 	Model                string `json:"model"`
 	VerboseNamePlural    string `json:"verbose_name_plural"`
+	FullyQualifiedModel  string `json:"fully_qualified_model"`
 	AdditionalProperties map[string]interface{}
 }
 
@@ -34,12 +35,13 @@ type _ContentType ContentType
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewContentType(id int32, appLabel string, model string, verboseNamePlural string) *ContentType {
+func NewContentType(id int32, appLabel string, model string, verboseNamePlural string, fullyQualifiedModel string) *ContentType {
 	this := ContentType{}
 	this.Id = id
 	this.AppLabel = appLabel
 	this.Model = model
 	this.VerboseNamePlural = verboseNamePlural
+	this.FullyQualifiedModel = fullyQualifiedModel
 	return &this
 }
 
@@ -147,6 +149,30 @@ func (o *ContentType) SetVerboseNamePlural(v string) {
 	o.VerboseNamePlural = v
 }
 
+// GetFullyQualifiedModel returns the FullyQualifiedModel field value
+func (o *ContentType) GetFullyQualifiedModel() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.FullyQualifiedModel
+}
+
+// GetFullyQualifiedModelOk returns a tuple with the FullyQualifiedModel field value
+// and a boolean to check if the value has been set.
+func (o *ContentType) GetFullyQualifiedModelOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.FullyQualifiedModel, true
+}
+
+// SetFullyQualifiedModel sets field value
+func (o *ContentType) SetFullyQualifiedModel(v string) {
+	o.FullyQualifiedModel = v
+}
+
 func (o ContentType) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
@@ -161,6 +187,7 @@ func (o ContentType) ToMap() (map[string]interface{}, error) {
 	toSerialize["app_label"] = o.AppLabel
 	toSerialize["model"] = o.Model
 	toSerialize["verbose_name_plural"] = o.VerboseNamePlural
+	toSerialize["fully_qualified_model"] = o.FullyQualifiedModel
 
 	for key, value := range o.AdditionalProperties {
 		toSerialize[key] = value
@@ -178,6 +205,7 @@ func (o *ContentType) UnmarshalJSON(data []byte) (err error) {
 		"app_label",
 		"model",
 		"verbose_name_plural",
+		"fully_qualified_model",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -211,6 +239,7 @@ func (o *ContentType) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "app_label")
 		delete(additionalProperties, "model")
 		delete(additionalProperties, "verbose_name_plural")
+		delete(additionalProperties, "fully_qualified_model")
 		o.AdditionalProperties = additionalProperties
 	}
 

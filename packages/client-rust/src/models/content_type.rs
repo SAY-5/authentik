@@ -20,6 +20,8 @@ pub struct ContentType {
     pub model: String,
     #[serde(rename = "verbose_name_plural")]
     pub verbose_name_plural: String,
+    #[serde(rename = "fully_qualified_model")]
+    pub fully_qualified_model: String,
 }
 
 impl ContentType {
@@ -28,12 +30,14 @@ impl ContentType {
         app_label: String,
         model: String,
         verbose_name_plural: String,
+        fully_qualified_model: String,
     ) -> ContentType {
         ContentType {
             id,
             app_label,
             model,
             verbose_name_plural,
+            fully_qualified_model,
         }
     }
 }

@@ -29,6 +29,12 @@ export interface PatchedObjectAttributeRequest {
      * @type {string}
      * @memberof PatchedObjectAttributeRequest
      */
+    objectType?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof PatchedObjectAttributeRequest
+     */
     key?: string;
     /**
      *
@@ -36,12 +42,6 @@ export interface PatchedObjectAttributeRequest {
      * @memberof PatchedObjectAttributeRequest
      */
     label?: string;
-    /**
-     *
-     * @type {number}
-     * @memberof PatchedObjectAttributeRequest
-     */
-    objectType?: number;
     /**
      *
      * @type {string}
@@ -95,9 +95,9 @@ export function PatchedObjectAttributeRequestFromJSONTyped(
         return json;
     }
     return {
+        objectType: json["object_type"] == null ? undefined : json["object_type"],
         key: json["key"] == null ? undefined : json["key"],
         label: json["label"] == null ? undefined : json["label"],
-        objectType: json["object_type"] == null ? undefined : json["object_type"],
         regex: json["regex"] == null ? undefined : json["regex"],
         type: json["type"] == null ? undefined : ObjectAttributeTypeEnumFromJSON(json["type"]),
         flagUnique: json["flag_unique"] == null ? undefined : json["flag_unique"],
@@ -119,9 +119,9 @@ export function PatchedObjectAttributeRequestToJSONTyped(
     }
 
     return {
+        object_type: value["objectType"],
         key: value["key"],
         label: value["label"],
-        object_type: value["objectType"],
         regex: value["regex"],
         type: ObjectAttributeTypeEnumToJSON(value["type"]),
         flag_unique: value["flagUnique"],

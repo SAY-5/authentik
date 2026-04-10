@@ -22,15 +22,15 @@ var _ MappedNullable = &ObjectAttribute{}
 
 // ObjectAttribute struct for ObjectAttribute
 type ObjectAttribute struct {
-	Pk          string                  `json:"pk"`
-	ContentType ContentType             `json:"content_type"`
-	Created     time.Time               `json:"created"`
-	Key         string                  `json:"key"`
-	Label       string                  `json:"label"`
-	LastUpdated time.Time               `json:"last_updated"`
-	ObjectType  int32                   `json:"object_type"`
-	Regex       *string                 `json:"regex,omitempty"`
-	Type        ObjectAttributeTypeEnum `json:"type"`
+	Pk            string                  `json:"pk"`
+	ObjectType    string                  `json:"object_type"`
+	ObjectTypeObj ContentType             `json:"object_type_obj"`
+	Created       time.Time               `json:"created"`
+	Key           string                  `json:"key"`
+	Label         string                  `json:"label"`
+	LastUpdated   time.Time               `json:"last_updated"`
+	Regex         *string                 `json:"regex,omitempty"`
+	Type          ObjectAttributeTypeEnum `json:"type"`
 	// Objects that are managed by authentik. These objects are created and updated automatically. This flag only indicates that an object can be overwritten by migrations. You can still modify the objects via the API, but expect changes to be overwritten in a later update.
 	Managed              NullableString `json:"managed"`
 	FlagUnique           *bool          `json:"flag_unique,omitempty"`
@@ -45,15 +45,15 @@ type _ObjectAttribute ObjectAttribute
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewObjectAttribute(pk string, contentType ContentType, created time.Time, key string, label string, lastUpdated time.Time, objectType int32, type_ ObjectAttributeTypeEnum, managed NullableString) *ObjectAttribute {
+func NewObjectAttribute(pk string, objectType string, objectTypeObj ContentType, created time.Time, key string, label string, lastUpdated time.Time, type_ ObjectAttributeTypeEnum, managed NullableString) *ObjectAttribute {
 	this := ObjectAttribute{}
 	this.Pk = pk
-	this.ContentType = contentType
+	this.ObjectType = objectType
+	this.ObjectTypeObj = objectTypeObj
 	this.Created = created
 	this.Key = key
 	this.Label = label
 	this.LastUpdated = lastUpdated
-	this.ObjectType = objectType
 	this.Type = type_
 	this.Managed = managed
 	return &this
@@ -91,28 +91,52 @@ func (o *ObjectAttribute) SetPk(v string) {
 	o.Pk = v
 }
 
-// GetContentType returns the ContentType field value
-func (o *ObjectAttribute) GetContentType() ContentType {
+// GetObjectType returns the ObjectType field value
+func (o *ObjectAttribute) GetObjectType() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.ObjectType
+}
+
+// GetObjectTypeOk returns a tuple with the ObjectType field value
+// and a boolean to check if the value has been set.
+func (o *ObjectAttribute) GetObjectTypeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.ObjectType, true
+}
+
+// SetObjectType sets field value
+func (o *ObjectAttribute) SetObjectType(v string) {
+	o.ObjectType = v
+}
+
+// GetObjectTypeObj returns the ObjectTypeObj field value
+func (o *ObjectAttribute) GetObjectTypeObj() ContentType {
 	if o == nil {
 		var ret ContentType
 		return ret
 	}
 
-	return o.ContentType
+	return o.ObjectTypeObj
 }
 
-// GetContentTypeOk returns a tuple with the ContentType field value
+// GetObjectTypeObjOk returns a tuple with the ObjectTypeObj field value
 // and a boolean to check if the value has been set.
-func (o *ObjectAttribute) GetContentTypeOk() (*ContentType, bool) {
+func (o *ObjectAttribute) GetObjectTypeObjOk() (*ContentType, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.ContentType, true
+	return &o.ObjectTypeObj, true
 }
 
-// SetContentType sets field value
-func (o *ObjectAttribute) SetContentType(v ContentType) {
-	o.ContentType = v
+// SetObjectTypeObj sets field value
+func (o *ObjectAttribute) SetObjectTypeObj(v ContentType) {
+	o.ObjectTypeObj = v
 }
 
 // GetCreated returns the Created field value
@@ -209,30 +233,6 @@ func (o *ObjectAttribute) GetLastUpdatedOk() (*time.Time, bool) {
 // SetLastUpdated sets field value
 func (o *ObjectAttribute) SetLastUpdated(v time.Time) {
 	o.LastUpdated = v
-}
-
-// GetObjectType returns the ObjectType field value
-func (o *ObjectAttribute) GetObjectType() int32 {
-	if o == nil {
-		var ret int32
-		return ret
-	}
-
-	return o.ObjectType
-}
-
-// GetObjectTypeOk returns a tuple with the ObjectType field value
-// and a boolean to check if the value has been set.
-func (o *ObjectAttribute) GetObjectTypeOk() (*int32, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.ObjectType, true
-}
-
-// SetObjectType sets field value
-func (o *ObjectAttribute) SetObjectType(v int32) {
-	o.ObjectType = v
 }
 
 // GetRegex returns the Regex field value if set, zero value otherwise.
@@ -424,12 +424,12 @@ func (o ObjectAttribute) MarshalJSON() ([]byte, error) {
 func (o ObjectAttribute) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["pk"] = o.Pk
-	toSerialize["content_type"] = o.ContentType
+	toSerialize["object_type"] = o.ObjectType
+	toSerialize["object_type_obj"] = o.ObjectTypeObj
 	toSerialize["created"] = o.Created
 	toSerialize["key"] = o.Key
 	toSerialize["label"] = o.Label
 	toSerialize["last_updated"] = o.LastUpdated
-	toSerialize["object_type"] = o.ObjectType
 	if !IsNil(o.Regex) {
 		toSerialize["regex"] = o.Regex
 	}
@@ -458,12 +458,12 @@ func (o *ObjectAttribute) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"pk",
-		"content_type",
+		"object_type",
+		"object_type_obj",
 		"created",
 		"key",
 		"label",
 		"last_updated",
-		"object_type",
 		"type",
 		"managed",
 	}
@@ -496,12 +496,12 @@ func (o *ObjectAttribute) UnmarshalJSON(data []byte) (err error) {
 
 	if err = json.Unmarshal(data, &additionalProperties); err == nil {
 		delete(additionalProperties, "pk")
-		delete(additionalProperties, "content_type")
+		delete(additionalProperties, "object_type")
+		delete(additionalProperties, "object_type_obj")
 		delete(additionalProperties, "created")
 		delete(additionalProperties, "key")
 		delete(additionalProperties, "label")
 		delete(additionalProperties, "last_updated")
-		delete(additionalProperties, "object_type")
 		delete(additionalProperties, "regex")
 		delete(additionalProperties, "type")
 		delete(additionalProperties, "managed")

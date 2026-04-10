@@ -21,9 +21,9 @@ var _ MappedNullable = &ObjectAttributeRequest{}
 
 // ObjectAttributeRequest struct for ObjectAttributeRequest
 type ObjectAttributeRequest struct {
+	ObjectType           string                  `json:"object_type"`
 	Key                  string                  `json:"key"`
 	Label                string                  `json:"label"`
-	ObjectType           int32                   `json:"object_type"`
 	Regex                *string                 `json:"regex,omitempty"`
 	Type                 ObjectAttributeTypeEnum `json:"type"`
 	FlagUnique           *bool                   `json:"flag_unique,omitempty"`
@@ -38,11 +38,11 @@ type _ObjectAttributeRequest ObjectAttributeRequest
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewObjectAttributeRequest(key string, label string, objectType int32, type_ ObjectAttributeTypeEnum) *ObjectAttributeRequest {
+func NewObjectAttributeRequest(objectType string, key string, label string, type_ ObjectAttributeTypeEnum) *ObjectAttributeRequest {
 	this := ObjectAttributeRequest{}
+	this.ObjectType = objectType
 	this.Key = key
 	this.Label = label
-	this.ObjectType = objectType
 	this.Type = type_
 	return &this
 }
@@ -53,6 +53,30 @@ func NewObjectAttributeRequest(key string, label string, objectType int32, type_
 func NewObjectAttributeRequestWithDefaults() *ObjectAttributeRequest {
 	this := ObjectAttributeRequest{}
 	return &this
+}
+
+// GetObjectType returns the ObjectType field value
+func (o *ObjectAttributeRequest) GetObjectType() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.ObjectType
+}
+
+// GetObjectTypeOk returns a tuple with the ObjectType field value
+// and a boolean to check if the value has been set.
+func (o *ObjectAttributeRequest) GetObjectTypeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.ObjectType, true
+}
+
+// SetObjectType sets field value
+func (o *ObjectAttributeRequest) SetObjectType(v string) {
+	o.ObjectType = v
 }
 
 // GetKey returns the Key field value
@@ -101,30 +125,6 @@ func (o *ObjectAttributeRequest) GetLabelOk() (*string, bool) {
 // SetLabel sets field value
 func (o *ObjectAttributeRequest) SetLabel(v string) {
 	o.Label = v
-}
-
-// GetObjectType returns the ObjectType field value
-func (o *ObjectAttributeRequest) GetObjectType() int32 {
-	if o == nil {
-		var ret int32
-		return ret
-	}
-
-	return o.ObjectType
-}
-
-// GetObjectTypeOk returns a tuple with the ObjectType field value
-// and a boolean to check if the value has been set.
-func (o *ObjectAttributeRequest) GetObjectTypeOk() (*int32, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.ObjectType, true
-}
-
-// SetObjectType sets field value
-func (o *ObjectAttributeRequest) SetObjectType(v int32) {
-	o.ObjectType = v
 }
 
 // GetRegex returns the Regex field value if set, zero value otherwise.
@@ -289,9 +289,9 @@ func (o ObjectAttributeRequest) MarshalJSON() ([]byte, error) {
 
 func (o ObjectAttributeRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	toSerialize["object_type"] = o.ObjectType
 	toSerialize["key"] = o.Key
 	toSerialize["label"] = o.Label
-	toSerialize["object_type"] = o.ObjectType
 	if !IsNil(o.Regex) {
 		toSerialize["regex"] = o.Regex
 	}
@@ -318,9 +318,9 @@ func (o *ObjectAttributeRequest) UnmarshalJSON(data []byte) (err error) {
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
+		"object_type",
 		"key",
 		"label",
-		"object_type",
 		"type",
 	}
 
@@ -351,9 +351,9 @@ func (o *ObjectAttributeRequest) UnmarshalJSON(data []byte) (err error) {
 	additionalProperties := make(map[string]interface{})
 
 	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "object_type")
 		delete(additionalProperties, "key")
 		delete(additionalProperties, "label")
-		delete(additionalProperties, "object_type")
 		delete(additionalProperties, "regex")
 		delete(additionalProperties, "type")
 		delete(additionalProperties, "flag_unique")

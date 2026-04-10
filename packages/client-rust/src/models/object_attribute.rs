@@ -14,8 +14,10 @@ use crate::models;
 pub struct ObjectAttribute {
     #[serde(rename = "pk")]
     pub pk: uuid::Uuid,
-    #[serde(rename = "content_type")]
-    pub content_type: models::ContentType,
+    #[serde(rename = "object_type")]
+    pub object_type: String,
+    #[serde(rename = "object_type_obj")]
+    pub object_type_obj: models::ContentType,
     #[serde(rename = "created")]
     pub created: String,
     #[serde(rename = "key")]
@@ -24,8 +26,6 @@ pub struct ObjectAttribute {
     pub label: String,
     #[serde(rename = "last_updated")]
     pub last_updated: String,
-    #[serde(rename = "object_type")]
-    pub object_type: i32,
     #[serde(rename = "regex", skip_serializing_if = "Option::is_none")]
     pub regex: Option<String>,
     #[serde(rename = "type")]
@@ -46,23 +46,23 @@ pub struct ObjectAttribute {
 impl ObjectAttribute {
     pub fn new(
         pk: uuid::Uuid,
-        content_type: models::ContentType,
+        object_type: String,
+        object_type_obj: models::ContentType,
         created: String,
         key: String,
         label: String,
         last_updated: String,
-        object_type: i32,
         r#type: models::ObjectAttributeTypeEnum,
         managed: Option<String>,
     ) -> ObjectAttribute {
         ObjectAttribute {
             pk,
-            content_type,
+            object_type,
+            object_type_obj,
             created,
             key,
             label,
             last_updated,
-            object_type,
             regex: None,
             r#type,
             managed,

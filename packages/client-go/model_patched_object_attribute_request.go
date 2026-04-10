@@ -20,9 +20,9 @@ var _ MappedNullable = &PatchedObjectAttributeRequest{}
 
 // PatchedObjectAttributeRequest struct for PatchedObjectAttributeRequest
 type PatchedObjectAttributeRequest struct {
+	ObjectType           *string                  `json:"object_type,omitempty"`
 	Key                  *string                  `json:"key,omitempty"`
 	Label                *string                  `json:"label,omitempty"`
-	ObjectType           *int32                   `json:"object_type,omitempty"`
 	Regex                *string                  `json:"regex,omitempty"`
 	Type                 *ObjectAttributeTypeEnum `json:"type,omitempty"`
 	FlagUnique           *bool                    `json:"flag_unique,omitempty"`
@@ -48,6 +48,38 @@ func NewPatchedObjectAttributeRequest() *PatchedObjectAttributeRequest {
 func NewPatchedObjectAttributeRequestWithDefaults() *PatchedObjectAttributeRequest {
 	this := PatchedObjectAttributeRequest{}
 	return &this
+}
+
+// GetObjectType returns the ObjectType field value if set, zero value otherwise.
+func (o *PatchedObjectAttributeRequest) GetObjectType() string {
+	if o == nil || IsNil(o.ObjectType) {
+		var ret string
+		return ret
+	}
+	return *o.ObjectType
+}
+
+// GetObjectTypeOk returns a tuple with the ObjectType field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PatchedObjectAttributeRequest) GetObjectTypeOk() (*string, bool) {
+	if o == nil || IsNil(o.ObjectType) {
+		return nil, false
+	}
+	return o.ObjectType, true
+}
+
+// HasObjectType returns a boolean if a field has been set.
+func (o *PatchedObjectAttributeRequest) HasObjectType() bool {
+	if o != nil && !IsNil(o.ObjectType) {
+		return true
+	}
+
+	return false
+}
+
+// SetObjectType gets a reference to the given string and assigns it to the ObjectType field.
+func (o *PatchedObjectAttributeRequest) SetObjectType(v string) {
+	o.ObjectType = &v
 }
 
 // GetKey returns the Key field value if set, zero value otherwise.
@@ -112,38 +144,6 @@ func (o *PatchedObjectAttributeRequest) HasLabel() bool {
 // SetLabel gets a reference to the given string and assigns it to the Label field.
 func (o *PatchedObjectAttributeRequest) SetLabel(v string) {
 	o.Label = &v
-}
-
-// GetObjectType returns the ObjectType field value if set, zero value otherwise.
-func (o *PatchedObjectAttributeRequest) GetObjectType() int32 {
-	if o == nil || IsNil(o.ObjectType) {
-		var ret int32
-		return ret
-	}
-	return *o.ObjectType
-}
-
-// GetObjectTypeOk returns a tuple with the ObjectType field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *PatchedObjectAttributeRequest) GetObjectTypeOk() (*int32, bool) {
-	if o == nil || IsNil(o.ObjectType) {
-		return nil, false
-	}
-	return o.ObjectType, true
-}
-
-// HasObjectType returns a boolean if a field has been set.
-func (o *PatchedObjectAttributeRequest) HasObjectType() bool {
-	if o != nil && !IsNil(o.ObjectType) {
-		return true
-	}
-
-	return false
-}
-
-// SetObjectType gets a reference to the given int32 and assigns it to the ObjectType field.
-func (o *PatchedObjectAttributeRequest) SetObjectType(v int32) {
-	o.ObjectType = &v
 }
 
 // GetRegex returns the Regex field value if set, zero value otherwise.
@@ -316,14 +316,14 @@ func (o PatchedObjectAttributeRequest) MarshalJSON() ([]byte, error) {
 
 func (o PatchedObjectAttributeRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.ObjectType) {
+		toSerialize["object_type"] = o.ObjectType
+	}
 	if !IsNil(o.Key) {
 		toSerialize["key"] = o.Key
 	}
 	if !IsNil(o.Label) {
 		toSerialize["label"] = o.Label
-	}
-	if !IsNil(o.ObjectType) {
-		toSerialize["object_type"] = o.ObjectType
 	}
 	if !IsNil(o.Regex) {
 		toSerialize["regex"] = o.Regex
@@ -362,9 +362,9 @@ func (o *PatchedObjectAttributeRequest) UnmarshalJSON(data []byte) (err error) {
 	additionalProperties := make(map[string]interface{})
 
 	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "object_type")
 		delete(additionalProperties, "key")
 		delete(additionalProperties, "label")
-		delete(additionalProperties, "object_type")
 		delete(additionalProperties, "regex")
 		delete(additionalProperties, "type")
 		delete(additionalProperties, "flag_unique")

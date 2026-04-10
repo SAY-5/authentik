@@ -34,10 +34,16 @@ export interface ObjectAttribute {
     readonly pk: string;
     /**
      *
+     * @type {string}
+     * @memberof ObjectAttribute
+     */
+    objectType: string;
+    /**
+     *
      * @type {ContentType}
      * @memberof ObjectAttribute
      */
-    readonly contentType: ContentType;
+    readonly objectTypeObj: ContentType;
     /**
      *
      * @type {Date}
@@ -62,12 +68,6 @@ export interface ObjectAttribute {
      * @memberof ObjectAttribute
      */
     readonly lastUpdated: Date;
-    /**
-     *
-     * @type {number}
-     * @memberof ObjectAttribute
-     */
-    objectType: number;
     /**
      *
      * @type {string}
@@ -111,12 +111,12 @@ export interface ObjectAttribute {
  */
 export function instanceOfObjectAttribute(value: object): value is ObjectAttribute {
     if (!("pk" in value) || value["pk"] === undefined) return false;
-    if (!("contentType" in value) || value["contentType"] === undefined) return false;
+    if (!("objectType" in value) || value["objectType"] === undefined) return false;
+    if (!("objectTypeObj" in value) || value["objectTypeObj"] === undefined) return false;
     if (!("created" in value) || value["created"] === undefined) return false;
     if (!("key" in value) || value["key"] === undefined) return false;
     if (!("label" in value) || value["label"] === undefined) return false;
     if (!("lastUpdated" in value) || value["lastUpdated"] === undefined) return false;
-    if (!("objectType" in value) || value["objectType"] === undefined) return false;
     if (!("type" in value) || value["type"] === undefined) return false;
     if (!("managed" in value) || value["managed"] === undefined) return false;
     return true;
@@ -135,12 +135,12 @@ export function ObjectAttributeFromJSONTyped(
     }
     return {
         pk: json["pk"],
-        contentType: ContentTypeFromJSON(json["content_type"]),
+        objectType: json["object_type"],
+        objectTypeObj: ContentTypeFromJSON(json["object_type_obj"]),
         created: new Date(json["created"]),
         key: json["key"],
         label: json["label"],
         lastUpdated: new Date(json["last_updated"]),
-        objectType: json["object_type"],
         regex: json["regex"] == null ? undefined : json["regex"],
         type: ObjectAttributeTypeEnumFromJSON(json["type"]),
         managed: json["managed"],
@@ -157,7 +157,7 @@ export function ObjectAttributeToJSON(json: any): ObjectAttribute {
 export function ObjectAttributeToJSONTyped(
     value?: Omit<
         ObjectAttribute,
-        "pk" | "content_type" | "created" | "last_updated" | "managed"
+        "pk" | "object_type_obj" | "created" | "last_updated" | "managed"
     > | null,
     ignoreDiscriminator: boolean = false,
 ): any {
@@ -166,9 +166,9 @@ export function ObjectAttributeToJSONTyped(
     }
 
     return {
+        object_type: value["objectType"],
         key: value["key"],
         label: value["label"],
-        object_type: value["objectType"],
         regex: value["regex"],
         type: ObjectAttributeTypeEnumToJSON(value["type"]),
         flag_unique: value["flagUnique"],

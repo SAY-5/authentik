@@ -24,7 +24,7 @@ export class ObjectAttributeListPage extends TablePage<ObjectAttribute> {
     public pageIcon = "pf-icon pf-icon-flavor";
 
     protected override rowLabel(item: ObjectAttribute): string | null {
-        return item.attributeId ?? null;
+        return item.pk ?? null;
     }
 
     checkbox = true;
@@ -60,7 +60,7 @@ export class ObjectAttributeListPage extends TablePage<ObjectAttribute> {
             }}
             .delete=${(item: ObjectAttribute) => {
                 return new CoreApi(DEFAULT_CONFIG).coreObjectAttributesDestroy({
-                    attributeId: item.attributeId!,
+                    attributeId: item.pk,
                 });
             }}
         >
@@ -92,7 +92,7 @@ export class ObjectAttributeListPage extends TablePage<ObjectAttribute> {
                 <span slot="header">${msg("Update Attribute")}</span>
                 <ak-object-attribute-form
                     slot="form"
-                    .instancePk=${item.attributeId}
+                    .instancePk=${item.pk}
                 ></ak-object-attribute-form>
                 <button slot="trigger" class="pf-c-button pf-m-plain">
                     <pf-tooltip position="top" content=${msg("Edit")}>
