@@ -27,14 +27,7 @@ pub struct UserSetting {
         with = "::serde_with::rust::double_option",
         skip_serializing_if = "Option::is_none"
     )]
-    pub icon_url: Option<Option<String>>,
-    #[serde(
-        rename = "icon_themed_urls",
-        default,
-        with = "::serde_with::rust::double_option",
-        skip_serializing_if = "Option::is_none"
-    )]
-    pub icon_themed_urls: Option<Option<models::ThemedUrls>>,
+    pub icon_url: Option<Option<models::DynamicUrl>>,
 }
 
 impl UserSetting {
@@ -46,7 +39,6 @@ impl UserSetting {
             title,
             configure_url: None,
             icon_url: None,
-            icon_themed_urls: None,
         }
     }
 }

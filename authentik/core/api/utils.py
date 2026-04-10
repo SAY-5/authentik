@@ -4,8 +4,8 @@ from typing import Any
 
 from django.db import models
 from django.db.models import Model
-from drf_spectacular.extensions import OpenApiSerializerFieldExtension
-from drf_spectacular.plumbing import build_basic_type
+from drf_spectacular.extensions import OpenApiSerializerExtension, OpenApiSerializerFieldExtension
+from drf_spectacular.plumbing import build_basic_type, build_object_type
 from drf_spectacular.types import OpenApiTypes
 from rest_framework.fields import (
     CharField,
@@ -129,8 +129,69 @@ class LinkSerializer(PassiveSerializer):
     link = CharField()
 
 
-class ThemedUrlsSerializer(PassiveSerializer):
-    """Themed URLs - maps theme names to URLs for light and dark themes"""
+def _validate_dynamic_url_map(value: Any) -> dict[str, str | None]:
+    if not isinstance(value, dict):
+        raise ValidationError("Value must be a dictionary mapping variant names to URLs.")
 
-    light = CharField(required=False, allow_null=True)
-    dark = CharField(required=False, allow_null=True)
+    validated = {}
+    for key, variant_url in value.items():
+        if not isinstance(key, str):
+            raise ValidationError("Dynamic URL variant names must be strings.")
+        if variant_url is not None and not isinstance(variant_url, str):
+            raise ValidationError(f'Value for "{key}" must be a string or null.')
+        validated[key] = variant_url
+    return validated
+
+
+def _build_dynamic_url_schema(description: str) -> dict[str, Any]:
+    url_schema = build_basic_type(OpenApiTypes.STR)
+    url_schema["nullable"] = True
+    return build_object_type(
+        description=description,
+        properties={
+            "fallback": url_schema.copy(),
+        },
+        additionalProperties=url_schema,
+    )
+
+
+class DynamicURLSerializerExtension(OpenApiSerializerExtension):
+    target_class = "authentik.core.api.utils.DynamicURLSerializer"
+
+    def get_name(self, auto_schema, direction):
+        return "DynamicURL"
+
+    def map_serializer(self, auto_schema, direction):
+        return _build_dynamic_url_schema(
+            "Dynamic URL variants keyed by variant name. Includes a fallback URL."
+        )
+
+
+class DynamicURLSerializer(PassiveSerializer):
+    """Dynamic URLs keyed by variant name with a generic fallback URL."""
+
+    fallback = CharField(required=False, allow_null=True)
+
+    def to_internal_value(self, data: Any) -> dict[str, str | None]:
+        return _validate_dynamic_url_map(data)
+
+    def to_representation(self, instance: Any) -> dict[str, str | None] | None:
+        if instance is None:
+            return None
+        return _validate_dynamic_url_map(instance)
+
+
+class ThemedUrlsSerializerExtension(OpenApiSerializerExtension):
+    target_class = "authentik.core.api.utils.ThemedUrlsSerializer"
+
+    def get_name(self, auto_schema, direction):
+        return "ThemedUrls"
+
+    def map_serializer(self, auto_schema, direction):
+        return _build_dynamic_url_schema(
+            "URL variants keyed by theme name. Includes a fallback URL."
+        )
+
+
+class ThemedUrlsSerializer(DynamicURLSerializer):
+    """Backward-compatible alias for themed URL variants."""

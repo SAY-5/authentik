@@ -12,10 +12,10 @@
  * Do not edit the class manually.
  */
 
+import type { DynamicURL } from "./DynamicURL";
+import { DynamicURLFromJSON, DynamicURLToJSON } from "./DynamicURL";
 import type { LoginChallengeTypes } from "./LoginChallengeTypes";
 import { LoginChallengeTypesFromJSON, LoginChallengeTypesToJSON } from "./LoginChallengeTypes";
-import type { ThemedUrls } from "./ThemedUrls";
-import { ThemedUrlsFromJSON, ThemedUrlsToJSON } from "./ThemedUrls";
 
 /**
  * Serializer for Login buttons of sources
@@ -31,16 +31,10 @@ export interface LoginSource {
     name: string;
     /**
      *
-     * @type {string}
+     * @type {DynamicURL}
      * @memberof LoginSource
      */
-    iconUrl?: string | null;
-    /**
-     *
-     * @type {ThemedUrls}
-     * @memberof LoginSource
-     */
-    iconThemedUrls?: ThemedUrls | null;
+    iconUrl?: DynamicURL | null;
     /**
      *
      * @type {boolean}
@@ -74,11 +68,7 @@ export function LoginSourceFromJSONTyped(json: any, ignoreDiscriminator: boolean
     }
     return {
         name: json["name"],
-        iconUrl: json["icon_url"] == null ? undefined : json["icon_url"],
-        iconThemedUrls:
-            json["icon_themed_urls"] == null
-                ? undefined
-                : ThemedUrlsFromJSON(json["icon_themed_urls"]),
+        iconUrl: json["icon_url"] == null ? undefined : DynamicURLFromJSON(json["icon_url"]),
         promoted: json["promoted"] == null ? undefined : json["promoted"],
         challenge: LoginChallengeTypesFromJSON(json["challenge"]),
     };
@@ -98,8 +88,7 @@ export function LoginSourceToJSONTyped(
 
     return {
         name: value["name"],
-        icon_url: value["iconUrl"],
-        icon_themed_urls: ThemedUrlsToJSON(value["iconThemedUrls"]),
+        icon_url: DynamicURLToJSON(value["iconUrl"]),
         promoted: value["promoted"],
         challenge: LoginChallengeTypesToJSON(value["challenge"]),
     };

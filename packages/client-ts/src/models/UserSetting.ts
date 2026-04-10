@@ -12,8 +12,8 @@
  * Do not edit the class manually.
  */
 
-import type { ThemedUrls } from "./ThemedUrls";
-import { ThemedUrlsFromJSON, ThemedUrlsToJSON } from "./ThemedUrls";
+import type { DynamicURL } from "./DynamicURL";
+import { DynamicURLFromJSON, DynamicURLToJSON } from "./DynamicURL";
 
 /**
  * Serializer for User settings for stages and sources
@@ -47,16 +47,10 @@ export interface UserSetting {
     configureUrl?: string;
     /**
      *
-     * @type {string}
+     * @type {DynamicURL}
      * @memberof UserSetting
      */
-    iconUrl?: string | null;
-    /**
-     *
-     * @type {ThemedUrls}
-     * @memberof UserSetting
-     */
-    iconThemedUrls?: ThemedUrls | null;
+    iconUrl?: DynamicURL | null;
 }
 
 /**
@@ -82,11 +76,7 @@ export function UserSettingFromJSONTyped(json: any, ignoreDiscriminator: boolean
         component: json["component"],
         title: json["title"],
         configureUrl: json["configure_url"] == null ? undefined : json["configure_url"],
-        iconUrl: json["icon_url"] == null ? undefined : json["icon_url"],
-        iconThemedUrls:
-            json["icon_themed_urls"] == null
-                ? undefined
-                : ThemedUrlsFromJSON(json["icon_themed_urls"]),
+        iconUrl: json["icon_url"] == null ? undefined : DynamicURLFromJSON(json["icon_url"]),
     };
 }
 
@@ -107,7 +97,6 @@ export function UserSettingToJSONTyped(
         component: value["component"],
         title: value["title"],
         configure_url: value["configureUrl"],
-        icon_url: value["iconUrl"],
-        icon_themed_urls: ThemedUrlsToJSON(value["iconThemedUrls"]),
+        icon_url: DynamicURLToJSON(value["iconUrl"]),
     };
 }

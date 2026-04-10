@@ -9,7 +9,7 @@ from rest_framework.fields import (
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from authentik.core.api.utils import PassiveSerializer, ThemedUrlsSerializer
+from authentik.core.api.utils import DynamicURLSerializer, PassiveSerializer
 from authentik.lib.models import DeprecatedMixin
 from authentik.lib.utils.reflection import all_subclasses
 
@@ -22,8 +22,7 @@ class TypeCreateSerializer(PassiveSerializer):
     component = CharField(required=True)
     model_name = CharField(required=True)
 
-    icon_url = CharField(required=False, allow_null=True)
-    icon_themed_urls = ThemedUrlsSerializer(required=False, allow_null=True)
+    icon_url = DynamicURLSerializer(required=False, allow_null=True)
     requires_enterprise = BooleanField(default=False)
     deprecated = BooleanField(default=False)
 
@@ -52,7 +51,7 @@ class TypesMixin:
                     continue
                 # Circumvent the django protection for not being able to instantiate
                 # abstract models. We need a model instance to access .component
-                # and further down .icon_url
+                # and further down .icon_dynamic_url
                 instance = subclass.__new__(subclass)
                 # Django re-sets abstract = False so we need to override that
                 instance.Meta.abstract = True
@@ -66,8 +65,7 @@ class TypesMixin:
                     "description": subclass.__doc__,
                     "component": instance.component,
                     "model_name": subclass._meta.model_name,
-                    "icon_url": getattr(instance, "icon_url", None),
-                    "icon_themed_urls": getattr(instance, "icon_themed_urls", None),
+                    "icon_url": getattr(instance, "icon_dynamic_url", None),
                     "requires_enterprise": False,
                     "deprecated": isinstance(instance, DeprecatedMixin),
                 }

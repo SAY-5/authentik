@@ -25,8 +25,7 @@ type TypeCreate struct {
 	Description          string             `json:"description"`
 	Component            string             `json:"component"`
 	ModelName            string             `json:"model_name"`
-	IconUrl              NullableString     `json:"icon_url,omitempty"`
-	IconThemedUrls       NullableThemedUrls `json:"icon_themed_urls,omitempty"`
+	IconUrl              NullableDynamicURL `json:"icon_url,omitempty"`
 	RequiresEnterprise   *bool              `json:"requires_enterprise,omitempty"`
 	Deprecated           *bool              `json:"deprecated,omitempty"`
 	AdditionalProperties map[string]interface{}
@@ -160,9 +159,9 @@ func (o *TypeCreate) SetModelName(v string) {
 }
 
 // GetIconUrl returns the IconUrl field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *TypeCreate) GetIconUrl() string {
+func (o *TypeCreate) GetIconUrl() DynamicURL {
 	if o == nil || IsNil(o.IconUrl.Get()) {
-		var ret string
+		var ret DynamicURL
 		return ret
 	}
 	return *o.IconUrl.Get()
@@ -171,7 +170,7 @@ func (o *TypeCreate) GetIconUrl() string {
 // GetIconUrlOk returns a tuple with the IconUrl field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *TypeCreate) GetIconUrlOk() (*string, bool) {
+func (o *TypeCreate) GetIconUrlOk() (*DynamicURL, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -187,8 +186,8 @@ func (o *TypeCreate) HasIconUrl() bool {
 	return false
 }
 
-// SetIconUrl gets a reference to the given NullableString and assigns it to the IconUrl field.
-func (o *TypeCreate) SetIconUrl(v string) {
+// SetIconUrl gets a reference to the given NullableDynamicURL and assigns it to the IconUrl field.
+func (o *TypeCreate) SetIconUrl(v DynamicURL) {
 	o.IconUrl.Set(&v)
 }
 
@@ -200,49 +199,6 @@ func (o *TypeCreate) SetIconUrlNil() {
 // UnsetIconUrl ensures that no value is present for IconUrl, not even an explicit nil
 func (o *TypeCreate) UnsetIconUrl() {
 	o.IconUrl.Unset()
-}
-
-// GetIconThemedUrls returns the IconThemedUrls field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *TypeCreate) GetIconThemedUrls() ThemedUrls {
-	if o == nil || IsNil(o.IconThemedUrls.Get()) {
-		var ret ThemedUrls
-		return ret
-	}
-	return *o.IconThemedUrls.Get()
-}
-
-// GetIconThemedUrlsOk returns a tuple with the IconThemedUrls field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *TypeCreate) GetIconThemedUrlsOk() (*ThemedUrls, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.IconThemedUrls.Get(), o.IconThemedUrls.IsSet()
-}
-
-// HasIconThemedUrls returns a boolean if a field has been set.
-func (o *TypeCreate) HasIconThemedUrls() bool {
-	if o != nil && o.IconThemedUrls.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetIconThemedUrls gets a reference to the given NullableThemedUrls and assigns it to the IconThemedUrls field.
-func (o *TypeCreate) SetIconThemedUrls(v ThemedUrls) {
-	o.IconThemedUrls.Set(&v)
-}
-
-// SetIconThemedUrlsNil sets the value for IconThemedUrls to be an explicit nil
-func (o *TypeCreate) SetIconThemedUrlsNil() {
-	o.IconThemedUrls.Set(nil)
-}
-
-// UnsetIconThemedUrls ensures that no value is present for IconThemedUrls, not even an explicit nil
-func (o *TypeCreate) UnsetIconThemedUrls() {
-	o.IconThemedUrls.Unset()
 }
 
 // GetRequiresEnterprise returns the RequiresEnterprise field value if set, zero value otherwise.
@@ -326,9 +282,6 @@ func (o TypeCreate) ToMap() (map[string]interface{}, error) {
 	if o.IconUrl.IsSet() {
 		toSerialize["icon_url"] = o.IconUrl.Get()
 	}
-	if o.IconThemedUrls.IsSet() {
-		toSerialize["icon_themed_urls"] = o.IconThemedUrls.Get()
-	}
 	if !IsNil(o.RequiresEnterprise) {
 		toSerialize["requires_enterprise"] = o.RequiresEnterprise
 	}
@@ -386,7 +339,6 @@ func (o *TypeCreate) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "component")
 		delete(additionalProperties, "model_name")
 		delete(additionalProperties, "icon_url")
-		delete(additionalProperties, "icon_themed_urls")
 		delete(additionalProperties, "requires_enterprise")
 		delete(additionalProperties, "deprecated")
 		o.AdditionalProperties = additionalProperties

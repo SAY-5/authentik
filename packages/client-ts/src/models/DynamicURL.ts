@@ -13,32 +13,32 @@
  */
 
 /**
- * URL variants keyed by theme name. Includes a fallback URL.
+ * Dynamic URL variants keyed by variant name. Includes a fallback URL.
  * @export
- * @interface ThemedUrls
+ * @interface DynamicURL
  */
-export interface ThemedUrls {
+export interface DynamicURL {
     [key: string]: string | any;
     /**
      *
      * @type {string}
-     * @memberof ThemedUrls
+     * @memberof DynamicURL
      */
     fallback?: string | null;
 }
 
 /**
- * Check if a given object implements the ThemedUrls interface.
+ * Check if a given object implements the DynamicURL interface.
  */
-export function instanceOfThemedUrls(value: object): value is ThemedUrls {
+export function instanceOfDynamicURL(value: object): value is DynamicURL {
     return true;
 }
 
-export function ThemedUrlsFromJSON(json: any): ThemedUrls {
-    return ThemedUrlsFromJSONTyped(json, false);
+export function DynamicURLFromJSON(json: any): DynamicURL {
+    return DynamicURLFromJSONTyped(json, false);
 }
 
-export function ThemedUrlsFromJSONTyped(json: any, ignoreDiscriminator: boolean): ThemedUrls {
+export function DynamicURLFromJSONTyped(json: any, ignoreDiscriminator: boolean): DynamicURL {
     if (json == null) {
         return json;
     }
@@ -48,12 +48,12 @@ export function ThemedUrlsFromJSONTyped(json: any, ignoreDiscriminator: boolean)
     };
 }
 
-export function ThemedUrlsToJSON(json: any): ThemedUrls {
-    return ThemedUrlsToJSONTyped(json, false);
+export function DynamicURLToJSON(json: any): DynamicURL {
+    return DynamicURLToJSONTyped(json, false);
 }
 
-export function ThemedUrlsToJSONTyped(
-    value?: ThemedUrls | null,
+export function DynamicURLToJSONTyped(
+    value?: DynamicURL | null,
     ignoreDiscriminator: boolean = false,
 ): any {
     if (value == null) {

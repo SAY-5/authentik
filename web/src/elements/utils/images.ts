@@ -12,16 +12,40 @@ import { html, nothing, TemplateResult } from "lit";
 
 export const FontAwesomeProtocol = "fa://";
 
+export interface VariantUrls {
+    fallback?: string | null;
+    [key: string]: string | null | undefined;
+}
+
+export function resolveVariantUrl(
+    variantUrls: VariantUrls | undefined | null,
+    theme: ResolvedUITheme | undefined,
+): string | undefined | null {
+    if (!variantUrls) {
+        return undefined;
+    }
+
+    if (theme && variantUrls[theme]) {
+        return variantUrls[theme];
+    }
+
+    if (variantUrls.fallback) {
+        return variantUrls.fallback;
+    }
+
+    return Object.values(variantUrls).find((url) => !!url);
+}
+
 export function resolveThemedUrl(
     src: string | undefined | null,
     themedUrls: ThemedUrls | undefined | null,
     theme: ResolvedUITheme | undefined,
 ): string | undefined | null {
-    if (theme && themedUrls?.[theme]) {
-        return themedUrls[theme];
+    const variantUrls = themedUrls ? { ...themedUrls } : {};
+    if (src !== undefined && src !== null) {
+        variantUrls.fallback = src;
     }
-
-    return src;
+    return resolveVariantUrl(variantUrls, theme);
 }
 
 export interface ThemedImageProps extends ImgHTMLAttributes<HTMLImageElement> {
@@ -46,6 +70,11 @@ export interface RenderIconOptions {
     className?: string;
     fallback?: TemplateResult | typeof nothing;
     part?: string;
+}
+
+export interface RenderDynamicIconOptions extends RenderIconOptions {
+    urls: VariantUrls | undefined | null;
+    theme: ResolvedUITheme | undefined;
 }
 
 export const ThemedImage: LitFC<ThemedImageProps> = ({
@@ -105,6 +134,13 @@ export function renderIcon(
         "role": ariaHidden ? undefined : "img",
         "theme": theme ?? "light",
     })}`;
+}
+
+export function renderDynamicIcon(
+    { urls, theme, ...options }: RenderDynamicIconOptions,
+): TemplateResult | typeof nothing {
+    const resolvedSrc = resolveVariantUrl(urls, theme);
+    return renderIcon(resolvedSrc, null, theme, options);
 }
 
 export function isDefaultAvatar(path?: string | null): boolean {

@@ -16,6 +16,8 @@ import type { BindingTypeEnum } from "./BindingTypeEnum";
 import { BindingTypeEnumFromJSON, BindingTypeEnumToJSON } from "./BindingTypeEnum";
 import type { DigestAlgorithmEnum } from "./DigestAlgorithmEnum";
 import { DigestAlgorithmEnumFromJSON, DigestAlgorithmEnumToJSON } from "./DigestAlgorithmEnum";
+import type { DynamicURL } from "./DynamicURL";
+import { DynamicURLFromJSON } from "./DynamicURL";
 import type { GroupMatchingModeEnum } from "./GroupMatchingModeEnum";
 import {
     GroupMatchingModeEnumFromJSON,
@@ -30,8 +32,6 @@ import {
     SignatureAlgorithmEnumFromJSON,
     SignatureAlgorithmEnumToJSON,
 } from "./SignatureAlgorithmEnum";
-import type { ThemedUrls } from "./ThemedUrls";
-import { ThemedUrlsFromJSON } from "./ThemedUrls";
 import type { UserMatchingModeEnum } from "./UserMatchingModeEnum";
 import { UserMatchingModeEnumFromJSON, UserMatchingModeEnumToJSON } from "./UserMatchingModeEnum";
 
@@ -150,17 +150,11 @@ export interface SAMLSource {
      */
     icon?: string;
     /**
-     * Get the URL to the source icon.
-     * @type {string}
-     * @memberof SAMLSource
-     */
-    readonly iconUrl: string | null;
-    /**
      *
-     * @type {ThemedUrls}
+     * @type {DynamicURL}
      * @memberof SAMLSource
      */
-    readonly iconThemedUrls: ThemedUrls | null;
+    readonly iconUrl: DynamicURL | null;
     /**
      * How the source determines if an existing group should be used or a new group created.
      * @type {GroupMatchingModeEnum}
@@ -278,7 +272,6 @@ export function instanceOfSAMLSource(value: object): value is SAMLSource {
     if (!("metaModelName" in value) || value["metaModelName"] === undefined) return false;
     if (!("managed" in value) || value["managed"] === undefined) return false;
     if (!("iconUrl" in value) || value["iconUrl"] === undefined) return false;
-    if (!("iconThemedUrls" in value) || value["iconThemedUrls"] === undefined) return false;
     if (!("preAuthenticationFlow" in value) || value["preAuthenticationFlow"] === undefined)
         return false;
     if (!("ssoUrl" in value) || value["ssoUrl"] === undefined) return false;
@@ -322,8 +315,7 @@ export function SAMLSourceFromJSONTyped(json: any, ignoreDiscriminator: boolean)
         userPathTemplate:
             json["user_path_template"] == null ? undefined : json["user_path_template"],
         icon: json["icon"] == null ? undefined : json["icon"],
-        iconUrl: json["icon_url"],
-        iconThemedUrls: ThemedUrlsFromJSON(json["icon_themed_urls"]),
+        iconUrl: DynamicURLFromJSON(json["icon_url"]),
         groupMatchingMode:
             json["group_matching_mode"] == null
                 ? undefined
@@ -377,7 +369,6 @@ export function SAMLSourceToJSONTyped(
         | "meta_model_name"
         | "managed"
         | "icon_url"
-        | "icon_themed_urls"
     > | null,
     ignoreDiscriminator: boolean = false,
 ): any {

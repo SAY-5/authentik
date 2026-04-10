@@ -47,13 +47,11 @@ type LDAPSource struct {
 	// How the source determines if an existing user should be authenticated or a new user enrolled.
 	UserMatchingMode *UserMatchingModeEnum `json:"user_matching_mode,omitempty"`
 	// Objects that are managed by authentik. These objects are created and updated automatically. This flag only indicates that an object can be overwritten by migrations. You can still modify the objects via the API, but expect changes to be overwritten in a later update.
-	Managed          NullableString `json:"managed"`
-	UserPathTemplate *string        `json:"user_path_template,omitempty"`
-	Icon             *string        `json:"icon,omitempty"`
-	// Get the URL to the source icon.
-	IconUrl        NullableString     `json:"icon_url"`
-	IconThemedUrls NullableThemedUrls `json:"icon_themed_urls"`
-	ServerUri      string             `json:"server_uri"`
+	Managed          NullableString     `json:"managed"`
+	UserPathTemplate *string            `json:"user_path_template,omitempty"`
+	Icon             *string            `json:"icon,omitempty"`
+	IconUrl          NullableDynamicURL `json:"icon_url"`
+	ServerUri        string             `json:"server_uri"`
 	// Optionally verify the LDAP Server's Certificate against the CA Chain in this keypair.
 	PeerCertificate NullableString `json:"peer_certificate,omitempty"`
 	// Client certificate to authenticate against the LDAP Server's Certificate.
@@ -100,7 +98,7 @@ type _LDAPSource LDAPSource
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewLDAPSource(pk string, name string, slug string, component string, verboseName string, verboseNamePlural string, metaModelName string, managed NullableString, iconUrl NullableString, iconThemedUrls NullableThemedUrls, serverUri string, baseDn string, connectivity map[string]map[string]string) *LDAPSource {
+func NewLDAPSource(pk string, name string, slug string, component string, verboseName string, verboseNamePlural string, metaModelName string, managed NullableString, iconUrl NullableDynamicURL, serverUri string, baseDn string, connectivity map[string]map[string]string) *LDAPSource {
 	this := LDAPSource{}
 	this.Pk = pk
 	this.Name = name
@@ -111,7 +109,6 @@ func NewLDAPSource(pk string, name string, slug string, component string, verbos
 	this.MetaModelName = metaModelName
 	this.Managed = managed
 	this.IconUrl = iconUrl
-	this.IconThemedUrls = iconThemedUrls
 	this.ServerUri = serverUri
 	this.BaseDn = baseDn
 	this.Connectivity = connectivity
@@ -663,10 +660,10 @@ func (o *LDAPSource) SetIcon(v string) {
 }
 
 // GetIconUrl returns the IconUrl field value
-// If the value is explicit nil, the zero value for string will be returned
-func (o *LDAPSource) GetIconUrl() string {
+// If the value is explicit nil, the zero value for DynamicURL will be returned
+func (o *LDAPSource) GetIconUrl() DynamicURL {
 	if o == nil || o.IconUrl.Get() == nil {
-		var ret string
+		var ret DynamicURL
 		return ret
 	}
 
@@ -676,7 +673,7 @@ func (o *LDAPSource) GetIconUrl() string {
 // GetIconUrlOk returns a tuple with the IconUrl field value
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *LDAPSource) GetIconUrlOk() (*string, bool) {
+func (o *LDAPSource) GetIconUrlOk() (*DynamicURL, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -684,34 +681,8 @@ func (o *LDAPSource) GetIconUrlOk() (*string, bool) {
 }
 
 // SetIconUrl sets field value
-func (o *LDAPSource) SetIconUrl(v string) {
+func (o *LDAPSource) SetIconUrl(v DynamicURL) {
 	o.IconUrl.Set(&v)
-}
-
-// GetIconThemedUrls returns the IconThemedUrls field value
-// If the value is explicit nil, the zero value for ThemedUrls will be returned
-func (o *LDAPSource) GetIconThemedUrls() ThemedUrls {
-	if o == nil || o.IconThemedUrls.Get() == nil {
-		var ret ThemedUrls
-		return ret
-	}
-
-	return *o.IconThemedUrls.Get()
-}
-
-// GetIconThemedUrlsOk returns a tuple with the IconThemedUrls field value
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *LDAPSource) GetIconThemedUrlsOk() (*ThemedUrls, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.IconThemedUrls.Get(), o.IconThemedUrls.IsSet()
-}
-
-// SetIconThemedUrls sets field value
-func (o *LDAPSource) SetIconThemedUrls(v ThemedUrls) {
-	o.IconThemedUrls.Set(&v)
 }
 
 // GetServerUri returns the ServerUri field value
@@ -1510,7 +1481,6 @@ func (o LDAPSource) ToMap() (map[string]interface{}, error) {
 		toSerialize["icon"] = o.Icon
 	}
 	toSerialize["icon_url"] = o.IconUrl.Get()
-	toSerialize["icon_themed_urls"] = o.IconThemedUrls.Get()
 	toSerialize["server_uri"] = o.ServerUri
 	if o.PeerCertificate.IsSet() {
 		toSerialize["peer_certificate"] = o.PeerCertificate.Get()
@@ -1598,7 +1568,6 @@ func (o *LDAPSource) UnmarshalJSON(data []byte) (err error) {
 		"meta_model_name",
 		"managed",
 		"icon_url",
-		"icon_themed_urls",
 		"server_uri",
 		"base_dn",
 		"connectivity",
@@ -1650,7 +1619,6 @@ func (o *LDAPSource) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "user_path_template")
 		delete(additionalProperties, "icon")
 		delete(additionalProperties, "icon_url")
-		delete(additionalProperties, "icon_themed_urls")
 		delete(additionalProperties, "server_uri")
 		delete(additionalProperties, "peer_certificate")
 		delete(additionalProperties, "client_certificate")

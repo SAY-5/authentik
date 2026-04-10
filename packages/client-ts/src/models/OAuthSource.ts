@@ -17,6 +17,8 @@ import {
     AuthorizationCodeAuthMethodEnumFromJSON,
     AuthorizationCodeAuthMethodEnumToJSON,
 } from "./AuthorizationCodeAuthMethodEnum";
+import type { DynamicURL } from "./DynamicURL";
+import { DynamicURLFromJSON } from "./DynamicURL";
 import type { GroupMatchingModeEnum } from "./GroupMatchingModeEnum";
 import {
     GroupMatchingModeEnumFromJSON,
@@ -30,8 +32,6 @@ import type { ProviderTypeEnum } from "./ProviderTypeEnum";
 import { ProviderTypeEnumFromJSON, ProviderTypeEnumToJSON } from "./ProviderTypeEnum";
 import type { SourceType } from "./SourceType";
 import { SourceTypeFromJSON } from "./SourceType";
-import type { ThemedUrls } from "./ThemedUrls";
-import { ThemedUrlsFromJSON } from "./ThemedUrls";
 import type { UserMatchingModeEnum } from "./UserMatchingModeEnum";
 import { UserMatchingModeEnumFromJSON, UserMatchingModeEnumToJSON } from "./UserMatchingModeEnum";
 
@@ -151,16 +151,10 @@ export interface OAuthSource {
     icon?: string;
     /**
      *
-     * @type {string}
+     * @type {DynamicURL}
      * @memberof OAuthSource
      */
-    readonly iconUrl: string | null;
-    /**
-     *
-     * @type {ThemedUrls}
-     * @memberof OAuthSource
-     */
-    readonly iconThemedUrls: ThemedUrls | null;
+    readonly iconUrl: DynamicURL | null;
     /**
      * How the source determines if an existing group should be used or a new group created.
      * @type {GroupMatchingModeEnum}
@@ -266,7 +260,6 @@ export function instanceOfOAuthSource(value: object): value is OAuthSource {
     if (!("metaModelName" in value) || value["metaModelName"] === undefined) return false;
     if (!("managed" in value) || value["managed"] === undefined) return false;
     if (!("iconUrl" in value) || value["iconUrl"] === undefined) return false;
-    if (!("iconThemedUrls" in value) || value["iconThemedUrls"] === undefined) return false;
     if (!("providerType" in value) || value["providerType"] === undefined) return false;
     if (!("consumerKey" in value) || value["consumerKey"] === undefined) return false;
     if (!("callbackUrl" in value) || value["callbackUrl"] === undefined) return false;
@@ -311,8 +304,7 @@ export function OAuthSourceFromJSONTyped(json: any, ignoreDiscriminator: boolean
         userPathTemplate:
             json["user_path_template"] == null ? undefined : json["user_path_template"],
         icon: json["icon"] == null ? undefined : json["icon"],
-        iconUrl: json["icon_url"],
-        iconThemedUrls: ThemedUrlsFromJSON(json["icon_themed_urls"]),
+        iconUrl: DynamicURLFromJSON(json["icon_url"]),
         groupMatchingMode:
             json["group_matching_mode"] == null
                 ? undefined
@@ -352,7 +344,6 @@ export function OAuthSourceToJSONTyped(
         | "meta_model_name"
         | "managed"
         | "icon_url"
-        | "icon_themed_urls"
         | "callback_url"
         | "type"
     > | null,

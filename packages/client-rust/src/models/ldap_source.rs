@@ -80,11 +80,8 @@ pub struct LdapSource {
     pub user_path_template: Option<String>,
     #[serde(rename = "icon", skip_serializing_if = "Option::is_none")]
     pub icon: Option<String>,
-    /// Get the URL to the source icon.
     #[serde(rename = "icon_url", deserialize_with = "Option::deserialize")]
-    pub icon_url: Option<String>,
-    #[serde(rename = "icon_themed_urls", deserialize_with = "Option::deserialize")]
-    pub icon_themed_urls: Option<models::ThemedUrls>,
+    pub icon_url: Option<models::DynamicUrl>,
     #[serde(rename = "server_uri")]
     pub server_uri: String,
     /// Optionally verify the LDAP Server's Certificate against the CA Chain in this keypair.
@@ -208,8 +205,7 @@ impl LdapSource {
         verbose_name_plural: String,
         meta_model_name: String,
         managed: Option<String>,
-        icon_url: Option<String>,
-        icon_themed_urls: Option<models::ThemedUrls>,
+        icon_url: Option<models::DynamicUrl>,
         server_uri: String,
         base_dn: String,
         connectivity: Option<
@@ -236,7 +232,6 @@ impl LdapSource {
             user_path_template: None,
             icon: None,
             icon_url,
-            icon_themed_urls,
             server_uri,
             peer_certificate: None,
             client_certificate: None,

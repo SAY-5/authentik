@@ -80,11 +80,8 @@ pub struct TelegramSource {
     pub user_path_template: Option<String>,
     #[serde(rename = "icon", skip_serializing_if = "Option::is_none")]
     pub icon: Option<String>,
-    /// Get the URL to the source icon.
     #[serde(rename = "icon_url", deserialize_with = "Option::deserialize")]
-    pub icon_url: Option<String>,
-    #[serde(rename = "icon_themed_urls", deserialize_with = "Option::deserialize")]
-    pub icon_themed_urls: Option<models::ThemedUrls>,
+    pub icon_url: Option<models::DynamicUrl>,
     /// Telegram bot username
     #[serde(rename = "bot_username")]
     pub bot_username: String,
@@ -110,8 +107,7 @@ impl TelegramSource {
         verbose_name_plural: String,
         meta_model_name: String,
         managed: Option<String>,
-        icon_url: Option<String>,
-        icon_themed_urls: Option<models::ThemedUrls>,
+        icon_url: Option<models::DynamicUrl>,
         bot_username: String,
         pre_authentication_flow: uuid::Uuid,
     ) -> TelegramSource {
@@ -135,7 +131,6 @@ impl TelegramSource {
             user_path_template: None,
             icon: None,
             icon_url,
-            icon_themed_urls,
             bot_username,
             request_message_access: None,
             pre_authentication_flow,

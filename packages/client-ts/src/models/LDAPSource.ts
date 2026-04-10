@@ -12,6 +12,8 @@
  * Do not edit the class manually.
  */
 
+import type { DynamicURL } from "./DynamicURL";
+import { DynamicURLFromJSON } from "./DynamicURL";
 import type { PolicyEngineMode } from "./PolicyEngineMode";
 import { PolicyEngineModeFromJSON, PolicyEngineModeToJSON } from "./PolicyEngineMode";
 import type { SyncOutgoingTriggerModeEnum } from "./SyncOutgoingTriggerModeEnum";
@@ -19,8 +21,6 @@ import {
     SyncOutgoingTriggerModeEnumFromJSON,
     SyncOutgoingTriggerModeEnumToJSON,
 } from "./SyncOutgoingTriggerModeEnum";
-import type { ThemedUrls } from "./ThemedUrls";
-import { ThemedUrlsFromJSON } from "./ThemedUrls";
 import type { UserMatchingModeEnum } from "./UserMatchingModeEnum";
 import { UserMatchingModeEnumFromJSON, UserMatchingModeEnumToJSON } from "./UserMatchingModeEnum";
 
@@ -139,17 +139,11 @@ export interface LDAPSource {
      */
     icon?: string;
     /**
-     * Get the URL to the source icon.
-     * @type {string}
-     * @memberof LDAPSource
-     */
-    readonly iconUrl: string | null;
-    /**
      *
-     * @type {ThemedUrls}
+     * @type {DynamicURL}
      * @memberof LDAPSource
      */
-    readonly iconThemedUrls: ThemedUrls | null;
+    readonly iconUrl: DynamicURL | null;
     /**
      *
      * @type {string}
@@ -303,7 +297,6 @@ export function instanceOfLDAPSource(value: object): value is LDAPSource {
     if (!("metaModelName" in value) || value["metaModelName"] === undefined) return false;
     if (!("managed" in value) || value["managed"] === undefined) return false;
     if (!("iconUrl" in value) || value["iconUrl"] === undefined) return false;
-    if (!("iconThemedUrls" in value) || value["iconThemedUrls"] === undefined) return false;
     if (!("serverUri" in value) || value["serverUri"] === undefined) return false;
     if (!("baseDn" in value) || value["baseDn"] === undefined) return false;
     if (!("connectivity" in value) || value["connectivity"] === undefined) return false;
@@ -347,8 +340,7 @@ export function LDAPSourceFromJSONTyped(json: any, ignoreDiscriminator: boolean)
         userPathTemplate:
             json["user_path_template"] == null ? undefined : json["user_path_template"],
         icon: json["icon"] == null ? undefined : json["icon"],
-        iconUrl: json["icon_url"],
-        iconThemedUrls: ThemedUrlsFromJSON(json["icon_themed_urls"]),
+        iconUrl: DynamicURLFromJSON(json["icon_url"]),
         serverUri: json["server_uri"],
         peerCertificate: json["peer_certificate"] == null ? undefined : json["peer_certificate"],
         clientCertificate:
@@ -408,7 +400,6 @@ export function LDAPSourceToJSONTyped(
         | "meta_model_name"
         | "managed"
         | "icon_url"
-        | "icon_themed_urls"
         | "connectivity"
     > | null,
     ignoreDiscriminator: boolean = false,

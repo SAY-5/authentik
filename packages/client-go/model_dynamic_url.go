@@ -15,36 +15,36 @@ import (
 	"encoding/json"
 )
 
-// checks if the ThemedUrls type satisfies the MappedNullable interface at compile time
-var _ MappedNullable = &ThemedUrls{}
+// checks if the DynamicURL type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &DynamicURL{}
 
-// ThemedUrls URL variants keyed by theme name. Includes a fallback URL.
-type ThemedUrls struct {
+// DynamicURL Dynamic URL variants keyed by variant name. Includes a fallback URL.
+type DynamicURL struct {
 	Fallback             NullableString `json:"fallback,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
 
-type _ThemedUrls ThemedUrls
+type _DynamicURL DynamicURL
 
-// NewThemedUrls instantiates a new ThemedUrls object
+// NewDynamicURL instantiates a new DynamicURL object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewThemedUrls() *ThemedUrls {
-	this := ThemedUrls{}
+func NewDynamicURL() *DynamicURL {
+	this := DynamicURL{}
 	return &this
 }
 
-// NewThemedUrlsWithDefaults instantiates a new ThemedUrls object
+// NewDynamicURLWithDefaults instantiates a new DynamicURL object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewThemedUrlsWithDefaults() *ThemedUrls {
-	this := ThemedUrls{}
+func NewDynamicURLWithDefaults() *DynamicURL {
+	this := DynamicURL{}
 	return &this
 }
 
 // GetFallback returns the Fallback field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *ThemedUrls) GetFallback() string {
+func (o *DynamicURL) GetFallback() string {
 	if o == nil || IsNil(o.Fallback.Get()) {
 		var ret string
 		return ret
@@ -55,7 +55,7 @@ func (o *ThemedUrls) GetFallback() string {
 // GetFallbackOk returns a tuple with the Fallback field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *ThemedUrls) GetFallbackOk() (*string, bool) {
+func (o *DynamicURL) GetFallbackOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -63,7 +63,7 @@ func (o *ThemedUrls) GetFallbackOk() (*string, bool) {
 }
 
 // HasFallback returns a boolean if a field has been set.
-func (o *ThemedUrls) HasFallback() bool {
+func (o *DynamicURL) HasFallback() bool {
 	if o != nil && o.Fallback.IsSet() {
 		return true
 	}
@@ -72,21 +72,21 @@ func (o *ThemedUrls) HasFallback() bool {
 }
 
 // SetFallback gets a reference to the given NullableString and assigns it to the Fallback field.
-func (o *ThemedUrls) SetFallback(v string) {
+func (o *DynamicURL) SetFallback(v string) {
 	o.Fallback.Set(&v)
 }
 
 // SetFallbackNil sets the value for Fallback to be an explicit nil
-func (o *ThemedUrls) SetFallbackNil() {
+func (o *DynamicURL) SetFallbackNil() {
 	o.Fallback.Set(nil)
 }
 
 // UnsetFallback ensures that no value is present for Fallback, not even an explicit nil
-func (o *ThemedUrls) UnsetFallback() {
+func (o *DynamicURL) UnsetFallback() {
 	o.Fallback.Unset()
 }
 
-func (o ThemedUrls) MarshalJSON() ([]byte, error) {
+func (o DynamicURL) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
 		return []byte{}, err
@@ -94,7 +94,7 @@ func (o ThemedUrls) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-func (o ThemedUrls) ToMap() (map[string]interface{}, error) {
+func (o DynamicURL) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Fallback.IsSet() {
 		toSerialize["fallback"] = o.Fallback.Get()
@@ -107,16 +107,16 @@ func (o ThemedUrls) ToMap() (map[string]interface{}, error) {
 	return toSerialize, nil
 }
 
-func (o *ThemedUrls) UnmarshalJSON(data []byte) (err error) {
-	varThemedUrls := _ThemedUrls{}
+func (o *DynamicURL) UnmarshalJSON(data []byte) (err error) {
+	varDynamicURL := _DynamicURL{}
 
-	err = json.Unmarshal(data, &varThemedUrls)
+	err = json.Unmarshal(data, &varDynamicURL)
 
 	if err != nil {
 		return err
 	}
 
-	*o = ThemedUrls(varThemedUrls)
+	*o = DynamicURL(varDynamicURL)
 
 	additionalProperties := make(map[string]interface{})
 
@@ -128,38 +128,38 @@ func (o *ThemedUrls) UnmarshalJSON(data []byte) (err error) {
 	return err
 }
 
-type NullableThemedUrls struct {
-	value *ThemedUrls
+type NullableDynamicURL struct {
+	value *DynamicURL
 	isSet bool
 }
 
-func (v NullableThemedUrls) Get() *ThemedUrls {
+func (v NullableDynamicURL) Get() *DynamicURL {
 	return v.value
 }
 
-func (v *NullableThemedUrls) Set(val *ThemedUrls) {
+func (v *NullableDynamicURL) Set(val *DynamicURL) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullableThemedUrls) IsSet() bool {
+func (v NullableDynamicURL) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullableThemedUrls) Unset() {
+func (v *NullableDynamicURL) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullableThemedUrls(val *ThemedUrls) *NullableThemedUrls {
-	return &NullableThemedUrls{value: val, isSet: true}
+func NewNullableDynamicURL(val *DynamicURL) *NullableDynamicURL {
+	return &NullableDynamicURL{value: val, isSet: true}
 }
 
-func (v NullableThemedUrls) MarshalJSON() ([]byte, error) {
+func (v NullableDynamicURL) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullableThemedUrls) UnmarshalJSON(src []byte) error {
+func (v *NullableDynamicURL) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

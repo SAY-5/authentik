@@ -147,6 +147,7 @@ export * from "./DuoDevice";
 export * from "./DuoDeviceEnrollmentStatus";
 export * from "./DuoDeviceRequest";
 export * from "./DuoResponseEnum";
+export * from "./DynamicURL";
 export * from "./EmailChallenge";
 export * from "./EmailChallengeResponseRequest";
 export * from "./EmailDevice";

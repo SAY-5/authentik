@@ -12,10 +12,10 @@
  * Do not edit the class manually.
  */
 
+import type { DynamicURL } from "./DynamicURL";
+import { DynamicURLFromJSON } from "./DynamicURL";
 import type { PolicyEngineMode } from "./PolicyEngineMode";
 import { PolicyEngineModeFromJSON, PolicyEngineModeToJSON } from "./PolicyEngineMode";
-import type { ThemedUrls } from "./ThemedUrls";
-import { ThemedUrlsFromJSON } from "./ThemedUrls";
 import type { UserMatchingModeEnum } from "./UserMatchingModeEnum";
 import { UserMatchingModeEnumFromJSON, UserMatchingModeEnumToJSON } from "./UserMatchingModeEnum";
 
@@ -134,17 +134,11 @@ export interface Source {
      */
     icon?: string;
     /**
-     * Get the URL to the source icon.
-     * @type {string}
-     * @memberof Source
-     */
-    readonly iconUrl: string | null;
-    /**
      *
-     * @type {ThemedUrls}
+     * @type {DynamicURL}
      * @memberof Source
      */
-    readonly iconThemedUrls: ThemedUrls | null;
+    readonly iconUrl: DynamicURL | null;
 }
 
 /**
@@ -160,7 +154,6 @@ export function instanceOfSource(value: object): value is Source {
     if (!("metaModelName" in value) || value["metaModelName"] === undefined) return false;
     if (!("managed" in value) || value["managed"] === undefined) return false;
     if (!("iconUrl" in value) || value["iconUrl"] === undefined) return false;
-    if (!("iconThemedUrls" in value) || value["iconThemedUrls"] === undefined) return false;
     return true;
 }
 
@@ -201,8 +194,7 @@ export function SourceFromJSONTyped(json: any, ignoreDiscriminator: boolean): So
         userPathTemplate:
             json["user_path_template"] == null ? undefined : json["user_path_template"],
         icon: json["icon"] == null ? undefined : json["icon"],
-        iconUrl: json["icon_url"],
-        iconThemedUrls: ThemedUrlsFromJSON(json["icon_themed_urls"]),
+        iconUrl: DynamicURLFromJSON(json["icon_url"]),
     };
 }
 
@@ -220,7 +212,6 @@ export function SourceToJSONTyped(
         | "meta_model_name"
         | "managed"
         | "icon_url"
-        | "icon_themed_urls"
     > | null,
     ignoreDiscriminator: boolean = false,
 ): any {

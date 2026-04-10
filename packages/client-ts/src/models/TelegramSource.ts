@@ -12,10 +12,10 @@
  * Do not edit the class manually.
  */
 
+import type { DynamicURL } from "./DynamicURL";
+import { DynamicURLFromJSON } from "./DynamicURL";
 import type { PolicyEngineMode } from "./PolicyEngineMode";
 import { PolicyEngineModeFromJSON, PolicyEngineModeToJSON } from "./PolicyEngineMode";
-import type { ThemedUrls } from "./ThemedUrls";
-import { ThemedUrlsFromJSON } from "./ThemedUrls";
 import type { UserMatchingModeEnum } from "./UserMatchingModeEnum";
 import { UserMatchingModeEnumFromJSON, UserMatchingModeEnumToJSON } from "./UserMatchingModeEnum";
 
@@ -134,17 +134,11 @@ export interface TelegramSource {
      */
     icon?: string;
     /**
-     * Get the URL to the source icon.
-     * @type {string}
-     * @memberof TelegramSource
-     */
-    readonly iconUrl: string | null;
-    /**
      *
-     * @type {ThemedUrls}
+     * @type {DynamicURL}
      * @memberof TelegramSource
      */
-    readonly iconThemedUrls: ThemedUrls | null;
+    readonly iconUrl: DynamicURL | null;
     /**
      * Telegram bot username
      * @type {string}
@@ -178,7 +172,6 @@ export function instanceOfTelegramSource(value: object): value is TelegramSource
     if (!("metaModelName" in value) || value["metaModelName"] === undefined) return false;
     if (!("managed" in value) || value["managed"] === undefined) return false;
     if (!("iconUrl" in value) || value["iconUrl"] === undefined) return false;
-    if (!("iconThemedUrls" in value) || value["iconThemedUrls"] === undefined) return false;
     if (!("botUsername" in value) || value["botUsername"] === undefined) return false;
     if (!("preAuthenticationFlow" in value) || value["preAuthenticationFlow"] === undefined)
         return false;
@@ -225,8 +218,7 @@ export function TelegramSourceFromJSONTyped(
         userPathTemplate:
             json["user_path_template"] == null ? undefined : json["user_path_template"],
         icon: json["icon"] == null ? undefined : json["icon"],
-        iconUrl: json["icon_url"],
-        iconThemedUrls: ThemedUrlsFromJSON(json["icon_themed_urls"]),
+        iconUrl: DynamicURLFromJSON(json["icon_url"]),
         botUsername: json["bot_username"],
         requestMessageAccess:
             json["request_message_access"] == null ? undefined : json["request_message_access"],
@@ -248,7 +240,6 @@ export function TelegramSourceToJSONTyped(
         | "meta_model_name"
         | "managed"
         | "icon_url"
-        | "icon_themed_urls"
     > | null,
     ignoreDiscriminator: boolean = false,
 ): any {

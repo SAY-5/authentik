@@ -50,8 +50,7 @@ type OAuthSource struct {
 	Managed          NullableString     `json:"managed"`
 	UserPathTemplate *string            `json:"user_path_template,omitempty"`
 	Icon             *string            `json:"icon,omitempty"`
-	IconUrl          NullableString     `json:"icon_url"`
-	IconThemedUrls   NullableThemedUrls `json:"icon_themed_urls"`
+	IconUrl          NullableDynamicURL `json:"icon_url"`
 	// How the source determines if an existing group should be used or a new group created.
 	GroupMatchingMode *GroupMatchingModeEnum `json:"group_matching_mode,omitempty"`
 	ProviderType      ProviderTypeEnum       `json:"provider_type"`
@@ -83,7 +82,7 @@ type _OAuthSource OAuthSource
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewOAuthSource(pk string, name string, slug string, component string, verboseName string, verboseNamePlural string, metaModelName string, managed NullableString, iconUrl NullableString, iconThemedUrls NullableThemedUrls, providerType ProviderTypeEnum, consumerKey string, callbackUrl string, type_ SourceType) *OAuthSource {
+func NewOAuthSource(pk string, name string, slug string, component string, verboseName string, verboseNamePlural string, metaModelName string, managed NullableString, iconUrl NullableDynamicURL, providerType ProviderTypeEnum, consumerKey string, callbackUrl string, type_ SourceType) *OAuthSource {
 	this := OAuthSource{}
 	this.Pk = pk
 	this.Name = name
@@ -94,7 +93,6 @@ func NewOAuthSource(pk string, name string, slug string, component string, verbo
 	this.MetaModelName = metaModelName
 	this.Managed = managed
 	this.IconUrl = iconUrl
-	this.IconThemedUrls = iconThemedUrls
 	this.ProviderType = providerType
 	this.ConsumerKey = consumerKey
 	this.CallbackUrl = callbackUrl
@@ -647,10 +645,10 @@ func (o *OAuthSource) SetIcon(v string) {
 }
 
 // GetIconUrl returns the IconUrl field value
-// If the value is explicit nil, the zero value for string will be returned
-func (o *OAuthSource) GetIconUrl() string {
+// If the value is explicit nil, the zero value for DynamicURL will be returned
+func (o *OAuthSource) GetIconUrl() DynamicURL {
 	if o == nil || o.IconUrl.Get() == nil {
-		var ret string
+		var ret DynamicURL
 		return ret
 	}
 
@@ -660,7 +658,7 @@ func (o *OAuthSource) GetIconUrl() string {
 // GetIconUrlOk returns a tuple with the IconUrl field value
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *OAuthSource) GetIconUrlOk() (*string, bool) {
+func (o *OAuthSource) GetIconUrlOk() (*DynamicURL, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -668,34 +666,8 @@ func (o *OAuthSource) GetIconUrlOk() (*string, bool) {
 }
 
 // SetIconUrl sets field value
-func (o *OAuthSource) SetIconUrl(v string) {
+func (o *OAuthSource) SetIconUrl(v DynamicURL) {
 	o.IconUrl.Set(&v)
-}
-
-// GetIconThemedUrls returns the IconThemedUrls field value
-// If the value is explicit nil, the zero value for ThemedUrls will be returned
-func (o *OAuthSource) GetIconThemedUrls() ThemedUrls {
-	if o == nil || o.IconThemedUrls.Get() == nil {
-		var ret ThemedUrls
-		return ret
-	}
-
-	return *o.IconThemedUrls.Get()
-}
-
-// GetIconThemedUrlsOk returns a tuple with the IconThemedUrls field value
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *OAuthSource) GetIconThemedUrlsOk() (*ThemedUrls, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.IconThemedUrls.Get(), o.IconThemedUrls.IsSet()
-}
-
-// SetIconThemedUrls sets field value
-func (o *OAuthSource) SetIconThemedUrls(v ThemedUrls) {
-	o.IconThemedUrls.Set(&v)
 }
 
 // GetGroupMatchingMode returns the GroupMatchingMode field value if set, zero value otherwise.
@@ -1239,7 +1211,6 @@ func (o OAuthSource) ToMap() (map[string]interface{}, error) {
 		toSerialize["icon"] = o.Icon
 	}
 	toSerialize["icon_url"] = o.IconUrl.Get()
-	toSerialize["icon_themed_urls"] = o.IconThemedUrls.Get()
 	if !IsNil(o.GroupMatchingMode) {
 		toSerialize["group_matching_mode"] = o.GroupMatchingMode
 	}
@@ -1299,7 +1270,6 @@ func (o *OAuthSource) UnmarshalJSON(data []byte) (err error) {
 		"meta_model_name",
 		"managed",
 		"icon_url",
-		"icon_themed_urls",
 		"provider_type",
 		"consumer_key",
 		"callback_url",
@@ -1352,7 +1322,6 @@ func (o *OAuthSource) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "user_path_template")
 		delete(additionalProperties, "icon")
 		delete(additionalProperties, "icon_url")
-		delete(additionalProperties, "icon_themed_urls")
 		delete(additionalProperties, "group_matching_mode")
 		delete(additionalProperties, "provider_type")
 		delete(additionalProperties, "request_token_url")

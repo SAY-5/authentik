@@ -25,8 +25,7 @@ type UserSetting struct {
 	Component            string             `json:"component"`
 	Title                string             `json:"title"`
 	ConfigureUrl         *string            `json:"configure_url,omitempty"`
-	IconUrl              NullableString     `json:"icon_url,omitempty"`
-	IconThemedUrls       NullableThemedUrls `json:"icon_themed_urls,omitempty"`
+	IconUrl              NullableDynamicURL `json:"icon_url,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
 
@@ -157,9 +156,9 @@ func (o *UserSetting) SetConfigureUrl(v string) {
 }
 
 // GetIconUrl returns the IconUrl field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *UserSetting) GetIconUrl() string {
+func (o *UserSetting) GetIconUrl() DynamicURL {
 	if o == nil || IsNil(o.IconUrl.Get()) {
-		var ret string
+		var ret DynamicURL
 		return ret
 	}
 	return *o.IconUrl.Get()
@@ -168,7 +167,7 @@ func (o *UserSetting) GetIconUrl() string {
 // GetIconUrlOk returns a tuple with the IconUrl field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *UserSetting) GetIconUrlOk() (*string, bool) {
+func (o *UserSetting) GetIconUrlOk() (*DynamicURL, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -184,8 +183,8 @@ func (o *UserSetting) HasIconUrl() bool {
 	return false
 }
 
-// SetIconUrl gets a reference to the given NullableString and assigns it to the IconUrl field.
-func (o *UserSetting) SetIconUrl(v string) {
+// SetIconUrl gets a reference to the given NullableDynamicURL and assigns it to the IconUrl field.
+func (o *UserSetting) SetIconUrl(v DynamicURL) {
 	o.IconUrl.Set(&v)
 }
 
@@ -197,49 +196,6 @@ func (o *UserSetting) SetIconUrlNil() {
 // UnsetIconUrl ensures that no value is present for IconUrl, not even an explicit nil
 func (o *UserSetting) UnsetIconUrl() {
 	o.IconUrl.Unset()
-}
-
-// GetIconThemedUrls returns the IconThemedUrls field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *UserSetting) GetIconThemedUrls() ThemedUrls {
-	if o == nil || IsNil(o.IconThemedUrls.Get()) {
-		var ret ThemedUrls
-		return ret
-	}
-	return *o.IconThemedUrls.Get()
-}
-
-// GetIconThemedUrlsOk returns a tuple with the IconThemedUrls field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *UserSetting) GetIconThemedUrlsOk() (*ThemedUrls, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.IconThemedUrls.Get(), o.IconThemedUrls.IsSet()
-}
-
-// HasIconThemedUrls returns a boolean if a field has been set.
-func (o *UserSetting) HasIconThemedUrls() bool {
-	if o != nil && o.IconThemedUrls.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetIconThemedUrls gets a reference to the given NullableThemedUrls and assigns it to the IconThemedUrls field.
-func (o *UserSetting) SetIconThemedUrls(v ThemedUrls) {
-	o.IconThemedUrls.Set(&v)
-}
-
-// SetIconThemedUrlsNil sets the value for IconThemedUrls to be an explicit nil
-func (o *UserSetting) SetIconThemedUrlsNil() {
-	o.IconThemedUrls.Set(nil)
-}
-
-// UnsetIconThemedUrls ensures that no value is present for IconThemedUrls, not even an explicit nil
-func (o *UserSetting) UnsetIconThemedUrls() {
-	o.IconThemedUrls.Unset()
 }
 
 func (o UserSetting) MarshalJSON() ([]byte, error) {
@@ -260,9 +216,6 @@ func (o UserSetting) ToMap() (map[string]interface{}, error) {
 	}
 	if o.IconUrl.IsSet() {
 		toSerialize["icon_url"] = o.IconUrl.Get()
-	}
-	if o.IconThemedUrls.IsSet() {
-		toSerialize["icon_themed_urls"] = o.IconThemedUrls.Get()
 	}
 
 	for key, value := range o.AdditionalProperties {
@@ -314,7 +267,6 @@ func (o *UserSetting) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "title")
 		delete(additionalProperties, "configure_url")
 		delete(additionalProperties, "icon_url")
-		delete(additionalProperties, "icon_themed_urls")
 		o.AdditionalProperties = additionalProperties
 	}
 

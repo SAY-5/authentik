@@ -37513,6 +37513,17 @@ components:
       - waiting
       - invalid
       type: string
+    DynamicURL:
+      type: object
+      description: Dynamic URL variants keyed by variant name. Includes a fallback
+        URL.
+      properties:
+        fallback:
+          type: string
+          nullable: true
+      additionalProperties:
+        type: string
+        nullable: true
     EmailChallenge:
       type: object
       description: Email challenge
@@ -40859,13 +40870,8 @@ components:
         icon:
           type: string
         icon_url:
-          type: string
-          nullable: true
-          description: Get the URL to the source icon.
-          readOnly: true
-        icon_themed_urls:
           allOf:
-          - $ref: '#/components/schemas/ThemedUrls'
+          - $ref: '#/components/schemas/DynamicURL'
           readOnly: true
           nullable: true
         group_matching_mode:
@@ -40921,7 +40927,6 @@ components:
       required:
       - component
       - connectivity
-      - icon_themed_urls
       - icon_url
       - managed
       - meta_model_name
@@ -41551,13 +41556,8 @@ components:
         icon:
           type: string
         icon_url:
-          type: string
-          nullable: true
-          description: Get the URL to the source icon.
-          readOnly: true
-        icon_themed_urls:
           allOf:
-          - $ref: '#/components/schemas/ThemedUrls'
+          - $ref: '#/components/schemas/DynamicURL'
           readOnly: true
           nullable: true
         server_uri:
@@ -41650,7 +41650,6 @@ components:
       - base_dn
       - component
       - connectivity
-      - icon_themed_urls
       - icon_url
       - managed
       - meta_model_name
@@ -42355,11 +42354,8 @@ components:
         name:
           type: string
         icon_url:
-          type: string
-          nullable: true
-        icon_themed_urls:
           allOf:
-          - $ref: '#/components/schemas/ThemedUrls'
+          - $ref: '#/components/schemas/DynamicURL'
           nullable: true
         promoted:
           type: boolean
@@ -43761,12 +43757,8 @@ components:
         icon:
           type: string
         icon_url:
-          type: string
-          nullable: true
-          readOnly: true
-        icon_themed_urls:
           allOf:
-          - $ref: '#/components/schemas/ThemedUrls'
+          - $ref: '#/components/schemas/DynamicURL'
           readOnly: true
           nullable: true
         group_matching_mode:
@@ -43827,7 +43819,6 @@ components:
       - callback_url
       - component
       - consumer_key
-      - icon_themed_urls
       - icon_url
       - managed
       - meta_model_name
@@ -51119,13 +51110,8 @@ components:
         icon:
           type: string
         icon_url:
-          type: string
-          nullable: true
-          description: Get the URL to the source icon.
-          readOnly: true
-        icon_themed_urls:
           allOf:
-          - $ref: '#/components/schemas/ThemedUrls'
+          - $ref: '#/components/schemas/DynamicURL'
           readOnly: true
           nullable: true
         group_matching_mode:
@@ -51150,7 +51136,6 @@ components:
           description: Plex token used to check friends
       required:
       - component
-      - icon_themed_urls
       - icon_url
       - managed
       - meta_model_name
@@ -53790,13 +53775,8 @@ components:
         icon:
           type: string
         icon_url:
-          type: string
-          nullable: true
-          description: Get the URL to the source icon.
-          readOnly: true
-        icon_themed_urls:
           allOf:
-          - $ref: '#/components/schemas/ThemedUrls'
+          - $ref: '#/components/schemas/DynamicURL'
           readOnly: true
           nullable: true
         group_matching_mode:
@@ -53873,7 +53853,6 @@ components:
           type: boolean
       required:
       - component
-      - icon_themed_urls
       - icon_url
       - managed
       - meta_model_name
@@ -55446,18 +55425,12 @@ components:
         icon:
           type: string
         icon_url:
-          type: string
-          nullable: true
-          description: Get the URL to the source icon.
-          readOnly: true
-        icon_themed_urls:
           allOf:
-          - $ref: '#/components/schemas/ThemedUrls'
+          - $ref: '#/components/schemas/DynamicURL'
           readOnly: true
           nullable: true
       required:
       - component
-      - icon_themed_urls
       - icon_url
       - managed
       - meta_model_name
@@ -56128,13 +56101,8 @@ components:
         icon:
           type: string
         icon_url:
-          type: string
-          nullable: true
-          description: Get the URL to the source icon.
-          readOnly: true
-        icon_themed_urls:
           allOf:
-          - $ref: '#/components/schemas/ThemedUrls'
+          - $ref: '#/components/schemas/DynamicURL'
           readOnly: true
           nullable: true
         bot_username:
@@ -56150,7 +56118,6 @@ components:
       required:
       - bot_username
       - component
-      - icon_themed_urls
       - icon_url
       - managed
       - meta_model_name
@@ -56370,14 +56337,14 @@ components:
       - schema_name
     ThemedUrls:
       type: object
-      description: Themed URLs - maps theme names to URLs for light and dark themes
+      description: URL variants keyed by theme name. Includes a fallback URL.
       properties:
-        light:
+        fallback:
           type: string
           nullable: true
-        dark:
-          type: string
-          nullable: true
+      additionalProperties:
+        type: string
+        nullable: true
     Token:
       type: object
       description: Token Serializer
@@ -56592,11 +56559,8 @@ components:
         model_name:
           type: string
         icon_url:
-          type: string
-          nullable: true
-        icon_themed_urls:
           allOf:
-          - $ref: '#/components/schemas/ThemedUrls'
+          - $ref: '#/components/schemas/DynamicURL'
           nullable: true
         requires_enterprise:
           type: boolean
@@ -57626,11 +57590,8 @@ components:
         configure_url:
           type: string
         icon_url:
-          type: string
-          nullable: true
-        icon_themed_urls:
           allOf:
-          - $ref: '#/components/schemas/ThemedUrls'
+          - $ref: '#/components/schemas/DynamicURL'
           nullable: true
       required:
       - component

@@ -333,9 +333,9 @@ export class IdentificationStage extends BaseStage<
 
     //#region Render
     protected renderDefaultSource(source: LoginSource, showLabels: boolean) {
-        const { name, iconUrl, iconThemedUrls, challenge } = source;
+        const { name, iconUrl, challenge } = source;
 
-        const icon = renderSourceIcon(name, iconUrl, iconThemedUrls, this.activeTheme);
+        const icon = renderSourceIcon(name, iconUrl, this.activeTheme);
         return html`<button
             type="button"
             @click=${() => this.#dispatchChallengeToHost(challenge)}

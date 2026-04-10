@@ -80,11 +80,8 @@ pub struct KerberosSource {
     pub user_path_template: Option<String>,
     #[serde(rename = "icon", skip_serializing_if = "Option::is_none")]
     pub icon: Option<String>,
-    /// Get the URL to the source icon.
     #[serde(rename = "icon_url", deserialize_with = "Option::deserialize")]
-    pub icon_url: Option<String>,
-    #[serde(rename = "icon_themed_urls", deserialize_with = "Option::deserialize")]
-    pub icon_themed_urls: Option<models::ThemedUrls>,
+    pub icon_url: Option<models::DynamicUrl>,
     /// How the source determines if an existing group should be used or a new group created.
     #[serde(
         rename = "group_matching_mode",
@@ -150,8 +147,7 @@ impl KerberosSource {
         verbose_name_plural: String,
         meta_model_name: String,
         managed: Option<String>,
-        icon_url: Option<String>,
-        icon_themed_urls: Option<models::ThemedUrls>,
+        icon_url: Option<models::DynamicUrl>,
         realm: String,
         connectivity: Option<std::collections::HashMap<String, String>>,
     ) -> KerberosSource {
@@ -175,7 +171,6 @@ impl KerberosSource {
             user_path_template: None,
             icon: None,
             icon_url,
-            icon_themed_urls,
             group_matching_mode: None,
             realm,
             krb5_conf: None,

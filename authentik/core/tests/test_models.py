@@ -101,6 +101,17 @@ class TestModels(TestCase):
             use_cache=False,
         )
 
+    def test_source_icon_dynamic_url_uses_resolved_variant_fallback(self):
+        source = Source(icon="https://example.com/icon-%(theme)s.svg")
+        self.assertEqual(
+            source.icon_dynamic_url,
+            {
+                "fallback": "https://example.com/icon-light.svg",
+                "light": "https://example.com/icon-light.svg",
+                "dark": "https://example.com/icon-dark.svg",
+            },
+        )
+
 
 def source_tester_factory(test_model: type[Source]) -> Callable:
     """Test source"""

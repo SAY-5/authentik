@@ -80,11 +80,8 @@ pub struct Source {
     pub user_path_template: Option<String>,
     #[serde(rename = "icon", skip_serializing_if = "Option::is_none")]
     pub icon: Option<String>,
-    /// Get the URL to the source icon.
     #[serde(rename = "icon_url", deserialize_with = "Option::deserialize")]
-    pub icon_url: Option<String>,
-    #[serde(rename = "icon_themed_urls", deserialize_with = "Option::deserialize")]
-    pub icon_themed_urls: Option<models::ThemedUrls>,
+    pub icon_url: Option<models::DynamicUrl>,
 }
 
 impl Source {
@@ -98,8 +95,7 @@ impl Source {
         verbose_name_plural: String,
         meta_model_name: String,
         managed: Option<String>,
-        icon_url: Option<String>,
-        icon_themed_urls: Option<models::ThemedUrls>,
+        icon_url: Option<models::DynamicUrl>,
     ) -> Source {
         Source {
             pk,
@@ -121,7 +117,6 @@ impl Source {
             user_path_template: None,
             icon: None,
             icon_url,
-            icon_themed_urls,
         }
     }
 }

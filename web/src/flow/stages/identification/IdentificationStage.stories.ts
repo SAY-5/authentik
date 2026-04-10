@@ -79,7 +79,8 @@ export const ChallengeEverything = flowFactory("ak-stage-identification", {
                 component: "xak-flow-redirect",
                 to: "foo",
             },
-            iconThemedUrls: {
+            iconUrl: {
+                fallback: "/static/authentik/sources/google/light.svg",
                 light: "/static/authentik/sources/google/light.svg",
                 dark: "/static/authentik/sources/google/dark.svg",
             },

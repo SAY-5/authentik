@@ -10,9 +10,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::models;
 
-/// ThemedUrls : URL variants keyed by theme name. Includes a fallback URL.
+/// DynamicUrl : Dynamic URL variants keyed by variant name. Includes a fallback URL.
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
-pub struct ThemedUrls {
+pub struct DynamicUrl {
     #[serde(
         rename = "fallback",
         default,
@@ -22,9 +22,9 @@ pub struct ThemedUrls {
     pub fallback: Option<Option<String>>,
 }
 
-impl ThemedUrls {
-    /// URL variants keyed by theme name. Includes a fallback URL.
-    pub fn new() -> ThemedUrls {
-        ThemedUrls { fallback: None }
+impl DynamicUrl {
+    /// Dynamic URL variants keyed by variant name. Includes a fallback URL.
+    pub fn new() -> DynamicUrl {
+        DynamicUrl { fallback: None }
     }
 }

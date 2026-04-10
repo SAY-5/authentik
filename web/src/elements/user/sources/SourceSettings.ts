@@ -161,7 +161,6 @@ export class UserSourceSettingsPage extends AKElement {
                         ${renderSourceIcon(
                             source.title,
                             source.iconUrl,
-                            source.iconThemedUrls,
                             this.activeTheme,
                         )}
                         ${source.title}

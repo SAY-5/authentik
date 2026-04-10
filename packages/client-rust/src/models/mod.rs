@@ -74,6 +74,27 @@ pub mod dummy_challenge;
 pub use self::dummy_challenge::DummyChallenge;
 pub mod dummy_challenge_response_request;
 pub use self::dummy_challenge_response_request::DummyChallengeResponseRequest;
+<<<<<<< HEAD
+=======
+pub mod dummy_policy;
+pub use self::dummy_policy::DummyPolicy;
+pub mod dummy_policy_request;
+pub use self::dummy_policy_request::DummyPolicyRequest;
+pub mod dummy_stage;
+pub use self::dummy_stage::DummyStage;
+pub mod dummy_stage_request;
+pub use self::dummy_stage_request::DummyStageRequest;
+pub mod duo_device;
+pub use self::duo_device::DuoDevice;
+pub mod duo_device_enrollment_status;
+pub use self::duo_device_enrollment_status::DuoDeviceEnrollmentStatus;
+pub mod duo_device_request;
+pub use self::duo_device_request::DuoDeviceRequest;
+pub mod duo_response_enum;
+pub use self::duo_response_enum::DuoResponseEnum;
+pub mod dynamic_url;
+pub use self::dynamic_url::DynamicUrl;
+>>>>>>> 80ebcf05f4 (core: use dynamic icon urls)
 pub mod email_challenge;
 pub use self::email_challenge::EmailChallenge;
 pub mod email_challenge_response_request;

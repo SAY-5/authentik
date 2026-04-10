@@ -3,10 +3,16 @@ PWD = $(shell pwd)
 UID = $(shell id -u)
 GID = $(shell id -g)
 
+include ../../scripts/make/container.mk
+
 build:
 	rm -rf "${PWD}"/*.go
+<<<<<<< HEAD
 	"${PWD}/../../scripts/api_filter_schema.py" "${PWD}/../../schema.yml" "${PWD}/schema.yml" "${PWD}/operation_ids"
 	docker compose run --rm --user "${UID}:${GID}" gen \
+=======
+	$(CONTAINER_COMPOSE) run --rm --user "${UID}:${GID}" gen \
+>>>>>>> 80ebcf05f4 (core: use dynamic icon urls)
 		generate \
 		-i /local/schema.yml \
 		-g go \

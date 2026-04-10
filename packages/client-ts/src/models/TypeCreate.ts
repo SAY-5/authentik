@@ -12,8 +12,8 @@
  * Do not edit the class manually.
  */
 
-import type { ThemedUrls } from "./ThemedUrls";
-import { ThemedUrlsFromJSON, ThemedUrlsToJSON } from "./ThemedUrls";
+import type { DynamicURL } from "./DynamicURL";
+import { DynamicURLFromJSON, DynamicURLToJSON } from "./DynamicURL";
 
 /**
  * Types of an object that can be created
@@ -47,16 +47,10 @@ export interface TypeCreate {
     modelName: string;
     /**
      *
-     * @type {string}
+     * @type {DynamicURL}
      * @memberof TypeCreate
      */
-    iconUrl?: string | null;
-    /**
-     *
-     * @type {ThemedUrls}
-     * @memberof TypeCreate
-     */
-    iconThemedUrls?: ThemedUrls | null;
+    iconUrl?: DynamicURL | null;
     /**
      *
      * @type {boolean}
@@ -95,11 +89,7 @@ export function TypeCreateFromJSONTyped(json: any, ignoreDiscriminator: boolean)
         description: json["description"],
         component: json["component"],
         modelName: json["model_name"],
-        iconUrl: json["icon_url"] == null ? undefined : json["icon_url"],
-        iconThemedUrls:
-            json["icon_themed_urls"] == null
-                ? undefined
-                : ThemedUrlsFromJSON(json["icon_themed_urls"]),
+        iconUrl: json["icon_url"] == null ? undefined : DynamicURLFromJSON(json["icon_url"]),
         requiresEnterprise:
             json["requires_enterprise"] == null ? undefined : json["requires_enterprise"],
         deprecated: json["deprecated"] == null ? undefined : json["deprecated"],
@@ -123,8 +113,7 @@ export function TypeCreateToJSONTyped(
         description: value["description"],
         component: value["component"],
         model_name: value["modelName"],
-        icon_url: value["iconUrl"],
-        icon_themed_urls: ThemedUrlsToJSON(value["iconThemedUrls"]),
+        icon_url: DynamicURLToJSON(value["iconUrl"]),
         requires_enterprise: value["requiresEnterprise"],
         deprecated: value["deprecated"],
     };

@@ -167,8 +167,7 @@ class OAuthSource(NonCreatableType, Source):
                     "authentik_sources_oauth:oauth-client-login",
                     kwargs={"source_slug": self.slug},
                 ),
-                "icon_url": self.icon_url,
-                "icon_themed_urls": self.icon_themed_urls,
+                "icon_url": self.icon_dynamic_url,
             }
         )
 

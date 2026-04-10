@@ -1,17 +1,15 @@
 import { PolicyBindingCheckTarget } from "#common/policies/utils";
 import { ResolvedUITheme } from "#common/theme";
 
-import { renderIcon } from "#elements/utils/images";
-
-import { ThemedUrls } from "@goauthentik/api";
+import { renderDynamicIcon } from "#elements/utils/images";
+import type { VariantUrls } from "#elements/utils/images";
 
 import { msg } from "@lit/localize";
 import { html, nothing, TemplateResult } from "lit";
 
 export function renderSourceIcon(
     name: string,
-    iconUrl: string | undefined | null,
-    iconThemedUrls?: ThemedUrls | null,
+    iconUrl: VariantUrls | undefined | null,
     theme?: ResolvedUITheme,
 ): TemplateResult {
     const fallback = html`<i
@@ -20,7 +18,9 @@ export function renderSourceIcon(
         class="fas fa-share-square"
         title="${name}"
     ></i>`;
-    const icon = renderIcon(iconUrl, iconThemedUrls, theme, {
+    const icon = renderDynamicIcon({
+        urls: iconUrl,
+        theme,
         alt: name,
         ariaLabel: name,
         fallback,

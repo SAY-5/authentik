@@ -31,6 +31,7 @@ from psqlextra.models import PostgresMaterializedViewModel
 from rest_framework.serializers import Serializer
 from structlog.stdlib import get_logger
 
+from authentik.admin.files.backends.base import THEME_VARIABLE
 from authentik.admin.files.fields import FileField
 from authentik.admin.files.manager import get_file_manager
 from authentik.admin.files.usage import FileUsage
@@ -79,6 +80,21 @@ def _get_default_source_icon_themed_urls(icon_name: str) -> dict[str, str] | Non
                 "dark": legacy_url,
             }
     return None
+
+
+def _build_dynamic_url_map(
+    fallback: str | None,
+    variants: dict[str, str] | None,
+) -> dict[str, str] | None:
+    dynamic_url = dict(variants or {})
+    if fallback and THEME_VARIABLE in fallback:
+        fallback = None
+    resolved_fallback = fallback or dynamic_url.get("light")
+    if not resolved_fallback and dynamic_url:
+        resolved_fallback = next((url for url in dynamic_url.values() if url), None)
+    if resolved_fallback:
+        dynamic_url["fallback"] = resolved_fallback
+    return dynamic_url or None
 
 
 def _get_default_source_icon_url(icon_name: str) -> str | None:
@@ -792,6 +808,10 @@ class Application(SerializerModel, PolicyBindingModel):
             return None
 
         return get_file_manager(FileUsage.MEDIA).themed_urls(self.meta_icon)
+
+    @property
+    def get_meta_icon_dynamic_url(self) -> dict[str, str] | None:
+        return _build_dynamic_url_map(self.get_meta_icon, self.get_meta_icon_themed_urls)
 
     def get_launch_url(self, user: User | None = None, user_data: dict | None = None) -> str | None:
         """Get launch URL if set, otherwise attempt to get launch URL based on provider.

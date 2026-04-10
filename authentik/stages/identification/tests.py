@@ -207,7 +207,6 @@ class TestIdentificationStage(FlowTestCase):
                         "to": f"/source/oauth/login/{self.source.slug}/",
                     },
                     "icon_url": None,
-                    "icon_themed_urls": None,
                     "name": self.source.name,
                     "promoted": False,
                 }
@@ -244,7 +243,6 @@ class TestIdentificationStage(FlowTestCase):
                         "to": f"/source/oauth/login/{self.source.slug}/",
                     },
                     "icon_url": None,
-                    "icon_themed_urls": None,
                     "name": self.source.name,
                     "promoted": False,
                 }
@@ -320,7 +318,6 @@ class TestIdentificationStage(FlowTestCase):
                         "to": f"/source/oauth/login/{self.source.slug}/",
                     },
                     "icon_url": None,
-                    "icon_themed_urls": None,
                     "name": self.source.name,
                     "promoted": False,
                 }
@@ -377,7 +374,6 @@ class TestIdentificationStage(FlowTestCase):
                         "to": f"/source/oauth/login/{self.source.slug}/",
                     },
                     "icon_url": None,
-                    "icon_themed_urls": None,
                     "name": self.source.name,
                     "promoted": False,
                 }
@@ -441,7 +437,6 @@ class TestIdentificationStage(FlowTestCase):
                         "to": f"/source/oauth/login/{self.source.slug}/",
                     },
                     "icon_url": None,
-                    "icon_themed_urls": None,
                     "name": self.source.name,
                     "promoted": False,
                 }
@@ -487,7 +482,6 @@ class TestIdentificationStage(FlowTestCase):
             sources=[
                 {
                     "icon_url": None,
-                    "icon_themed_urls": None,
                     "name": self.source.name,
                     "challenge": {
                         "component": "xak-flow-redirect",
@@ -530,7 +524,6 @@ class TestIdentificationStage(FlowTestCase):
                         "to": f"/source/oauth/login/{self.source.slug}/",
                     },
                     "icon_url": None,
-                    "icon_themed_urls": None,
                     "name": self.source.name,
                     "promoted": False,
                 }
@@ -559,7 +552,6 @@ class TestIdentificationStage(FlowTestCase):
                         "to": f"/source/oauth/login/{self.source.slug}/",
                     },
                     "icon_url": None,
-                    "icon_themed_urls": None,
                     "name": self.source.name,
                     "promoted": False,
                 }
