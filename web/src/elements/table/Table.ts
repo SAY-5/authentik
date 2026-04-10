@@ -262,9 +262,6 @@ export abstract class Table<T extends object, D = T>
     public checkbox = false;
 
     @property({ type: Boolean })
-    public clickable = false;
-
-    @property({ type: Boolean })
     public radioSelect = false;
 
     @property({ type: Boolean })
@@ -294,6 +291,9 @@ export abstract class Table<T extends object, D = T>
 
     @property({ type: Boolean })
     public expandable = false;
+
+    @property({ type: String, attribute: "row-class" })
+    public rowClassNames = `${this.checkbox || this.expandable ? "pf-m-hoverable" : ""}`;
 
     @property({ type: String, attribute: "search-label" })
     public searchLabel: string | null = null;
@@ -772,12 +772,7 @@ export abstract class Table<T extends object, D = T>
         }
 
         return html`
-            <tr
-                aria-selected=${selected ? "true" : "false"}
-                class="${classMap({
-                    "pf-m-hoverable": this.checkbox || this.expandable || this.clickable,
-                })}"
-            >
+            <tr aria-selected=${selected ? "true" : "false"} class="${this.rowClassNames}">
                 ${memoizedCheckbox} ${memoizedExpansion}
                 ${this.row(item).map((cell, columnIndex) => {
                     const columnID = this.#columnIDs.get(this.columns[columnIndex]);
@@ -992,16 +987,13 @@ export abstract class Table<T extends object, D = T>
             this.fetch();
         };
 
-        return html`
-            <ak-table-pagination
-                ?loading=${this.loading}
-                label=${ifPresent(this.label)}
-                class="pf-c-toolbar__item pf-m-pagination"
-                .pages=${this.data?.pagination}
-                .onPageChange=${handler}
-            >
-            </ak-table-pagination>
-        `;
+        return html`<ak-table-pagination
+            ?loading=${this.loading}
+            label=${ifPresent(this.label)}
+            class="pf-c-toolbar__item pf-m-pagination"
+            .pages=${this.data?.pagination}
+            .onPageChange=${handler}
+        ></ak-table-pagination>`;
     }
 
     protected renderLoadingBar(): SlottedTemplateResult {
