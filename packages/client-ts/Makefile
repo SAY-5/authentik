@@ -3,11 +3,9 @@ PWD = $(shell pwd)
 UID = $(shell id -u)
 GID = $(shell id -g)
 
-include ../../scripts/make/container.mk
-
 build:
 	rm -rf src
-	$(CONTAINER_COMPOSE) run --rm --user "${UID}:${GID}" gen \
+	docker compose run --rm --user "${UID}:${GID}" gen \
 		generate \
 		-i /schema.yml \
 		-g typescript-fetch \
