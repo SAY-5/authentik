@@ -91,3 +91,4 @@ class ObjectAttributeViewSet(ModelViewSet):
     queryset = ObjectAttribute.objects.all()
     filterset_fields = ["object_type__model", "object_type__app_label", "enabled"]
     search_fields = ["key", "label", "group", "object_type__model", "object_type__app_label"]
+    ordering = ["key"]
