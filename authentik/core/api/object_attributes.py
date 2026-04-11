@@ -1,6 +1,7 @@
 from typing import Any
 
 from django.contrib.contenttypes.models import ContentType
+from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CharField, SerializerMethodField
 from rest_framework.viewsets import ModelViewSet
@@ -53,6 +54,11 @@ class ObjectAttributeSerializer(ModelSerializer):
         if not ct or not issubclass(ct.model_class(), AttributesMixin):
             raise ValidationError("Invalid object type")
         return ct
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        if attrs.get("is_unique") and attrs.get("is_array"):
+            raise ValidationError(_("Unique cannot be enabled for arrays."))
+        return super().validate(attrs)
 
     class Meta:
         model = ObjectAttribute

@@ -1376,16 +1376,21 @@ class ObjectAttribute(SerializerModel, ManagedModel, CreatedUpdatedModel):
         err_key = f"attributes_{self.key.replace(".", "_")}"
         if self.is_required and value is None:
             raise ValidationError({err_key: _("This field is required")})
-        if self.is_unique:
-            model: type[models.Model] = self.object_type.model_class()
-            lookup_key = f"attributes__{self.key.replace(".", "__")}"
-            if model.objects.filter(**{lookup_key: value}).exists():
-                raise ValidationError({err_key: _("Value is not unique.")})
-        if self.regex != "":
-            if not re.fullmatch(self.regex, value):
-                raise ValidationError({err_key: _("Value does not match configured pattern.")})
-        if self.is_array and not isinstance(value, (list, tuple)):
-            raise ValidationError({err_key: _("Value must be an array.")})
+        if self.is_array:
+            if not isinstance(value, (list, tuple)):
+                raise ValidationError({err_key: _("Value must be an array.")})
+            if self.regex != "":
+                if not all(re.fullmatch(self.regex, v) for v in value):
+                    raise ValidationError({err_key: _("Value does not match configured pattern.")})
+        else:
+            if self.is_unique:
+                model: type[models.Model] = self.object_type.model_class()
+                lookup_key = f"attributes__{self.key.replace(".", "__")}"
+                if model.objects.filter(**{lookup_key: value}).exists():
+                    raise ValidationError({err_key: _("Value is not unique.")})
+            if self.regex != "":
+                if not re.fullmatch(self.regex, value):
+                    raise ValidationError({err_key: _("Value does not match configured pattern.")})
 
     @property
     def serializer(self) -> type[Serializer]:

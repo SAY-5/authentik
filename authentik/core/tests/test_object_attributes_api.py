@@ -52,6 +52,26 @@ class TestObjectAttributesAPI(APITestCase):
         self.assertEqual(res.status_code, 400)
         self.assertJSONEqual(res.content, {"object_type": ["Invalid object type"]})
 
+    def test_create_invalid_array_unique(self):
+        res = self.client.post(
+            reverse("authentik_api:objectattribute-list"),
+            data={
+                "object_type": "authentik_core.user",
+                "enabled": False,
+                "key": "employeeNumber",
+                "label": "Employee Number",
+                "type": "text",
+                "group": "Employee",
+                "is_unique": True,
+                "is_required": False,
+                "is_array": True,
+            },
+        )
+        self.assertEqual(res.status_code, 400)
+        self.assertJSONEqual(
+            res.content, {"non_field_errors": ["Unique cannot be enabled for arrays."]}
+        )
+
     def test_update(self):
         attr = ObjectAttribute.objects.create(
             object_type=ContentType.objects.get_for_model(User),
@@ -156,3 +176,23 @@ class TestObjectAttributesAPI(APITestCase):
             },
         )
         self.assertEqual(res.status_code, 200)
+
+    def test_user_attrib_validation_array_regex(self):
+        attr = ObjectAttribute.objects.create(
+            object_type=ContentType.objects.get_for_model(User),
+            label="foo",
+            key=generate_id(),
+            type=ObjectAttribute.AttributeType.TEXT,
+            is_array=True,
+            regex="bar",
+        )
+        res = self.client.patch(
+            reverse("authentik_api:user-detail", kwargs={"pk": self.user.pk}),
+            data={
+                "attributes": {attr.key: ["foo"]},
+            },
+        )
+        self.assertEqual(res.status_code, 400)
+        self.assertJSONEqual(
+            res.content, {f"attributes_{attr.key}": ["Value does not match configured pattern."]}
+        )
