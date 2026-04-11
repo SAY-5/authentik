@@ -1,0 +1,120 @@
+version: 1
+metadata:
+  labels:
+    blueprints.goauthentik.io/system: "true"
+  name: System - Object Attributes - User
+entries:
+  ak:
+    - model: authentik_core.objectattribute
+      identifiers:
+        key: settings.locale
+        managed: goauthentik.io/object-attrs/user/settings/locale
+      attrs:
+        group: Settings
+        object_type: authentik_core.user
+        label: Locale
+        enabled: true
+        flag_required: false
+        flag_unique: false
+        type: text
+  address:
+    - model: authentik_core.objectattribute
+      identifiers:
+        key: street
+        managed: goauthentik.io/object-attrs/user/address/street
+      attrs:
+        group: Address
+        object_type: authentik_core.user
+        label: Street
+        enabled: false
+        flag_required: false
+        flag_unique: false
+        type: text
+    - model: authentik_core.objectattribute
+      identifiers:
+        key: state
+        managed: goauthentik.io/object-attrs/user/address/state
+      attrs:
+        group: Address
+        object_type: authentik_core.user
+        label: State
+        enabled: false
+        flag_required: false
+        flag_unique: false
+        type: text
+    - model: authentik_core.objectattribute
+      identifiers:
+        key: location
+        managed: goauthentik.io/object-attrs/user/address/location
+      attrs:
+        group: Address
+        object_type: authentik_core.user
+        label: Location
+        enabled: false
+        flag_required: false
+        flag_unique: false
+        type: text
+    - model: authentik_core.objectattribute
+      identifiers:
+        key: postalCode
+        managed: goauthentik.io/object-attrs/user/address/postal-code
+      attrs:
+        group: Address
+        object_type: authentik_core.user
+        label: Postal code
+        enabled: false
+        flag_required: false
+        flag_unique: false
+        type: text
+  contact:
+    - model: authentik_core.objectattribute
+      identifiers:
+        key: phoneNumber
+        managed: goauthentik.io/object-attrs/user/contact/phone-number
+      attrs:
+        group: Contact
+        object_type: authentik_core.user
+        label: Phone number(s)
+        enabled: false
+        flag_required: false
+        flag_unique: false
+        type: text
+        is_array: true
+  unix:
+    - model: authentik_core.objectattribute
+      identifiers:
+        key: shell
+        managed: goauthentik.io/object-attrs/user/unix/shell
+      attrs:
+        group: Unix
+        object_type: authentik_core.user
+        label: Shell
+        enabled: false
+        flag_required: false
+        flag_unique: false
+        type: text
+  employee:
+    - model: authentik_core.objectattribute
+      identifiers:
+        key: employeeNumber
+        managed: goauthentik.io/object-attrs/user/employee/number
+      attrs:
+        group: Employee
+        object_type: authentik_core.user
+        label: Employee Number
+        enabled: false
+        flag_required: false
+        flag_unique: false
+        type: text
+    - model: authentik_core.objectattribute
+      identifiers:
+        key: jobTitle
+        managed: goauthentik.io/object-attrs/user/employee/title
+      attrs:
+        group: Employee
+        object_type: authentik_core.user
+        label: Title
+        enabled: false
+        flag_required: false
+        flag_unique: false
+        type: text
