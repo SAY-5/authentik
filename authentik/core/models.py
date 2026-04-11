@@ -1399,4 +1399,4 @@ class ObjectAttribute(SerializerModel, ManagedModel, CreatedUpdatedModel):
     class Meta:
         verbose_name = _("Object Attribute")
         verbose_name_plural = _("Object Attributes")
-        unique_together = (("object_type", "key"),)
+        unique_together = (("object_type", "key", "enabled"),)
