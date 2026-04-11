@@ -5445,6 +5445,10 @@
                     ],
                     "title": "Type"
                 },
+                "group": {
+                    "type": "string",
+                    "title": "Group"
+                },
                 "flag_unique": {
                     "type": "boolean",
                     "title": "Flag unique"

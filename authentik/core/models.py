@@ -1362,6 +1362,7 @@ class ObjectAttribute(SerializerModel, ManagedModel, CreatedUpdatedModel):
 
     object_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     label = models.TextField()
+    group = models.TextField(blank=True)
     key = models.TextField()
 
     type = models.TextField(choices=AttributeType.choices)

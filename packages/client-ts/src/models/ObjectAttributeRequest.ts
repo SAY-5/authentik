@@ -62,6 +62,12 @@ export interface ObjectAttributeRequest {
     type: ObjectAttributeTypeEnum;
     /**
      *
+     * @type {string}
+     * @memberof ObjectAttributeRequest
+     */
+    group?: string;
+    /**
+     *
      * @type {boolean}
      * @memberof ObjectAttributeRequest
      */
@@ -109,6 +115,7 @@ export function ObjectAttributeRequestFromJSONTyped(
         label: json["label"],
         regex: json["regex"] == null ? undefined : json["regex"],
         type: ObjectAttributeTypeEnumFromJSON(json["type"]),
+        group: json["group"] == null ? undefined : json["group"],
         flagUnique: json["flag_unique"] == null ? undefined : json["flag_unique"],
         flagRequired: json["flag_required"] == null ? undefined : json["flag_required"],
         isArray: json["is_array"] == null ? undefined : json["is_array"],
@@ -134,6 +141,7 @@ export function ObjectAttributeRequestToJSONTyped(
         label: value["label"],
         regex: value["regex"],
         type: ObjectAttributeTypeEnumToJSON(value["type"]),
+        group: value["group"],
         flag_unique: value["flagUnique"],
         flag_required: value["flagRequired"],
         is_array: value["isArray"],

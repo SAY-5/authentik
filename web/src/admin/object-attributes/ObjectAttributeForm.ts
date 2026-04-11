@@ -66,6 +66,12 @@ export class ObjectAttributeForm extends ModelForm<ObjectAttribute, string> {
                 placeholder=${msg("Type a unique identifier...")}
                 required
             ></ak-text-input>
+            <ak-text-input
+                name="group"
+                value="${this.instance?.group ?? ""}"
+                label=${msg("Group")}
+                placeholder=${msg("Type an optional group identifier...")}
+            ></ak-text-input>
             <ak-switch-input
                 name="enabled"
                 label=${msg("Enabled")}

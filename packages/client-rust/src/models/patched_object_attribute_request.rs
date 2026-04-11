@@ -24,6 +24,8 @@ pub struct PatchedObjectAttributeRequest {
     pub regex: Option<String>,
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub r#type: Option<models::ObjectAttributeTypeEnum>,
+    #[serde(rename = "group", skip_serializing_if = "Option::is_none")]
+    pub group: Option<String>,
     #[serde(rename = "flag_unique", skip_serializing_if = "Option::is_none")]
     pub flag_unique: Option<bool>,
     #[serde(rename = "flag_required", skip_serializing_if = "Option::is_none")]
@@ -41,6 +43,7 @@ impl PatchedObjectAttributeRequest {
             label: None,
             regex: None,
             r#type: None,
+            group: None,
             flag_unique: None,
             flag_required: None,
             is_array: None,

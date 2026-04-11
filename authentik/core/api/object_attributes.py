@@ -50,6 +50,7 @@ class ObjectAttributeSerializer(ModelSerializer):
             "last_updated",
             "regex",
             "type",
+            "group",
             "managed",
             "flag_unique",
             "flag_required",

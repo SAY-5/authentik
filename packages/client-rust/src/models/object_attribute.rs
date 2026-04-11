@@ -32,6 +32,8 @@ pub struct ObjectAttribute {
     pub regex: Option<String>,
     #[serde(rename = "type")]
     pub r#type: models::ObjectAttributeTypeEnum,
+    #[serde(rename = "group", skip_serializing_if = "Option::is_none")]
+    pub group: Option<String>,
     /// Objects that are managed by authentik. These objects are created and updated automatically.
     /// This flag only indicates that an object can be overwritten by migrations. You can still
     /// modify the objects via the API, but expect changes to be overwritten in a later update.
@@ -68,6 +70,7 @@ impl ObjectAttribute {
             last_updated,
             regex: None,
             r#type,
+            group: None,
             managed,
             flag_unique: None,
             flag_required: None,

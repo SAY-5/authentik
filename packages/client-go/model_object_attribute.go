@@ -32,6 +32,7 @@ type ObjectAttribute struct {
 	LastUpdated   time.Time               `json:"last_updated"`
 	Regex         *string                 `json:"regex,omitempty"`
 	Type          ObjectAttributeTypeEnum `json:"type"`
+	Group         *string                 `json:"group,omitempty"`
 	// Objects that are managed by authentik. These objects are created and updated automatically. This flag only indicates that an object can be overwritten by migrations. You can still modify the objects via the API, but expect changes to be overwritten in a later update.
 	Managed              NullableString `json:"managed"`
 	FlagUnique           *bool          `json:"flag_unique,omitempty"`
@@ -324,6 +325,38 @@ func (o *ObjectAttribute) SetType(v ObjectAttributeTypeEnum) {
 	o.Type = v
 }
 
+// GetGroup returns the Group field value if set, zero value otherwise.
+func (o *ObjectAttribute) GetGroup() string {
+	if o == nil || IsNil(o.Group) {
+		var ret string
+		return ret
+	}
+	return *o.Group
+}
+
+// GetGroupOk returns a tuple with the Group field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ObjectAttribute) GetGroupOk() (*string, bool) {
+	if o == nil || IsNil(o.Group) {
+		return nil, false
+	}
+	return o.Group, true
+}
+
+// HasGroup returns a boolean if a field has been set.
+func (o *ObjectAttribute) HasGroup() bool {
+	if o != nil && !IsNil(o.Group) {
+		return true
+	}
+
+	return false
+}
+
+// SetGroup gets a reference to the given string and assigns it to the Group field.
+func (o *ObjectAttribute) SetGroup(v string) {
+	o.Group = &v
+}
+
 // GetManaged returns the Managed field value
 // If the value is explicit nil, the zero value for string will be returned
 func (o *ObjectAttribute) GetManaged() string {
@@ -470,6 +503,9 @@ func (o ObjectAttribute) ToMap() (map[string]interface{}, error) {
 		toSerialize["regex"] = o.Regex
 	}
 	toSerialize["type"] = o.Type
+	if !IsNil(o.Group) {
+		toSerialize["group"] = o.Group
+	}
 	toSerialize["managed"] = o.Managed.Get()
 	if !IsNil(o.FlagUnique) {
 		toSerialize["flag_unique"] = o.FlagUnique
@@ -541,6 +577,7 @@ func (o *ObjectAttribute) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "last_updated")
 		delete(additionalProperties, "regex")
 		delete(additionalProperties, "type")
+		delete(additionalProperties, "group")
 		delete(additionalProperties, "managed")
 		delete(additionalProperties, "flag_unique")
 		delete(additionalProperties, "flag_required")

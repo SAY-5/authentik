@@ -44244,6 +44244,8 @@ components:
           type: string
         type:
           $ref: '#/components/schemas/ObjectAttributeTypeEnum'
+        group:
+          type: string
         managed:
           type: string
           readOnly: true
@@ -44287,6 +44289,8 @@ components:
           type: string
         type:
           $ref: '#/components/schemas/ObjectAttributeTypeEnum'
+        group:
+          type: string
         flag_unique:
           type: boolean
         flag_required:
@@ -49568,6 +49572,8 @@ components:
           type: string
         type:
           $ref: '#/components/schemas/ObjectAttributeTypeEnum'
+        group:
+          type: string
         flag_unique:
           type: boolean
         flag_required:

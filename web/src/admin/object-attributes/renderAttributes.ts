@@ -5,6 +5,7 @@ import "#elements/forms/FormGroup";
 import "#elements/CodeMirror/ak-codemirror";
 
 import { DEFAULT_CONFIG } from "#common/api/config";
+import { groupBy } from "#common/utils";
 
 import { ModelForm } from "#elements/forms/ModelForm";
 
@@ -51,7 +52,7 @@ export abstract class ObjectAttributeModelForm<
         options?: ObjectAttributeOptions,
     ) {
         const attrs = obj?.attributes || {};
-        return html`${defs.map((attr) => {
+        const renderSingleAttribute = (attr: ObjectAttribute) => {
             switch (attr.type) {
                 case ObjectAttributeTypeEnum.Text:
                     return html`<ak-text-input
@@ -77,7 +78,14 @@ export abstract class ObjectAttributeModelForm<
                     >
                     </ak-switch-input>`;
             }
-            return html``;
+        };
+        return html`${groupBy(defs, (def) => def.group || "").map(([group, attrs]) => {
+            if (group === "") {
+                return html`${attrs.map((attr) => renderSingleAttribute(attr))}`;
+            }
+            return html`<ak-form-group label=${group}>
+                <div class="pf-c-form">${attrs.map((attr) => renderSingleAttribute(attr))}</div>
+            </ak-form-group>`;
         })}
         ${options?.disableRawAttributes
             ? nothing

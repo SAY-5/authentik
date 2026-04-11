@@ -24,6 +24,8 @@ pub struct ObjectAttributeRequest {
     pub regex: Option<String>,
     #[serde(rename = "type")]
     pub r#type: models::ObjectAttributeTypeEnum,
+    #[serde(rename = "group", skip_serializing_if = "Option::is_none")]
+    pub group: Option<String>,
     #[serde(rename = "flag_unique", skip_serializing_if = "Option::is_none")]
     pub flag_unique: Option<bool>,
     #[serde(rename = "flag_required", skip_serializing_if = "Option::is_none")]
@@ -46,6 +48,7 @@ impl ObjectAttributeRequest {
             label,
             regex: None,
             r#type,
+            group: None,
             flag_unique: None,
             flag_required: None,
             is_array: None,

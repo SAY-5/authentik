@@ -87,6 +87,12 @@ export interface ObjectAttribute {
      */
     type: ObjectAttributeTypeEnum;
     /**
+     *
+     * @type {string}
+     * @memberof ObjectAttribute
+     */
+    group?: string;
+    /**
      * Objects that are managed by authentik. These objects are created and updated automatically. This flag only indicates that an object can be overwritten by migrations. You can still modify the objects via the API, but expect changes to be overwritten in a later update.
      * @type {string}
      * @memberof ObjectAttribute
@@ -150,6 +156,7 @@ export function ObjectAttributeFromJSONTyped(
         lastUpdated: new Date(json["last_updated"]),
         regex: json["regex"] == null ? undefined : json["regex"],
         type: ObjectAttributeTypeEnumFromJSON(json["type"]),
+        group: json["group"] == null ? undefined : json["group"],
         managed: json["managed"],
         flagUnique: json["flag_unique"] == null ? undefined : json["flag_unique"],
         flagRequired: json["flag_required"] == null ? undefined : json["flag_required"],
@@ -179,6 +186,7 @@ export function ObjectAttributeToJSONTyped(
         label: value["label"],
         regex: value["regex"],
         type: ObjectAttributeTypeEnumToJSON(value["type"]),
+        group: value["group"],
         flag_unique: value["flagUnique"],
         flag_required: value["flagRequired"],
         is_array: value["isArray"],

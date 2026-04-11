@@ -62,6 +62,12 @@ export interface PatchedObjectAttributeRequest {
     type?: ObjectAttributeTypeEnum;
     /**
      *
+     * @type {string}
+     * @memberof PatchedObjectAttributeRequest
+     */
+    group?: string;
+    /**
+     *
      * @type {boolean}
      * @memberof PatchedObjectAttributeRequest
      */
@@ -107,6 +113,7 @@ export function PatchedObjectAttributeRequestFromJSONTyped(
         label: json["label"] == null ? undefined : json["label"],
         regex: json["regex"] == null ? undefined : json["regex"],
         type: json["type"] == null ? undefined : ObjectAttributeTypeEnumFromJSON(json["type"]),
+        group: json["group"] == null ? undefined : json["group"],
         flagUnique: json["flag_unique"] == null ? undefined : json["flag_unique"],
         flagRequired: json["flag_required"] == null ? undefined : json["flag_required"],
         isArray: json["is_array"] == null ? undefined : json["is_array"],
@@ -132,6 +139,7 @@ export function PatchedObjectAttributeRequestToJSONTyped(
         label: value["label"],
         regex: value["regex"],
         type: ObjectAttributeTypeEnumToJSON(value["type"]),
+        group: value["group"],
         flag_unique: value["flagUnique"],
         flag_required: value["flagRequired"],
         is_array: value["isArray"],

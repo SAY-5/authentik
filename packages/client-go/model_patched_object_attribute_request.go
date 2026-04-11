@@ -26,6 +26,7 @@ type PatchedObjectAttributeRequest struct {
 	Label                *string                  `json:"label,omitempty"`
 	Regex                *string                  `json:"regex,omitempty"`
 	Type                 *ObjectAttributeTypeEnum `json:"type,omitempty"`
+	Group                *string                  `json:"group,omitempty"`
 	FlagUnique           *bool                    `json:"flag_unique,omitempty"`
 	FlagRequired         *bool                    `json:"flag_required,omitempty"`
 	IsArray              *bool                    `json:"is_array,omitempty"`
@@ -243,6 +244,38 @@ func (o *PatchedObjectAttributeRequest) SetType(v ObjectAttributeTypeEnum) {
 	o.Type = &v
 }
 
+// GetGroup returns the Group field value if set, zero value otherwise.
+func (o *PatchedObjectAttributeRequest) GetGroup() string {
+	if o == nil || IsNil(o.Group) {
+		var ret string
+		return ret
+	}
+	return *o.Group
+}
+
+// GetGroupOk returns a tuple with the Group field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PatchedObjectAttributeRequest) GetGroupOk() (*string, bool) {
+	if o == nil || IsNil(o.Group) {
+		return nil, false
+	}
+	return o.Group, true
+}
+
+// HasGroup returns a boolean if a field has been set.
+func (o *PatchedObjectAttributeRequest) HasGroup() bool {
+	if o != nil && !IsNil(o.Group) {
+		return true
+	}
+
+	return false
+}
+
+// SetGroup gets a reference to the given string and assigns it to the Group field.
+func (o *PatchedObjectAttributeRequest) SetGroup(v string) {
+	o.Group = &v
+}
+
 // GetFlagUnique returns the FlagUnique field value if set, zero value otherwise.
 func (o *PatchedObjectAttributeRequest) GetFlagUnique() bool {
 	if o == nil || IsNil(o.FlagUnique) {
@@ -367,6 +400,9 @@ func (o PatchedObjectAttributeRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Type) {
 		toSerialize["type"] = o.Type
 	}
+	if !IsNil(o.Group) {
+		toSerialize["group"] = o.Group
+	}
 	if !IsNil(o.FlagUnique) {
 		toSerialize["flag_unique"] = o.FlagUnique
 	}
@@ -404,6 +440,7 @@ func (o *PatchedObjectAttributeRequest) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "label")
 		delete(additionalProperties, "regex")
 		delete(additionalProperties, "type")
+		delete(additionalProperties, "group")
 		delete(additionalProperties, "flag_unique")
 		delete(additionalProperties, "flag_required")
 		delete(additionalProperties, "is_array")
