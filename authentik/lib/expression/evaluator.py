@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any
 
 from cachetools import TLRUCache, cached
 from django.core.exceptions import FieldError
+from django.db.models import Model
 from django.http import HttpRequest
 from django.utils.text import slugify
 from django.utils.timezone import now
@@ -22,6 +23,7 @@ from structlog.stdlib import get_logger
 from authentik.core.models import User
 from authentik.events.models import Event
 from authentik.lib.expression.exceptions import ControlFlowException
+from authentik.lib.utils.dict import get_path_from_dict
 from authentik.lib.utils.email import normalize_addresses
 from authentik.lib.utils.http import get_http_session
 from authentik.lib.utils.time import timedelta_from_string
@@ -70,6 +72,7 @@ class BaseEvaluator:
             "ak_send_email": self.expr_send_email,
             "ak_user_by": BaseEvaluator.expr_user_by,
             "ak_user_has_authenticator": BaseEvaluator.expr_func_user_has_authenticator,
+            "ak_obj_attr": BaseEvaluator.expr_obj_attr,
             "ip_address": ip_address,
             "ip_network": ip_network,
             "list_flatten": BaseEvaluator.expr_flatten,
@@ -161,6 +164,16 @@ class BaseEvaluator:
                     return True
             return False
         return len(list(user_devices)) > 0
+
+    @staticmethod
+    def expr_obj_attr(obj: Model, attr_key: str, fallback: str) -> Any:
+        """Get an attribute of the given object if set by its dotted path, otherwise
+        return fallback value."""
+        attrs = getattr(obj, "attributes", {})
+        value = get_path_from_dict(attrs, attr_key)
+        if value is None and fallback:
+            return getattr(obj, fallback)
+        return value
 
     def expr_event_create(self, action: str, **kwargs):
         """Create event with supplied data and try to extract as much relevant data

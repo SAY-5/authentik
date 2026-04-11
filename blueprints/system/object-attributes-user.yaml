@@ -4,6 +4,31 @@ metadata:
     blueprints.goauthentik.io/system: "true"
   name: System - Object Attributes - User
 entries:
+  identity:
+    - model: authentik_core.objectattribute
+      identifiers:
+        key: givenName
+        managed: goauthentik.io/object-attrs/user/identity/givenName
+      attrs:
+        group: Identity
+        object_type: authentik_core.user
+        label: Given Name
+        enabled: false
+        is_required: false
+        is_unique: false
+        type: text
+    - model: authentik_core.objectattribute
+      identifiers:
+        key: familyName
+        managed: goauthentik.io/object-attrs/user/identity/familyName
+      attrs:
+        group: Identity
+        object_type: authentik_core.user
+        label: Family Name
+        enabled: false
+        is_required: false
+        is_unique: false
+        type: text
   ak:
     - model: authentik_core.objectattribute
       identifiers:

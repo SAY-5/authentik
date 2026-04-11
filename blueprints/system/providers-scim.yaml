@@ -42,8 +42,8 @@ entries:
             "userName": request.user.username,
             "name": {
                 "formatted": formatted,
-                "givenName": givenName,
-                "familyName": familyName,
+                "givenName": ak_obj_attr(request.user, "givenName") or givenName,
+                "familyName": ak_obj_attr(request.user, "familyName") or familyName,
             },
             "displayName": request.user.name,
             "photos": photos,
