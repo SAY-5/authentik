@@ -66,6 +66,12 @@ export class ObjectAttributeForm extends ModelForm<ObjectAttribute, string> {
                 placeholder=${msg("Type a unique identifier...")}
                 required
             ></ak-text-input>
+            <ak-switch-input
+                name="enabled"
+                label=${msg("Enabled")}
+                ?checked=${this.instance?.enabled ?? true}
+                help=${msg("Value of the attribute cannot be empty.")}
+            ></ak-switch-input>
             <ak-form-element-horizontal label=${msg("Type")} required name="type">
                 <ak-radio
                     .options=${[
