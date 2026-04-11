@@ -8,25 +8,15 @@ import "#components/ak-switch-input";
 
 import { DEFAULT_CONFIG } from "#common/api/config";
 
-import { ModelForm } from "#elements/forms/ModelForm";
 import { RadioOption } from "#elements/forms/Radio";
 
-import { renderObjectAttributes } from "#admin/object-attributes/renderAttributes";
+import { ObjectAttributeModelForm } from "#admin/object-attributes/renderAttributes";
 
-import {
-    CoreApi,
-    Group,
-    ModelEnum,
-    ObjectAttribute,
-    RbacApi,
-    Role,
-    User,
-    UserTypeEnum,
-} from "@goauthentik/api";
+import { CoreApi, Group, ModelEnum, RbacApi, Role, User, UserTypeEnum } from "@goauthentik/api";
 
 import { msg, str } from "@lit/localize";
 import { css, CSSResult, html, TemplateResult } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 
 const UserTypeOptions: readonly RadioOption<UserTypeEnum>[] = [
@@ -53,7 +43,8 @@ const UserTypeOptions: readonly RadioOption<UserTypeEnum>[] = [
 ];
 
 @customElement("ak-user-form")
-export class UserForm extends ModelForm<User, number> {
+export class UserForm extends ObjectAttributeModelForm<User, number> {
+    public model = ModelEnum.AuthentikCoreUser;
     public override entitySingular = msg("User");
     public override entityPlural = msg("Users");
 
@@ -65,9 +56,6 @@ export class UserForm extends ModelForm<User, number> {
 
     @property()
     defaultPath: string = "users";
-
-    @state()
-    objAttributes: ObjectAttribute[] = [];
 
     static get defaultUserAttributes(): { [key: string]: unknown } {
         return {};
@@ -84,16 +72,6 @@ export class UserForm extends ModelForm<User, number> {
             }
         `,
     ];
-
-    async load() {
-        const [app, model] = ModelEnum.AuthentikCoreUser.split(".");
-        this.objAttributes = (
-            await new CoreApi(DEFAULT_CONFIG).coreObjectAttributesList({
-                objectTypeAppLabel: app,
-                objectTypeModel: model,
-            })
-        ).results;
-    }
 
     async loadInstance(pk: number): Promise<User> {
         return new CoreApi(DEFAULT_CONFIG).coreUsersRetrieve({
@@ -235,7 +213,7 @@ export class UserForm extends ModelForm<User, number> {
                     </p>`}
             ></ak-text-input>
 
-            ${renderObjectAttributes(this.objAttributes, this.instance)}`;
+            ${this.renderObjectAttributes(this.objAttributes, this.instance)}`;
     }
 }
 

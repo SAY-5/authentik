@@ -4,32 +4,22 @@ import "#elements/forms/SearchSelect/index";
 
 import { DEFAULT_CONFIG } from "#common/api/config";
 
-import { ModelForm } from "#elements/forms/ModelForm";
+import { ObjectAttributeModelForm } from "#admin/object-attributes/renderAttributes";
 
-import { renderObjectAttributes } from "#admin/object-attributes/renderAttributes";
-
-import { ApplicationEntitlement, CoreApi, ModelEnum, ObjectAttribute } from "@goauthentik/api";
+import { ApplicationEntitlement, CoreApi, ModelEnum } from "@goauthentik/api";
 
 import { msg } from "@lit/localize";
 import { CSSResult, html, TemplateResult } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 
 import PFContent from "@patternfly/patternfly/components/Content/content.css";
 
 @customElement("ak-application-entitlement-form")
-export class ApplicationEntitlementForm extends ModelForm<ApplicationEntitlement, string> {
-    @state()
-    objAttributes: ObjectAttribute[] = [];
-
-    async load() {
-        const [app, model] = ModelEnum.AuthentikCoreApplicationentitlement.split(".");
-        this.objAttributes = (
-            await new CoreApi(DEFAULT_CONFIG).coreObjectAttributesList({
-                objectTypeAppLabel: app,
-                objectTypeModel: model,
-            })
-        ).results;
-    }
+export class ApplicationEntitlementForm extends ObjectAttributeModelForm<
+    ApplicationEntitlement,
+    string
+> {
+    public model = ModelEnum.AuthentikCoreApplicationentitlement;
 
     async loadInstance(pk: string): Promise<ApplicationEntitlement> {
         return new CoreApi(DEFAULT_CONFIG).coreApplicationEntitlementsRetrieve({
@@ -73,7 +63,7 @@ export class ApplicationEntitlementForm extends ModelForm<ApplicationEntitlement
                     required
                 />
             </ak-form-element-horizontal>
-            ${renderObjectAttributes(this.objAttributes, this.instance)}`;
+            ${this.renderObjectAttributes(this.objAttributes, this.instance)}`;
     }
 }
 

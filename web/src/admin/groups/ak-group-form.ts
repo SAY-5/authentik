@@ -11,23 +11,14 @@ import "#elements/forms/SearchSelect/index";
 import { DEFAULT_CONFIG } from "#common/api/config";
 
 import { DataProvision, DualSelectPair } from "#elements/ak-dual-select/types";
-import { ModelForm } from "#elements/forms/ModelForm";
 
-import { renderObjectAttributes } from "#admin/object-attributes/renderAttributes";
+import { ObjectAttributeModelForm } from "#admin/object-attributes/renderAttributes";
 
-import {
-    CoreApi,
-    Group,
-    ModelEnum,
-    ObjectAttribute,
-    RbacApi,
-    RelatedGroup,
-    Role,
-} from "@goauthentik/api";
+import { CoreApi, Group, ModelEnum, RbacApi, RelatedGroup, Role } from "@goauthentik/api";
 
 import { msg } from "@lit/localize";
 import { css, CSSResult, html, TemplateResult } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 
 export function coreGroupPair(item: Group | RelatedGroup): DualSelectPair {
@@ -38,7 +29,8 @@ export function rbacRolePair(item: Role): DualSelectPair {
 }
 
 @customElement("ak-group-form")
-export class GroupForm extends ModelForm<Group, string> {
+export class GroupForm extends ObjectAttributeModelForm<Group, string> {
+    public model = ModelEnum.AuthentikCoreGroup;
     static styles: CSSResult[] = [
         ...super.styles,
         css`
@@ -53,9 +45,6 @@ export class GroupForm extends ModelForm<Group, string> {
 
     public entitySingular = msg("Group");
     public entityPlural = msg("Groups");
-
-    @state()
-    objAttributes: ObjectAttribute[] = [];
 
     #fetchGroups = (page: number, search?: string): Promise<DataProvision> => {
         return new CoreApi(DEFAULT_CONFIG)
@@ -83,16 +72,6 @@ export class GroupForm extends ModelForm<Group, string> {
                 };
             });
     };
-
-    async load() {
-        const [app, model] = ModelEnum.AuthentikCoreGroup.split(".");
-        this.objAttributes = (
-            await new CoreApi(DEFAULT_CONFIG).coreObjectAttributesList({
-                objectTypeAppLabel: app,
-                objectTypeModel: model,
-            })
-        ).results;
-    }
 
     loadInstance(pk: string): Promise<Group> {
         return new CoreApi(DEFAULT_CONFIG).coreGroupsRetrieve({
@@ -165,7 +144,7 @@ export class GroupForm extends ModelForm<Group, string> {
                     )}
                 </p>
             </ak-form-element-horizontal>
-            ${renderObjectAttributes(this.objAttributes, this.instance)}`;
+            ${this.renderObjectAttributes(this.objAttributes, this.instance)}`;
     }
 }
 
