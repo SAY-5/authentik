@@ -3724,8 +3724,6 @@ paths:
   /core/object_attributes/:
     get:
       operationId: core_object_attributes_list
-      description: Mixin to add a used_by endpoint to return a list of all objects
-        using this object
       parameters:
       - in: query
         name: enabled
@@ -3760,8 +3758,6 @@ paths:
           $ref: '#/components/responses/GenericErrorResponse'
     post:
       operationId: core_object_attributes_create
-      description: Mixin to add a used_by endpoint to return a list of all objects
-        using this object
       tags:
       - core
       requestBody:
@@ -3786,8 +3782,6 @@ paths:
   /core/object_attributes/{attribute_id}/:
     get:
       operationId: core_object_attributes_retrieve
-      description: Mixin to add a used_by endpoint to return a list of all objects
-        using this object
       parameters:
       - in: path
         name: attribute_id
@@ -3813,8 +3807,6 @@ paths:
           $ref: '#/components/responses/GenericErrorResponse'
     put:
       operationId: core_object_attributes_update
-      description: Mixin to add a used_by endpoint to return a list of all objects
-        using this object
       parameters:
       - in: path
         name: attribute_id
@@ -3846,8 +3838,6 @@ paths:
           $ref: '#/components/responses/GenericErrorResponse'
     patch:
       operationId: core_object_attributes_partial_update
-      description: Mixin to add a used_by endpoint to return a list of all objects
-        using this object
       parameters:
       - in: path
         name: attribute_id
@@ -3878,8 +3868,6 @@ paths:
           $ref: '#/components/responses/GenericErrorResponse'
     delete:
       operationId: core_object_attributes_destroy
-      description: Mixin to add a used_by endpoint to return a list of all objects
-        using this object
       parameters:
       - in: path
         name: attribute_id
@@ -3895,35 +3883,6 @@ paths:
       responses:
         '204':
           description: No response body
-        '400':
-          $ref: '#/components/responses/ValidationErrorResponse'
-        '403':
-          $ref: '#/components/responses/GenericErrorResponse'
-  /core/object_attributes/{attribute_id}/used_by/:
-    get:
-      operationId: core_object_attributes_used_by_list
-      description: Get a list of all objects that use this object
-      parameters:
-      - in: path
-        name: attribute_id
-        schema:
-          type: string
-          format: uuid
-        description: A UUID string identifying this Object Attribute.
-        required: true
-      tags:
-      - core
-      security:
-      - authentik: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UsedBy'
-          description: ''
         '400':
           $ref: '#/components/responses/ValidationErrorResponse'
         '403':

@@ -401,15 +401,6 @@ pub enum CoreObjectAttributesUpdateError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`core_object_attributes_used_by_list`]
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum CoreObjectAttributesUsedByListError {
-    Status400(models::ValidationError),
-    Status403(models::GenericError),
-    UnknownValue(serde_json::Value),
-}
-
 /// struct for typed errors of method [`core_tokens_create`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
@@ -3205,7 +3196,6 @@ pub async fn core_groups_used_by_list(
     }
 }
 
-/// Mixin to add a used_by endpoint to return a list of all objects using this object
 pub async fn core_object_attributes_create(
     configuration: &configuration::Configuration,
     object_attribute_request: models::ObjectAttributeRequest,
@@ -3265,7 +3255,6 @@ pub async fn core_object_attributes_create(
     }
 }
 
-/// Mixin to add a used_by endpoint to return a list of all objects using this object
 pub async fn core_object_attributes_destroy(
     configuration: &configuration::Configuration,
     attribute_id: &str,
@@ -3307,7 +3296,6 @@ pub async fn core_object_attributes_destroy(
     }
 }
 
-/// Mixin to add a used_by endpoint to return a list of all objects using this object
 pub async fn core_object_attributes_list(
     configuration: &configuration::Configuration,
     enabled: Option<bool>,
@@ -3397,7 +3385,6 @@ pub async fn core_object_attributes_list(
     }
 }
 
-/// Mixin to add a used_by endpoint to return a list of all objects using this object
 pub async fn core_object_attributes_partial_update(
     configuration: &configuration::Configuration,
     attribute_id: &str,
@@ -3464,7 +3451,6 @@ pub async fn core_object_attributes_partial_update(
     }
 }
 
-/// Mixin to add a used_by endpoint to return a list of all objects using this object
 pub async fn core_object_attributes_retrieve(
     configuration: &configuration::Configuration,
     attribute_id: &str,
@@ -3525,7 +3511,6 @@ pub async fn core_object_attributes_retrieve(
     }
 }
 
-/// Mixin to add a used_by endpoint to return a list of all objects using this object
 pub async fn core_object_attributes_update(
     configuration: &configuration::Configuration,
     attribute_id: &str,
@@ -3581,68 +3566,6 @@ pub async fn core_object_attributes_update(
     } else {
         let content = resp.text().await?;
         let entity: Option<CoreObjectAttributesUpdateError> = serde_json::from_str(&content).ok();
-        Err(Error::ResponseError(ResponseContent {
-            status,
-            content,
-            entity,
-        }))
-    }
-}
-
-/// Get a list of all objects that use this object
-pub async fn core_object_attributes_used_by_list(
-    configuration: &configuration::Configuration,
-    attribute_id: &str,
-) -> Result<Vec<models::UsedBy>, Error<CoreObjectAttributesUsedByListError>> {
-    // add a prefix to parameters to efficiently prevent name collisions
-    let p_path_attribute_id = attribute_id;
-
-    let uri_str = format!(
-        "{}/core/object_attributes/{attribute_id}/used_by/",
-        configuration.base_path,
-        attribute_id = crate::apis::urlencode(p_path_attribute_id)
-    );
-    let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
-
-    if let Some(ref user_agent) = configuration.user_agent {
-        req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
-    }
-    if let Some(ref token) = configuration.bearer_access_token {
-        req_builder = req_builder.bearer_auth(token.to_owned());
-    };
-
-    let req = req_builder.build()?;
-    let resp = configuration.client.execute(req).await?;
-
-    let status = resp.status();
-    let content_type = resp
-        .headers()
-        .get("content-type")
-        .and_then(|v| v.to_str().ok())
-        .unwrap_or("application/octet-stream");
-    let content_type = super::ContentType::from(content_type);
-
-    if !status.is_client_error() && !status.is_server_error() {
-        let content = resp.text().await?;
-        match content_type {
-            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => {
-                return Err(Error::from(serde_json::Error::custom(
-                    "Received `text/plain` content type response that cannot be converted to \
-                     `Vec&lt;models::UsedBy&gt;`",
-                )));
-            }
-            ContentType::Unsupported(unknown_type) => {
-                return Err(Error::from(serde_json::Error::custom(format!(
-                    "Received `{unknown_type}` content type response that cannot be converted to \
-                     `Vec&lt;models::UsedBy&gt;`"
-                ))));
-            }
-        }
-    } else {
-        let content = resp.text().await?;
-        let entity: Option<CoreObjectAttributesUsedByListError> =
-            serde_json::from_str(&content).ok();
         Err(Error::ResponseError(ResponseContent {
             status,
             content,

@@ -3,7 +3,6 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CharField, SerializerMethodField
 from rest_framework.viewsets import ModelViewSet
 
-from authentik.core.api.used_by import UsedByMixin
 from authentik.core.api.utils import ModelSerializer
 from authentik.core.models import AttributesMixin, ObjectAttribute
 
@@ -64,7 +63,7 @@ class ObjectAttributeSerializer(ModelSerializer):
         }
 
 
-class ObjectAttributeViewSet(UsedByMixin, ModelViewSet):
+class ObjectAttributeViewSet(ModelViewSet):
     serializer_class = ObjectAttributeSerializer
     queryset = ObjectAttribute.objects.all()
     filterset_fields = ["object_type__model", "object_type__app_label", "enabled"]

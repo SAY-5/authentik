@@ -367,10 +367,6 @@ export interface CoreObjectAttributesUpdateRequest {
     objectAttributeRequest: ObjectAttributeRequest;
 }
 
-export interface CoreObjectAttributesUsedByListRequest {
-    attributeId: string;
-}
-
 export interface CoreTokensCreateRequest {
     tokenRequest: TokenRequest;
 }
@@ -3303,7 +3299,6 @@ export class CoreApi extends runtime.BaseAPI {
     }
 
     /**
-     * Mixin to add a used_by endpoint to return a list of all objects using this object
      */
     async coreObjectAttributesCreateRaw(
         requestParameters: CoreObjectAttributesCreateRequest,
@@ -3318,7 +3313,6 @@ export class CoreApi extends runtime.BaseAPI {
     }
 
     /**
-     * Mixin to add a used_by endpoint to return a list of all objects using this object
      */
     async coreObjectAttributesCreate(
         requestParameters: CoreObjectAttributesCreateRequest,
@@ -3369,7 +3363,6 @@ export class CoreApi extends runtime.BaseAPI {
     }
 
     /**
-     * Mixin to add a used_by endpoint to return a list of all objects using this object
      */
     async coreObjectAttributesDestroyRaw(
         requestParameters: CoreObjectAttributesDestroyRequest,
@@ -3382,7 +3375,6 @@ export class CoreApi extends runtime.BaseAPI {
     }
 
     /**
-     * Mixin to add a used_by endpoint to return a list of all objects using this object
      */
     async coreObjectAttributesDestroy(
         requestParameters: CoreObjectAttributesDestroyRequest,
@@ -3449,7 +3441,6 @@ export class CoreApi extends runtime.BaseAPI {
     }
 
     /**
-     * Mixin to add a used_by endpoint to return a list of all objects using this object
      */
     async coreObjectAttributesListRaw(
         requestParameters: CoreObjectAttributesListRequest,
@@ -3464,7 +3455,6 @@ export class CoreApi extends runtime.BaseAPI {
     }
 
     /**
-     * Mixin to add a used_by endpoint to return a list of all objects using this object
      */
     async coreObjectAttributesList(
         requestParameters: CoreObjectAttributesListRequest = {},
@@ -3520,7 +3510,6 @@ export class CoreApi extends runtime.BaseAPI {
     }
 
     /**
-     * Mixin to add a used_by endpoint to return a list of all objects using this object
      */
     async coreObjectAttributesPartialUpdateRaw(
         requestParameters: CoreObjectAttributesPartialUpdateRequest,
@@ -3536,7 +3525,6 @@ export class CoreApi extends runtime.BaseAPI {
     }
 
     /**
-     * Mixin to add a used_by endpoint to return a list of all objects using this object
      */
     async coreObjectAttributesPartialUpdate(
         requestParameters: CoreObjectAttributesPartialUpdateRequest,
@@ -3590,7 +3578,6 @@ export class CoreApi extends runtime.BaseAPI {
     }
 
     /**
-     * Mixin to add a used_by endpoint to return a list of all objects using this object
      */
     async coreObjectAttributesRetrieveRaw(
         requestParameters: CoreObjectAttributesRetrieveRequest,
@@ -3606,7 +3593,6 @@ export class CoreApi extends runtime.BaseAPI {
     }
 
     /**
-     * Mixin to add a used_by endpoint to return a list of all objects using this object
      */
     async coreObjectAttributesRetrieve(
         requestParameters: CoreObjectAttributesRetrieveRequest,
@@ -3670,7 +3656,6 @@ export class CoreApi extends runtime.BaseAPI {
     }
 
     /**
-     * Mixin to add a used_by endpoint to return a list of all objects using this object
      */
     async coreObjectAttributesUpdateRaw(
         requestParameters: CoreObjectAttributesUpdateRequest,
@@ -3685,81 +3670,12 @@ export class CoreApi extends runtime.BaseAPI {
     }
 
     /**
-     * Mixin to add a used_by endpoint to return a list of all objects using this object
      */
     async coreObjectAttributesUpdate(
         requestParameters: CoreObjectAttributesUpdateRequest,
         initOverrides?: RequestInit | runtime.InitOverrideFunction,
     ): Promise<ObjectAttribute> {
         const response = await this.coreObjectAttributesUpdateRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Creates request options for coreObjectAttributesUsedByList without sending the request
-     */
-    async coreObjectAttributesUsedByListRequestOpts(
-        requestParameters: CoreObjectAttributesUsedByListRequest,
-    ): Promise<runtime.RequestOpts> {
-        if (requestParameters["attributeId"] == null) {
-            throw new runtime.RequiredError(
-                "attributeId",
-                'Required parameter "attributeId" was null or undefined when calling coreObjectAttributesUsedByList().',
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            const token = this.configuration.accessToken;
-            const tokenString = await token("authentik", []);
-
-            if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
-            }
-        }
-
-        let urlPath = `/core/object_attributes/{attribute_id}/used_by/`;
-        urlPath = urlPath.replace(
-            `{${"attribute_id"}}`,
-            encodeURIComponent(String(requestParameters["attributeId"])),
-        );
-
-        return {
-            path: urlPath,
-            method: "GET",
-            headers: headerParameters,
-            query: queryParameters,
-        };
-    }
-
-    /**
-     * Get a list of all objects that use this object
-     */
-    async coreObjectAttributesUsedByListRaw(
-        requestParameters: CoreObjectAttributesUsedByListRequest,
-        initOverrides?: RequestInit | runtime.InitOverrideFunction,
-    ): Promise<runtime.ApiResponse<Array<UsedBy>>> {
-        const requestOptions =
-            await this.coreObjectAttributesUsedByListRequestOpts(requestParameters);
-        const response = await this.request(requestOptions, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(UsedByFromJSON));
-    }
-
-    /**
-     * Get a list of all objects that use this object
-     */
-    async coreObjectAttributesUsedByList(
-        requestParameters: CoreObjectAttributesUsedByListRequest,
-        initOverrides?: RequestInit | runtime.InitOverrideFunction,
-    ): Promise<Array<UsedBy>> {
-        const response = await this.coreObjectAttributesUsedByListRaw(
-            requestParameters,
-            initOverrides,
-        );
         return await response.value();
     }
 
