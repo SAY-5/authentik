@@ -3,6 +3,7 @@ import "#admin/object-attributes/ObjectAttributeForm";
 import "#elements/forms/DeleteBulkForm";
 import "#elements/forms/ModalForm";
 import "@patternfly/elements/pf-tooltip/pf-tooltip.js";
+import "#components/ak-status-label";
 
 import { DEFAULT_CONFIG } from "#common/api/config";
 
@@ -53,9 +54,9 @@ export class ObjectAttributeListPage extends TablePage<ObjectAttribute> {
     }
 
     protected columns: TableColumn[] = [
-        [msg("Label"), "Label"],
-        [msg("Key"), "key"],
+        [msg("Label"), "label"],
         [msg("Type"), "type"],
+        [msg("Status"), "enabled"],
         [msg("Object type"), "object_type"],
         [msg("Actions"), null, msg("Row Actions")],
     ];
@@ -67,6 +68,7 @@ export class ObjectAttributeListPage extends TablePage<ObjectAttribute> {
             .objects=${this.selectedElements}
             .metadata=${(item: ObjectAttribute) => {
                 return [
+                    { key: msg("Object type"), value: item.objectTypeObj.verboseNamePlural },
                     { key: msg("Label"), value: item.label },
                     { key: msg("Key"), value: item.key },
                 ];
@@ -96,9 +98,12 @@ export class ObjectAttributeListPage extends TablePage<ObjectAttribute> {
 
     row(item: ObjectAttribute): SlottedTemplateResult[] {
         return [
-            html`${item.label}`,
-            html`<code>${item.key}</code>`,
+            html`<div>
+                <div>${item.group}: ${item.label}</div>
+                <code>${item.key}</code>
+            </div>`,
             html`${objectAttributeTypeToLabel(item.type)}`,
+            html`<ak-status-label ?good=${item.enabled} type="info"></ak-status-label>`,
             html`${item.objectTypeObj.verboseNamePlural}`,
             html`<ak-forms-modal>
                 <span slot="submit">${msg("Save Changes")}</span>
