@@ -11,7 +11,8 @@ export default {
         "selector-class-pattern": [
             "^([a-z][a-z0-9]*)((__?|-)[A-Za-z0-9]+)*$",
             {
-                message: (selector) => `Expected class selector "${selector}" to be kebab-case`,
+                message: (/** @type {string} */ selector) =>
+                    `Expected class selector "${selector}" to be kebab-case`,
             },
         ],
         "declaration-empty-line-before": null,
