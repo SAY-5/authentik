@@ -344,6 +344,7 @@ export interface CoreObjectAttributesDestroyRequest {
 }
 
 export interface CoreObjectAttributesListRequest {
+    enabled?: boolean;
     objectTypeAppLabel?: string;
     objectTypeModel?: string;
     ordering?: string;
@@ -3397,6 +3398,10 @@ export class CoreApi extends runtime.BaseAPI {
         requestParameters: CoreObjectAttributesListRequest,
     ): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
+
+        if (requestParameters["enabled"] != null) {
+            queryParameters["enabled"] = requestParameters["enabled"];
+        }
 
         if (requestParameters["objectTypeAppLabel"] != null) {
             queryParameters["object_type__app_label"] = requestParameters["objectTypeAppLabel"];

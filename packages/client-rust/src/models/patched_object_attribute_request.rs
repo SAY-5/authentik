@@ -14,6 +14,8 @@ use crate::models;
 pub struct PatchedObjectAttributeRequest {
     #[serde(rename = "object_type", skip_serializing_if = "Option::is_none")]
     pub object_type: Option<String>,
+    #[serde(rename = "enabled", skip_serializing_if = "Option::is_none")]
+    pub enabled: Option<bool>,
     #[serde(rename = "key", skip_serializing_if = "Option::is_none")]
     pub key: Option<String>,
     #[serde(rename = "label", skip_serializing_if = "Option::is_none")]
@@ -34,6 +36,7 @@ impl PatchedObjectAttributeRequest {
     pub fn new() -> PatchedObjectAttributeRequest {
         PatchedObjectAttributeRequest {
             object_type: None,
+            enabled: None,
             key: None,
             label: None,
             regex: None,

@@ -25,6 +25,7 @@ type ObjectAttribute struct {
 	Pk            string                  `json:"pk"`
 	ObjectType    string                  `json:"object_type"`
 	ObjectTypeObj ContentType             `json:"object_type_obj"`
+	Enabled       *bool                   `json:"enabled,omitempty"`
 	Created       time.Time               `json:"created"`
 	Key           string                  `json:"key"`
 	Label         string                  `json:"label"`
@@ -137,6 +138,38 @@ func (o *ObjectAttribute) GetObjectTypeObjOk() (*ContentType, bool) {
 // SetObjectTypeObj sets field value
 func (o *ObjectAttribute) SetObjectTypeObj(v ContentType) {
 	o.ObjectTypeObj = v
+}
+
+// GetEnabled returns the Enabled field value if set, zero value otherwise.
+func (o *ObjectAttribute) GetEnabled() bool {
+	if o == nil || IsNil(o.Enabled) {
+		var ret bool
+		return ret
+	}
+	return *o.Enabled
+}
+
+// GetEnabledOk returns a tuple with the Enabled field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ObjectAttribute) GetEnabledOk() (*bool, bool) {
+	if o == nil || IsNil(o.Enabled) {
+		return nil, false
+	}
+	return o.Enabled, true
+}
+
+// HasEnabled returns a boolean if a field has been set.
+func (o *ObjectAttribute) HasEnabled() bool {
+	if o != nil && !IsNil(o.Enabled) {
+		return true
+	}
+
+	return false
+}
+
+// SetEnabled gets a reference to the given bool and assigns it to the Enabled field.
+func (o *ObjectAttribute) SetEnabled(v bool) {
+	o.Enabled = &v
 }
 
 // GetCreated returns the Created field value
@@ -426,6 +459,9 @@ func (o ObjectAttribute) ToMap() (map[string]interface{}, error) {
 	toSerialize["pk"] = o.Pk
 	toSerialize["object_type"] = o.ObjectType
 	toSerialize["object_type_obj"] = o.ObjectTypeObj
+	if !IsNil(o.Enabled) {
+		toSerialize["enabled"] = o.Enabled
+	}
 	toSerialize["created"] = o.Created
 	toSerialize["key"] = o.Key
 	toSerialize["label"] = o.Label
@@ -498,6 +534,7 @@ func (o *ObjectAttribute) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "pk")
 		delete(additionalProperties, "object_type")
 		delete(additionalProperties, "object_type_obj")
+		delete(additionalProperties, "enabled")
 		delete(additionalProperties, "created")
 		delete(additionalProperties, "key")
 		delete(additionalProperties, "label")

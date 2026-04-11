@@ -32,6 +32,12 @@ export interface PatchedObjectAttributeRequest {
     objectType?: string;
     /**
      *
+     * @type {boolean}
+     * @memberof PatchedObjectAttributeRequest
+     */
+    enabled?: boolean;
+    /**
+     *
      * @type {string}
      * @memberof PatchedObjectAttributeRequest
      */
@@ -96,6 +102,7 @@ export function PatchedObjectAttributeRequestFromJSONTyped(
     }
     return {
         objectType: json["object_type"] == null ? undefined : json["object_type"],
+        enabled: json["enabled"] == null ? undefined : json["enabled"],
         key: json["key"] == null ? undefined : json["key"],
         label: json["label"] == null ? undefined : json["label"],
         regex: json["regex"] == null ? undefined : json["regex"],
@@ -120,6 +127,7 @@ export function PatchedObjectAttributeRequestToJSONTyped(
 
     return {
         object_type: value["objectType"],
+        enabled: value["enabled"],
         key: value["key"],
         label: value["label"],
         regex: value["regex"],

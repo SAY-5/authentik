@@ -14,6 +14,8 @@ use crate::models;
 pub struct ObjectAttributeRequest {
     #[serde(rename = "object_type")]
     pub object_type: String,
+    #[serde(rename = "enabled", skip_serializing_if = "Option::is_none")]
+    pub enabled: Option<bool>,
     #[serde(rename = "key")]
     pub key: String,
     #[serde(rename = "label")]
@@ -39,6 +41,7 @@ impl ObjectAttributeRequest {
     ) -> ObjectAttributeRequest {
         ObjectAttributeRequest {
             object_type,
+            enabled: None,
             key,
             label,
             regex: None,

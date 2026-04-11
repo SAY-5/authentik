@@ -5587,12 +5587,18 @@ func (a *CoreAPIService) CoreObjectAttributesDestroyExecute(r ApiCoreObjectAttri
 type ApiCoreObjectAttributesListRequest struct {
 	ctx                context.Context
 	ApiService         *CoreAPIService
+	enabled            *bool
 	objectTypeAppLabel *string
 	objectTypeModel    *string
 	ordering           *string
 	page               *int32
 	pageSize           *int32
 	search             *string
+}
+
+func (r ApiCoreObjectAttributesListRequest) Enabled(enabled bool) ApiCoreObjectAttributesListRequest {
+	r.enabled = &enabled
+	return r
 }
 
 func (r ApiCoreObjectAttributesListRequest) ObjectTypeAppLabel(objectTypeAppLabel string) ApiCoreObjectAttributesListRequest {
@@ -5670,6 +5676,9 @@ func (a *CoreAPIService) CoreObjectAttributesListExecute(r ApiCoreObjectAttribut
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.enabled != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "enabled", r.enabled, "form", "")
+	}
 	if r.objectTypeAppLabel != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "object_type__app_label", r.objectTypeAppLabel, "form", "")
 	}

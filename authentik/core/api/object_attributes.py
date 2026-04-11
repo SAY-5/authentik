@@ -43,6 +43,7 @@ class ObjectAttributeSerializer(ModelSerializer):
             "pk",
             "object_type",
             "object_type_obj",
+            "enabled",
             "created",
             "key",
             "label",
@@ -65,4 +66,4 @@ class ObjectAttributeSerializer(ModelSerializer):
 class ObjectAttributeViewSet(UsedByMixin, ModelViewSet):
     serializer_class = ObjectAttributeSerializer
     queryset = ObjectAttribute.objects.all()
-    filterset_fields = ["object_type__model", "object_type__app_label"]
+    filterset_fields = ["object_type__model", "object_type__app_label", "enabled"]

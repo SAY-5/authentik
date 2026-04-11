@@ -1358,6 +1358,8 @@ class ObjectAttribute(SerializerModel, ManagedModel, CreatedUpdatedModel):
 
     attribute_id = models.UUIDField(default=uuid4, primary_key=True)
 
+    enabled = models.BooleanField(default=True)
+
     object_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     label = models.TextField()
     key = models.TextField()

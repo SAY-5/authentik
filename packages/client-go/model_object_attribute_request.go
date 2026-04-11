@@ -22,6 +22,7 @@ var _ MappedNullable = &ObjectAttributeRequest{}
 // ObjectAttributeRequest struct for ObjectAttributeRequest
 type ObjectAttributeRequest struct {
 	ObjectType           string                  `json:"object_type"`
+	Enabled              *bool                   `json:"enabled,omitempty"`
 	Key                  string                  `json:"key"`
 	Label                string                  `json:"label"`
 	Regex                *string                 `json:"regex,omitempty"`
@@ -77,6 +78,38 @@ func (o *ObjectAttributeRequest) GetObjectTypeOk() (*string, bool) {
 // SetObjectType sets field value
 func (o *ObjectAttributeRequest) SetObjectType(v string) {
 	o.ObjectType = v
+}
+
+// GetEnabled returns the Enabled field value if set, zero value otherwise.
+func (o *ObjectAttributeRequest) GetEnabled() bool {
+	if o == nil || IsNil(o.Enabled) {
+		var ret bool
+		return ret
+	}
+	return *o.Enabled
+}
+
+// GetEnabledOk returns a tuple with the Enabled field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ObjectAttributeRequest) GetEnabledOk() (*bool, bool) {
+	if o == nil || IsNil(o.Enabled) {
+		return nil, false
+	}
+	return o.Enabled, true
+}
+
+// HasEnabled returns a boolean if a field has been set.
+func (o *ObjectAttributeRequest) HasEnabled() bool {
+	if o != nil && !IsNil(o.Enabled) {
+		return true
+	}
+
+	return false
+}
+
+// SetEnabled gets a reference to the given bool and assigns it to the Enabled field.
+func (o *ObjectAttributeRequest) SetEnabled(v bool) {
+	o.Enabled = &v
 }
 
 // GetKey returns the Key field value
@@ -290,6 +323,9 @@ func (o ObjectAttributeRequest) MarshalJSON() ([]byte, error) {
 func (o ObjectAttributeRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["object_type"] = o.ObjectType
+	if !IsNil(o.Enabled) {
+		toSerialize["enabled"] = o.Enabled
+	}
 	toSerialize["key"] = o.Key
 	toSerialize["label"] = o.Label
 	if !IsNil(o.Regex) {
@@ -352,6 +388,7 @@ func (o *ObjectAttributeRequest) UnmarshalJSON(data []byte) (err error) {
 
 	if err = json.Unmarshal(data, &additionalProperties); err == nil {
 		delete(additionalProperties, "object_type")
+		delete(additionalProperties, "enabled")
 		delete(additionalProperties, "key")
 		delete(additionalProperties, "label")
 		delete(additionalProperties, "regex")

@@ -3310,6 +3310,7 @@ pub async fn core_object_attributes_destroy(
 /// Mixin to add a used_by endpoint to return a list of all objects using this object
 pub async fn core_object_attributes_list(
     configuration: &configuration::Configuration,
+    enabled: Option<bool>,
     object_type__app_label: Option<&str>,
     object_type__model: Option<&str>,
     ordering: Option<&str>,
@@ -3318,6 +3319,7 @@ pub async fn core_object_attributes_list(
     search: Option<&str>,
 ) -> Result<models::PaginatedObjectAttributeList, Error<CoreObjectAttributesListError>> {
     // add a prefix to parameters to efficiently prevent name collisions
+    let p_query_enabled = enabled;
     let p_query_object_type__app_label = object_type__app_label;
     let p_query_object_type__model = object_type__model;
     let p_query_ordering = ordering;
@@ -3328,6 +3330,9 @@ pub async fn core_object_attributes_list(
     let uri_str = format!("{}/core/object_attributes/", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
+    if let Some(ref param_value) = p_query_enabled {
+        req_builder = req_builder.query(&[("enabled", &param_value.to_string())]);
+    }
     if let Some(ref param_value) = p_query_object_type__app_label {
         req_builder = req_builder.query(&[("object_type__app_label", &param_value.to_string())]);
     }

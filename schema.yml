@@ -3728,6 +3728,10 @@ paths:
         using this object
       parameters:
       - in: query
+        name: enabled
+        schema:
+          type: boolean
+      - in: query
         name: object_type__app_label
         schema:
           type: string
@@ -44222,6 +44226,8 @@ components:
           allOf:
           - $ref: '#/components/schemas/ContentType'
           readOnly: true
+        enabled:
+          type: boolean
         created:
           type: string
           format: date-time
@@ -44269,6 +44275,8 @@ components:
         object_type:
           type: string
           minLength: 1
+        enabled:
+          type: boolean
         key:
           type: string
           minLength: 1
@@ -49548,6 +49556,8 @@ components:
         object_type:
           type: string
           minLength: 1
+        enabled:
+          type: boolean
         key:
           type: string
           minLength: 1

@@ -5418,6 +5418,10 @@
                     "minLength": 1,
                     "title": "Object type"
                 },
+                "enabled": {
+                    "type": "boolean",
+                    "title": "Enabled"
+                },
                 "key": {
                     "type": "string",
                     "minLength": 1,

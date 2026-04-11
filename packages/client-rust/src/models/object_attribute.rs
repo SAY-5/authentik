@@ -18,6 +18,8 @@ pub struct ObjectAttribute {
     pub object_type: String,
     #[serde(rename = "object_type_obj")]
     pub object_type_obj: models::ContentType,
+    #[serde(rename = "enabled", skip_serializing_if = "Option::is_none")]
+    pub enabled: Option<bool>,
     #[serde(rename = "created")]
     pub created: String,
     #[serde(rename = "key")]
@@ -59,6 +61,7 @@ impl ObjectAttribute {
             pk,
             object_type,
             object_type_obj,
+            enabled: None,
             created,
             key,
             label,

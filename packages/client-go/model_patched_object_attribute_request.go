@@ -21,6 +21,7 @@ var _ MappedNullable = &PatchedObjectAttributeRequest{}
 // PatchedObjectAttributeRequest struct for PatchedObjectAttributeRequest
 type PatchedObjectAttributeRequest struct {
 	ObjectType           *string                  `json:"object_type,omitempty"`
+	Enabled              *bool                    `json:"enabled,omitempty"`
 	Key                  *string                  `json:"key,omitempty"`
 	Label                *string                  `json:"label,omitempty"`
 	Regex                *string                  `json:"regex,omitempty"`
@@ -80,6 +81,38 @@ func (o *PatchedObjectAttributeRequest) HasObjectType() bool {
 // SetObjectType gets a reference to the given string and assigns it to the ObjectType field.
 func (o *PatchedObjectAttributeRequest) SetObjectType(v string) {
 	o.ObjectType = &v
+}
+
+// GetEnabled returns the Enabled field value if set, zero value otherwise.
+func (o *PatchedObjectAttributeRequest) GetEnabled() bool {
+	if o == nil || IsNil(o.Enabled) {
+		var ret bool
+		return ret
+	}
+	return *o.Enabled
+}
+
+// GetEnabledOk returns a tuple with the Enabled field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PatchedObjectAttributeRequest) GetEnabledOk() (*bool, bool) {
+	if o == nil || IsNil(o.Enabled) {
+		return nil, false
+	}
+	return o.Enabled, true
+}
+
+// HasEnabled returns a boolean if a field has been set.
+func (o *PatchedObjectAttributeRequest) HasEnabled() bool {
+	if o != nil && !IsNil(o.Enabled) {
+		return true
+	}
+
+	return false
+}
+
+// SetEnabled gets a reference to the given bool and assigns it to the Enabled field.
+func (o *PatchedObjectAttributeRequest) SetEnabled(v bool) {
+	o.Enabled = &v
 }
 
 // GetKey returns the Key field value if set, zero value otherwise.
@@ -319,6 +352,9 @@ func (o PatchedObjectAttributeRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.ObjectType) {
 		toSerialize["object_type"] = o.ObjectType
 	}
+	if !IsNil(o.Enabled) {
+		toSerialize["enabled"] = o.Enabled
+	}
 	if !IsNil(o.Key) {
 		toSerialize["key"] = o.Key
 	}
@@ -363,6 +399,7 @@ func (o *PatchedObjectAttributeRequest) UnmarshalJSON(data []byte) (err error) {
 
 	if err = json.Unmarshal(data, &additionalProperties); err == nil {
 		delete(additionalProperties, "object_type")
+		delete(additionalProperties, "enabled")
 		delete(additionalProperties, "key")
 		delete(additionalProperties, "label")
 		delete(additionalProperties, "regex")

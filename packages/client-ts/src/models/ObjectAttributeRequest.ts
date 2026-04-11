@@ -32,6 +32,12 @@ export interface ObjectAttributeRequest {
     objectType: string;
     /**
      *
+     * @type {boolean}
+     * @memberof ObjectAttributeRequest
+     */
+    enabled?: boolean;
+    /**
+     *
      * @type {string}
      * @memberof ObjectAttributeRequest
      */
@@ -98,6 +104,7 @@ export function ObjectAttributeRequestFromJSONTyped(
     }
     return {
         objectType: json["object_type"],
+        enabled: json["enabled"] == null ? undefined : json["enabled"],
         key: json["key"],
         label: json["label"],
         regex: json["regex"] == null ? undefined : json["regex"],
@@ -122,6 +129,7 @@ export function ObjectAttributeRequestToJSONTyped(
 
     return {
         object_type: value["objectType"],
+        enabled: value["enabled"],
         key: value["key"],
         label: value["label"],
         regex: value["regex"],

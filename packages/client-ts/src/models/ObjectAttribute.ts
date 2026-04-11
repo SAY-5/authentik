@@ -46,6 +46,12 @@ export interface ObjectAttribute {
     readonly objectTypeObj: ContentType;
     /**
      *
+     * @type {boolean}
+     * @memberof ObjectAttribute
+     */
+    enabled?: boolean;
+    /**
+     *
      * @type {Date}
      * @memberof ObjectAttribute
      */
@@ -137,6 +143,7 @@ export function ObjectAttributeFromJSONTyped(
         pk: json["pk"],
         objectType: json["object_type"],
         objectTypeObj: ContentTypeFromJSON(json["object_type_obj"]),
+        enabled: json["enabled"] == null ? undefined : json["enabled"],
         created: new Date(json["created"]),
         key: json["key"],
         label: json["label"],
@@ -167,6 +174,7 @@ export function ObjectAttributeToJSONTyped(
 
     return {
         object_type: value["objectType"],
+        enabled: value["enabled"],
         key: value["key"],
         label: value["label"],
         regex: value["regex"],
