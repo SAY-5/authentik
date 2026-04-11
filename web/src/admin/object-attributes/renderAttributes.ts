@@ -48,7 +48,7 @@ export abstract class ObjectAttributeModelForm<
 
     renderObjectAttributes(
         defs: ObjectAttribute[],
-        obj?: AttributesMixin,
+        obj: AttributesMixin | null,
         options?: ObjectAttributeOptions,
     ) {
         const attrs = obj?.attributes || {};

@@ -45,6 +45,8 @@ type _ObjectAttributeRequest ObjectAttributeRequest
 func NewObjectAttributeRequest(objectType string, key string, label string, type_ ObjectAttributeTypeEnum) *ObjectAttributeRequest {
 	this := ObjectAttributeRequest{}
 	this.ObjectType = objectType
+	var enabled bool = true
+	this.Enabled = &enabled
 	this.Key = key
 	this.Label = label
 	this.Type = type_
@@ -56,6 +58,8 @@ func NewObjectAttributeRequest(objectType string, key string, label string, type
 // but it doesn't guarantee that properties required by API are set
 func NewObjectAttributeRequestWithDefaults() *ObjectAttributeRequest {
 	this := ObjectAttributeRequest{}
+	var enabled bool = true
+	this.Enabled = &enabled
 	return &this
 }
 

@@ -43,6 +43,8 @@ type _PatchedObjectAttributeRequest PatchedObjectAttributeRequest
 // will change when the set of required properties is changed
 func NewPatchedObjectAttributeRequest() *PatchedObjectAttributeRequest {
 	this := PatchedObjectAttributeRequest{}
+	var enabled bool = true
+	this.Enabled = &enabled
 	return &this
 }
 
@@ -51,6 +53,8 @@ func NewPatchedObjectAttributeRequest() *PatchedObjectAttributeRequest {
 // but it doesn't guarantee that properties required by API are set
 func NewPatchedObjectAttributeRequestWithDefaults() *PatchedObjectAttributeRequest {
 	this := PatchedObjectAttributeRequest{}
+	var enabled bool = true
+	this.Enabled = &enabled
 	return &this
 }
 

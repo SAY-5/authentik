@@ -52,6 +52,8 @@ func NewObjectAttribute(pk string, objectType string, objectTypeObj ContentType,
 	this.Pk = pk
 	this.ObjectType = objectType
 	this.ObjectTypeObj = objectTypeObj
+	var enabled bool = true
+	this.Enabled = &enabled
 	this.Created = created
 	this.Key = key
 	this.Label = label
@@ -65,6 +67,8 @@ func NewObjectAttribute(pk string, objectType string, objectTypeObj ContentType,
 // but it doesn't guarantee that properties required by API are set
 func NewObjectAttributeWithDefaults() *ObjectAttribute {
 	this := ObjectAttribute{}
+	var enabled bool = true
+	this.Enabled = &enabled
 	return &this
 }
 

@@ -44187,6 +44187,7 @@ components:
           readOnly: true
         enabled:
           type: boolean
+          default: true
         created:
           type: string
           format: date-time
@@ -44236,6 +44237,7 @@ components:
           minLength: 1
         enabled:
           type: boolean
+          default: true
         key:
           type: string
           minLength: 1
@@ -49528,6 +49530,7 @@ components:
           minLength: 1
         enabled:
           type: boolean
+          default: true
         key:
           type: string
           minLength: 1

@@ -9,13 +9,16 @@ import "#components/ak-switch-input";
 import { DEFAULT_CONFIG } from "#common/api/config";
 
 import { RadioOption } from "#elements/forms/Radio";
+import { SlottedTemplateResult } from "#elements/types";
 
 import { ObjectAttributeModelForm } from "#admin/object-attributes/renderAttributes";
 
 import { CoreApi, Group, ModelEnum, RbacApi, Role, User, UserTypeEnum } from "@goauthentik/api";
 
+import { match } from "ts-pattern";
+
 import { msg, str } from "@lit/localize";
-import { css, CSSResult, html, TemplateResult } from "lit";
+import { css, CSSResult, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 
@@ -45,8 +48,12 @@ const UserTypeOptions: readonly RadioOption<UserTypeEnum>[] = [
 @customElement("ak-user-form")
 export class UserForm extends ObjectAttributeModelForm<User, number> {
     public model = ModelEnum.AuthentikCoreUser;
-    public override entitySingular = msg("User");
-    public override entityPlural = msg("Users");
+
+    #coreAPI = new CoreApi(DEFAULT_CONFIG);
+    #rbacAPI = new RbacApi(DEFAULT_CONFIG);
+
+    public static override verboseName = msg("User");
+    public static override verboseNamePlural = msg("Users");
 
     @property({ attribute: false })
     public targetGroup: Group | null = null;
@@ -54,8 +61,11 @@ export class UserForm extends ObjectAttributeModelForm<User, number> {
     @property({ attribute: false })
     public targetRole: Role | null = null;
 
-    @property()
-    defaultPath: string = "users";
+    @property({ type: String, attribute: "default-path" })
+    public defaultPath: string = "users";
+
+    @property({ attribute: false })
+    public userType: UserTypeEnum | null = null;
 
     static get defaultUserAttributes(): { [key: string]: unknown } {
         return {};
@@ -73,10 +83,35 @@ export class UserForm extends ObjectAttributeModelForm<User, number> {
         `,
     ];
 
-    async loadInstance(pk: number): Promise<User> {
-        return new CoreApi(DEFAULT_CONFIG).coreUsersRetrieve({
+    protected override loadInstance(pk: number): Promise<User> {
+        return this.#coreAPI.coreUsersRetrieve({
             id: pk,
         });
+    }
+
+    protected override assignInstance(instance: User): void {
+        super.assignInstance(instance);
+
+        const { verboseName, verboseNamePlural } = match(instance.type)
+            .with(UserTypeEnum.Internal, () => ({
+                verboseName: msg("Internal User"),
+                verboseNamePlural: msg("Internal Users"),
+            }))
+            .with(UserTypeEnum.External, () => ({
+                verboseName: msg("External User"),
+                verboseNamePlural: msg("External Users"),
+            }))
+            .with(UserTypeEnum.ServiceAccount, () => ({
+                verboseName: msg("Service Account"),
+                verboseNamePlural: msg("Service Accounts"),
+            }))
+            .otherwise(() => ({
+                verboseName: msg("User"),
+                verboseNamePlural: msg("Users"),
+            }));
+
+        this.verboseName = verboseName;
+        this.verboseNamePlural = verboseNamePlural;
     }
 
     getSuccessMessage(): string {
@@ -89,6 +124,7 @@ export class UserForm extends ObjectAttributeModelForm<User, number> {
         if (this.targetRole) {
             return msg(str`User created and added to role ${this.targetRole.name}`);
         }
+
         return msg("User created.");
     }
 
@@ -96,43 +132,58 @@ export class UserForm extends ObjectAttributeModelForm<User, number> {
         if (data.attributes === null) {
             data.attributes = UserForm.defaultUserAttributes;
         }
+
+        if (this.userType) {
+            data.type = this.userType;
+        }
+
         let user;
+
         if (this.instance?.pk) {
-            user = await new CoreApi(DEFAULT_CONFIG).coreUsersPartialUpdate({
+            user = await this.#coreAPI.coreUsersPartialUpdate({
                 id: this.instance.pk,
                 patchedUserRequest: data,
             });
         } else {
             data.groups = [];
             data.roles = [];
-            user = await new CoreApi(DEFAULT_CONFIG).coreUsersCreate({
+
+            user = await this.#coreAPI.coreUsersCreate({
                 userRequest: data,
             });
         }
+
         if (this.targetGroup) {
-            await new CoreApi(DEFAULT_CONFIG).coreGroupsAddUserCreate({
+            await this.#coreAPI.coreGroupsAddUserCreate({
                 groupUuid: this.targetGroup.pk,
                 userAccountRequest: {
                     pk: user.pk,
                 },
             });
         }
+
         if (this.targetRole) {
-            await new RbacApi(DEFAULT_CONFIG).rbacRolesAddUserCreate({
+            await this.#rbacAPI.rbacRolesAddUserCreate({
                 uuid: this.targetRole.pk,
                 userAccountSerializerForRoleRequest: {
                     pk: user.pk,
                 },
             });
         }
+
         return user;
     }
 
-    protected override renderForm(): TemplateResult {
-        return html` <ak-text-input
+    protected override renderForm(): SlottedTemplateResult {
+        const placeholder =
+            this.userType === UserTypeEnum.Internal
+                ? msg("Type a username for the internal user...")
+                : msg("Type a username for the external user...");
+
+        return html`<ak-text-input
                 name="username"
                 label=${msg("Username")}
-                placeholder=${msg("Type a username for the user...")}
+                placeholder=${placeholder}
                 autocomplete="off"
                 value="${ifDefined(this.instance?.username)}"
                 input-hint="code"
@@ -153,28 +204,29 @@ export class UserForm extends ObjectAttributeModelForm<User, number> {
                 help=${msg("The user's display name.")}
             ></ak-text-input>
 
-            <ak-radio-input
-                label=${msg("User type")}
-                required
-                name="type"
-                .value=${this.instance?.type}
-                .options=${[
-                    ...UserTypeOptions,
-                    ...(this.instance
-                        ? [
-                              {
-                                  label: msg("Internal Service account"),
-                                  value: UserTypeEnum.InternalServiceAccount,
-                                  disabled: true,
-                                  description: html`${msg(
-                                      "Managed by authentik and cannot be assigned manually.",
-                                  )}`,
-                              },
-                          ]
-                        : []),
-                ] satisfies RadioOption<UserTypeEnum>[]}
-            >
-            </ak-radio-input>
+            ${this.userType
+                ? null
+                : html`<ak-radio-input
+                      label=${msg("User type")}
+                      required
+                      name="type"
+                      .value=${this.instance?.type}
+                      .options=${[
+                          ...UserTypeOptions,
+                          ...(this.instance
+                              ? [
+                                    {
+                                        label: msg("Internal Service account"),
+                                        value: UserTypeEnum.InternalServiceAccount,
+                                        disabled: true,
+                                        description: html`${msg(
+                                            "Managed by authentik and cannot be assigned manually.",
+                                        )}`,
+                                    },
+                                ]
+                              : []),
+                      ] satisfies RadioOption<UserTypeEnum>[]}
+                  ></ak-radio-input>`}
             <ak-text-input
                 name="email"
                 label=${msg("Email Address")}
