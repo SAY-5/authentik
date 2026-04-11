@@ -97,7 +97,7 @@ export interface ObjectAttribute {
      * @type {string}
      * @memberof ObjectAttribute
      */
-    readonly managed: string | null;
+    managed?: string | null;
     /**
      *
      * @type {boolean}
@@ -130,7 +130,6 @@ export function instanceOfObjectAttribute(value: object): value is ObjectAttribu
     if (!("label" in value) || value["label"] === undefined) return false;
     if (!("lastUpdated" in value) || value["lastUpdated"] === undefined) return false;
     if (!("type" in value) || value["type"] === undefined) return false;
-    if (!("managed" in value) || value["managed"] === undefined) return false;
     return true;
 }
 
@@ -157,7 +156,7 @@ export function ObjectAttributeFromJSONTyped(
         regex: json["regex"] == null ? undefined : json["regex"],
         type: ObjectAttributeTypeEnumFromJSON(json["type"]),
         group: json["group"] == null ? undefined : json["group"],
-        managed: json["managed"],
+        managed: json["managed"] == null ? undefined : json["managed"],
         flagUnique: json["flag_unique"] == null ? undefined : json["flag_unique"],
         flagRequired: json["flag_required"] == null ? undefined : json["flag_required"],
         isArray: json["is_array"] == null ? undefined : json["is_array"],
@@ -169,10 +168,7 @@ export function ObjectAttributeToJSON(json: any): ObjectAttribute {
 }
 
 export function ObjectAttributeToJSONTyped(
-    value?: Omit<
-        ObjectAttribute,
-        "pk" | "object_type_obj" | "created" | "last_updated" | "managed"
-    > | null,
+    value?: Omit<ObjectAttribute, "pk" | "object_type_obj" | "created" | "last_updated"> | null,
     ignoreDiscriminator: boolean = false,
 ): any {
     if (value == null) {
@@ -187,6 +183,7 @@ export function ObjectAttributeToJSONTyped(
         regex: value["regex"],
         type: ObjectAttributeTypeEnumToJSON(value["type"]),
         group: value["group"],
+        managed: value["managed"],
         flag_unique: value["flagUnique"],
         flag_required: value["flagRequired"],
         is_array: value["isArray"],

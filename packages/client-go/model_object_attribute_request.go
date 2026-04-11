@@ -21,16 +21,18 @@ var _ MappedNullable = &ObjectAttributeRequest{}
 
 // ObjectAttributeRequest struct for ObjectAttributeRequest
 type ObjectAttributeRequest struct {
-	ObjectType           string                  `json:"object_type"`
-	Enabled              *bool                   `json:"enabled,omitempty"`
-	Key                  string                  `json:"key"`
-	Label                string                  `json:"label"`
-	Regex                *string                 `json:"regex,omitempty"`
-	Type                 ObjectAttributeTypeEnum `json:"type"`
-	Group                *string                 `json:"group,omitempty"`
-	FlagUnique           *bool                   `json:"flag_unique,omitempty"`
-	FlagRequired         *bool                   `json:"flag_required,omitempty"`
-	IsArray              *bool                   `json:"is_array,omitempty"`
+	ObjectType string                  `json:"object_type"`
+	Enabled    *bool                   `json:"enabled,omitempty"`
+	Key        string                  `json:"key"`
+	Label      string                  `json:"label"`
+	Regex      *string                 `json:"regex,omitempty"`
+	Type       ObjectAttributeTypeEnum `json:"type"`
+	Group      *string                 `json:"group,omitempty"`
+	// Objects that are managed by authentik. These objects are created and updated automatically. This flag only indicates that an object can be overwritten by migrations. You can still modify the objects via the API, but expect changes to be overwritten in a later update.
+	Managed              NullableString `json:"managed,omitempty"`
+	FlagUnique           *bool          `json:"flag_unique,omitempty"`
+	FlagRequired         *bool          `json:"flag_required,omitempty"`
+	IsArray              *bool          `json:"is_array,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
 
@@ -249,6 +251,49 @@ func (o *ObjectAttributeRequest) SetGroup(v string) {
 	o.Group = &v
 }
 
+// GetManaged returns the Managed field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *ObjectAttributeRequest) GetManaged() string {
+	if o == nil || IsNil(o.Managed.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Managed.Get()
+}
+
+// GetManagedOk returns a tuple with the Managed field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *ObjectAttributeRequest) GetManagedOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Managed.Get(), o.Managed.IsSet()
+}
+
+// HasManaged returns a boolean if a field has been set.
+func (o *ObjectAttributeRequest) HasManaged() bool {
+	if o != nil && o.Managed.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetManaged gets a reference to the given NullableString and assigns it to the Managed field.
+func (o *ObjectAttributeRequest) SetManaged(v string) {
+	o.Managed.Set(&v)
+}
+
+// SetManagedNil sets the value for Managed to be an explicit nil
+func (o *ObjectAttributeRequest) SetManagedNil() {
+	o.Managed.Set(nil)
+}
+
+// UnsetManaged ensures that no value is present for Managed, not even an explicit nil
+func (o *ObjectAttributeRequest) UnsetManaged() {
+	o.Managed.Unset()
+}
+
 // GetFlagUnique returns the FlagUnique field value if set, zero value otherwise.
 func (o *ObjectAttributeRequest) GetFlagUnique() bool {
 	if o == nil || IsNil(o.FlagUnique) {
@@ -368,6 +413,9 @@ func (o ObjectAttributeRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Group) {
 		toSerialize["group"] = o.Group
 	}
+	if o.Managed.IsSet() {
+		toSerialize["managed"] = o.Managed.Get()
+	}
 	if !IsNil(o.FlagUnique) {
 		toSerialize["flag_unique"] = o.FlagUnique
 	}
@@ -430,6 +478,7 @@ func (o *ObjectAttributeRequest) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "regex")
 		delete(additionalProperties, "type")
 		delete(additionalProperties, "group")
+		delete(additionalProperties, "managed")
 		delete(additionalProperties, "flag_unique")
 		delete(additionalProperties, "flag_required")
 		delete(additionalProperties, "is_array")

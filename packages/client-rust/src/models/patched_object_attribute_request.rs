@@ -26,6 +26,16 @@ pub struct PatchedObjectAttributeRequest {
     pub r#type: Option<models::ObjectAttributeTypeEnum>,
     #[serde(rename = "group", skip_serializing_if = "Option::is_none")]
     pub group: Option<String>,
+    /// Objects that are managed by authentik. These objects are created and updated automatically.
+    /// This flag only indicates that an object can be overwritten by migrations. You can still
+    /// modify the objects via the API, but expect changes to be overwritten in a later update.
+    #[serde(
+        rename = "managed",
+        default,
+        with = "::serde_with::rust::double_option",
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub managed: Option<Option<String>>,
     #[serde(rename = "flag_unique", skip_serializing_if = "Option::is_none")]
     pub flag_unique: Option<bool>,
     #[serde(rename = "flag_required", skip_serializing_if = "Option::is_none")]
@@ -44,6 +54,7 @@ impl PatchedObjectAttributeRequest {
             regex: None,
             r#type: None,
             group: None,
+            managed: None,
             flag_unique: None,
             flag_required: None,
             is_array: None,

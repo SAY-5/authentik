@@ -34,7 +34,7 @@ type ObjectAttribute struct {
 	Type          ObjectAttributeTypeEnum `json:"type"`
 	Group         *string                 `json:"group,omitempty"`
 	// Objects that are managed by authentik. These objects are created and updated automatically. This flag only indicates that an object can be overwritten by migrations. You can still modify the objects via the API, but expect changes to be overwritten in a later update.
-	Managed              NullableString `json:"managed"`
+	Managed              NullableString `json:"managed,omitempty"`
 	FlagUnique           *bool          `json:"flag_unique,omitempty"`
 	FlagRequired         *bool          `json:"flag_required,omitempty"`
 	IsArray              *bool          `json:"is_array,omitempty"`
@@ -47,7 +47,7 @@ type _ObjectAttribute ObjectAttribute
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewObjectAttribute(pk string, objectType string, objectTypeObj ContentType, created time.Time, key string, label string, lastUpdated time.Time, type_ ObjectAttributeTypeEnum, managed NullableString) *ObjectAttribute {
+func NewObjectAttribute(pk string, objectType string, objectTypeObj ContentType, created time.Time, key string, label string, lastUpdated time.Time, type_ ObjectAttributeTypeEnum) *ObjectAttribute {
 	this := ObjectAttribute{}
 	this.Pk = pk
 	this.ObjectType = objectType
@@ -57,7 +57,6 @@ func NewObjectAttribute(pk string, objectType string, objectTypeObj ContentType,
 	this.Label = label
 	this.LastUpdated = lastUpdated
 	this.Type = type_
-	this.Managed = managed
 	return &this
 }
 
@@ -357,18 +356,16 @@ func (o *ObjectAttribute) SetGroup(v string) {
 	o.Group = &v
 }
 
-// GetManaged returns the Managed field value
-// If the value is explicit nil, the zero value for string will be returned
+// GetManaged returns the Managed field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *ObjectAttribute) GetManaged() string {
-	if o == nil || o.Managed.Get() == nil {
+	if o == nil || IsNil(o.Managed.Get()) {
 		var ret string
 		return ret
 	}
-
 	return *o.Managed.Get()
 }
 
-// GetManagedOk returns a tuple with the Managed field value
+// GetManagedOk returns a tuple with the Managed field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *ObjectAttribute) GetManagedOk() (*string, bool) {
@@ -378,9 +375,28 @@ func (o *ObjectAttribute) GetManagedOk() (*string, bool) {
 	return o.Managed.Get(), o.Managed.IsSet()
 }
 
-// SetManaged sets field value
+// HasManaged returns a boolean if a field has been set.
+func (o *ObjectAttribute) HasManaged() bool {
+	if o != nil && o.Managed.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetManaged gets a reference to the given NullableString and assigns it to the Managed field.
 func (o *ObjectAttribute) SetManaged(v string) {
 	o.Managed.Set(&v)
+}
+
+// SetManagedNil sets the value for Managed to be an explicit nil
+func (o *ObjectAttribute) SetManagedNil() {
+	o.Managed.Set(nil)
+}
+
+// UnsetManaged ensures that no value is present for Managed, not even an explicit nil
+func (o *ObjectAttribute) UnsetManaged() {
+	o.Managed.Unset()
 }
 
 // GetFlagUnique returns the FlagUnique field value if set, zero value otherwise.
@@ -506,7 +522,9 @@ func (o ObjectAttribute) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Group) {
 		toSerialize["group"] = o.Group
 	}
-	toSerialize["managed"] = o.Managed.Get()
+	if o.Managed.IsSet() {
+		toSerialize["managed"] = o.Managed.Get()
+	}
 	if !IsNil(o.FlagUnique) {
 		toSerialize["flag_unique"] = o.FlagUnique
 	}
@@ -537,7 +555,6 @@ func (o *ObjectAttribute) UnmarshalJSON(data []byte) (err error) {
 		"label",
 		"last_updated",
 		"type",
-		"managed",
 	}
 
 	allProperties := make(map[string]interface{})

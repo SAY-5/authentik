@@ -44207,7 +44207,6 @@ components:
           type: string
         managed:
           type: string
-          readOnly: true
           nullable: true
           title: Managed by authentik
           description: Objects that are managed by authentik. These objects are created
@@ -44225,7 +44224,6 @@ components:
       - key
       - label
       - last_updated
-      - managed
       - object_type
       - object_type_obj
       - pk
@@ -44250,6 +44248,15 @@ components:
           $ref: '#/components/schemas/ObjectAttributeTypeEnum'
         group:
           type: string
+        managed:
+          type: string
+          nullable: true
+          minLength: 1
+          title: Managed by authentik
+          description: Objects that are managed by authentik. These objects are created
+            and updated automatically. This flag only indicates that an object can
+            be overwritten by migrations. You can still modify the objects via the
+            API, but expect changes to be overwritten in a later update.
         flag_unique:
           type: boolean
         flag_required:
@@ -49533,6 +49540,15 @@ components:
           $ref: '#/components/schemas/ObjectAttributeTypeEnum'
         group:
           type: string
+        managed:
+          type: string
+          nullable: true
+          minLength: 1
+          title: Managed by authentik
+          description: Objects that are managed by authentik. These objects are created
+            and updated automatically. This flag only indicates that an object can
+            be overwritten by migrations. You can still modify the objects via the
+            API, but expect changes to be overwritten in a later update.
         flag_unique:
           type: boolean
         flag_required:

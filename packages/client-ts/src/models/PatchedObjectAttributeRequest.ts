@@ -67,6 +67,12 @@ export interface PatchedObjectAttributeRequest {
      */
     group?: string;
     /**
+     * Objects that are managed by authentik. These objects are created and updated automatically. This flag only indicates that an object can be overwritten by migrations. You can still modify the objects via the API, but expect changes to be overwritten in a later update.
+     * @type {string}
+     * @memberof PatchedObjectAttributeRequest
+     */
+    managed?: string | null;
+    /**
      *
      * @type {boolean}
      * @memberof PatchedObjectAttributeRequest
@@ -114,6 +120,7 @@ export function PatchedObjectAttributeRequestFromJSONTyped(
         regex: json["regex"] == null ? undefined : json["regex"],
         type: json["type"] == null ? undefined : ObjectAttributeTypeEnumFromJSON(json["type"]),
         group: json["group"] == null ? undefined : json["group"],
+        managed: json["managed"] == null ? undefined : json["managed"],
         flagUnique: json["flag_unique"] == null ? undefined : json["flag_unique"],
         flagRequired: json["flag_required"] == null ? undefined : json["flag_required"],
         isArray: json["is_array"] == null ? undefined : json["is_array"],
@@ -140,6 +147,7 @@ export function PatchedObjectAttributeRequestToJSONTyped(
         regex: value["regex"],
         type: ObjectAttributeTypeEnumToJSON(value["type"]),
         group: value["group"],
+        managed: value["managed"],
         flag_unique: value["flagUnique"],
         flag_required: value["flagRequired"],
         is_array: value["isArray"],

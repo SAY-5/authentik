@@ -59,7 +59,6 @@ class ObjectAttributeSerializer(ModelSerializer):
             "last_updated": {"read_only": True},
             "created": {"read_only": True},
             "pk": {"read_only": True},
-            "managed": {"read_only": True},
         }
 
 
@@ -67,3 +66,4 @@ class ObjectAttributeViewSet(ModelViewSet):
     serializer_class = ObjectAttributeSerializer
     queryset = ObjectAttribute.objects.all()
     filterset_fields = ["object_type__model", "object_type__app_label", "enabled"]
+    search_fields = ["key", "label", "group", "object_type__model", "object_type__app_label"]

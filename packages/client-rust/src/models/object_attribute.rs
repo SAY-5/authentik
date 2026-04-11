@@ -37,8 +37,13 @@ pub struct ObjectAttribute {
     /// Objects that are managed by authentik. These objects are created and updated automatically.
     /// This flag only indicates that an object can be overwritten by migrations. You can still
     /// modify the objects via the API, but expect changes to be overwritten in a later update.
-    #[serde(rename = "managed", deserialize_with = "Option::deserialize")]
-    pub managed: Option<String>,
+    #[serde(
+        rename = "managed",
+        default,
+        with = "::serde_with::rust::double_option",
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub managed: Option<Option<String>>,
     #[serde(rename = "flag_unique", skip_serializing_if = "Option::is_none")]
     pub flag_unique: Option<bool>,
     #[serde(rename = "flag_required", skip_serializing_if = "Option::is_none")]
@@ -57,7 +62,6 @@ impl ObjectAttribute {
         label: String,
         last_updated: String,
         r#type: models::ObjectAttributeTypeEnum,
-        managed: Option<String>,
     ) -> ObjectAttribute {
         ObjectAttribute {
             pk,
@@ -71,7 +75,7 @@ impl ObjectAttribute {
             regex: None,
             r#type,
             group: None,
-            managed,
+            managed: None,
             flag_unique: None,
             flag_required: None,
             is_array: None,
