@@ -61,7 +61,7 @@ export class ObjectAttributeForm extends ModelForm<ObjectAttribute, string> {
             ></ak-text-input>
             <ak-text-input
                 name="key"
-                value="${this.instance?.type ?? ""}"
+                value="${this.instance?.key ?? ""}"
                 label=${msg("Key")}
                 placeholder=${msg("Type a unique identifier...")}
                 required
