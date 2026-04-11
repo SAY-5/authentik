@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 
 from authentik.core.api.object_attributes import ContentType
 from authentik.core.models import ObjectAttribute, User
-from authentik.core.tests.utils import create_test_admin_user
+from authentik.core.tests.utils import create_test_admin_user, create_test_user
 from authentik.lib.generators import generate_id
 
 
@@ -75,3 +75,84 @@ class TestObjectAttributesAPI(APITestCase):
         self.assertEqual(res.status_code, 200)
         attr.refresh_from_db()
         self.assertEqual(attr.label, "Employee Number")
+
+    def test_user_attrib_validation_required(self):
+        attr = ObjectAttribute.objects.create(
+            object_type=ContentType.objects.get_for_model(User),
+            label="foo",
+            key=generate_id(),
+            type=ObjectAttribute.AttributeType.TEXT,
+            flag_required=True,
+        )
+        res = self.client.patch(
+            reverse("authentik_api:user-detail", kwargs={"pk": self.user.pk}),
+            data={
+                "attributes": {},
+            },
+        )
+        self.assertEqual(res.status_code, 400)
+        self.assertJSONEqual(res.content, {f"attributes_{attr.key}": ["This field is required"]})
+
+    def test_user_attrib_validation_unique(self):
+        attr = ObjectAttribute.objects.create(
+            object_type=ContentType.objects.get_for_model(User),
+            label="foo",
+            key=generate_id(),
+            type=ObjectAttribute.AttributeType.TEXT,
+            flag_unique=True,
+        )
+        other_user = create_test_user()
+        other_user.attributes[attr.key] = "foo"
+        other_user.save()
+        res = self.client.patch(
+            reverse("authentik_api:user-detail", kwargs={"pk": self.user.pk}),
+            data={
+                "attributes": {attr.key: "foo"},
+            },
+        )
+        self.assertEqual(res.status_code, 400)
+        self.assertJSONEqual(res.content, {f"attributes_{attr.key}": ["Value is not unique."]})
+
+    def test_user_attrib_validation_regex(self):
+        attr = ObjectAttribute.objects.create(
+            object_type=ContentType.objects.get_for_model(User),
+            label="foo",
+            key=generate_id(),
+            type=ObjectAttribute.AttributeType.TEXT,
+            regex="bar",
+        )
+        res = self.client.patch(
+            reverse("authentik_api:user-detail", kwargs={"pk": self.user.pk}),
+            data={
+                "attributes": {attr.key: "foo"},
+            },
+        )
+        self.assertEqual(res.status_code, 400)
+        self.assertJSONEqual(
+            res.content, {f"attributes_{attr.key}": ["Value does not match configured pattern."]}
+        )
+
+    def test_user_attrib_validation_array(self):
+        attr = ObjectAttribute.objects.create(
+            object_type=ContentType.objects.get_for_model(User),
+            label="foo",
+            key=generate_id(),
+            type=ObjectAttribute.AttributeType.TEXT,
+            is_array=True,
+        )
+        res = self.client.patch(
+            reverse("authentik_api:user-detail", kwargs={"pk": self.user.pk}),
+            data={
+                "attributes": {attr.key: "foo"},
+            },
+        )
+        self.assertEqual(res.status_code, 400)
+        self.assertJSONEqual(res.content, {f"attributes_{attr.key}": ["Value must be an array."]})
+
+        res = self.client.patch(
+            reverse("authentik_api:user-detail", kwargs={"pk": self.user.pk}),
+            data={
+                "attributes": {attr.key: ["foo"]},
+            },
+        )
+        self.assertEqual(res.status_code, 200)

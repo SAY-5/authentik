@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.contrib.contenttypes.models import ContentType
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CharField, SerializerMethodField
@@ -5,6 +7,22 @@ from rest_framework.viewsets import ModelViewSet
 
 from authentik.core.api.utils import ModelSerializer
 from authentik.core.models import AttributesMixin, ObjectAttribute
+from authentik.lib.utils.dict import get_path_from_dict
+
+
+class AttributesMixinSerializer(ModelSerializer):
+
+    def validate(self, data: dict[str, Any]) -> dict[str, Any]:
+        model = self.Meta.model
+        attrs = data.get("attributes", {})
+        attributes = ObjectAttribute.objects.filter(
+            object_type=ContentType.objects.get_for_model(model),
+            enabled=True,
+        )
+        for attr in attributes:
+            value = get_path_from_dict(attrs, attr.key)
+            attr.run_validation(value)
+        return data
 
 
 class ContentTypeSerializer(ModelSerializer):
