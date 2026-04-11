@@ -111,17 +111,13 @@ export class AdminInterface extends WithCapabilitiesConfig(
     @state()
     protected drawer: DrawerState = readDrawerParams();
 
-    @listen(AKDrawerChangeEvent, {
-        target: window,
-    })
+    @listen(AKDrawerChangeEvent, { target: window })
     protected drawerListener = (event: AKDrawerChangeEvent) => {
         this.drawer = event.drawer;
         persistDrawerParams(event.drawer);
     };
 
-    @listen(LOCALE_STATUS_EVENT, {
-        target: window,
-    })
+    @listen(LOCALE_STATUS_EVENT, { target: window })
     localeStatusListener = (event: CustomEvent<LocaleStatusEventDetail>) => {
         if (event.detail.status === "ready") {
             this.synchronizeSidebarEntries();

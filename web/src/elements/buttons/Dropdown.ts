@@ -27,9 +27,7 @@ export class DropdownButton extends AKElement {
 
     protected logger = ConsoleLogger.prefix("dropdown");
 
-    @listen(AKRefreshEvent, {
-        target: window,
-    })
+    @listen(AKRefreshEvent, { target: window })
     public hide = (): void => {
         if (!this.menu || !this.toggleButton) return;
 
@@ -48,9 +46,7 @@ export class DropdownButton extends AKElement {
         event.stopPropagation();
     };
 
-    @listen("click", {
-        target: window,
-    })
+    @listen("click", { target: window })
     protected clickHandler = (event: Event): void => {
         if (!this.menu) return;
 

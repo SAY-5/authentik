@@ -53,9 +53,7 @@ export class FlowInspector extends AKElement {
 
     //#endregion
 
-    @listen(AKFlowAdvanceEvent, {
-        target: window,
-    })
+    @listen(AKFlowAdvanceEvent, { target: window })
     protected advanceHandler = (): void => {
         new FlowsApi(DEFAULT_CONFIG)
             .flowsInspectorGet({

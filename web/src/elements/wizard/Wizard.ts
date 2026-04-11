@@ -395,9 +395,7 @@ export class AKWizard<S = Record<string, unknown>> extends AKElement {
         this.dialog.requestClose(returnValue);
     };
 
-    @listen(AKRefreshEvent, {
-        target: window,
-    })
+    @listen(AKRefreshEvent, { target: window })
     protected refreshListener = (event: AKRefreshEvent) => {
         const { lastPage } = this.takeStepProgress();
 
