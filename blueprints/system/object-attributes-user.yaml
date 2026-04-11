@@ -14,8 +14,8 @@ entries:
         object_type: authentik_core.user
         label: Locale
         enabled: true
-        flag_required: false
-        flag_unique: false
+        is_required: false
+        is_unique: false
         type: text
   address:
     - model: authentik_core.objectattribute
@@ -27,8 +27,8 @@ entries:
         object_type: authentik_core.user
         label: Street
         enabled: false
-        flag_required: false
-        flag_unique: false
+        is_required: false
+        is_unique: false
         type: text
     - model: authentik_core.objectattribute
       identifiers:
@@ -39,8 +39,8 @@ entries:
         object_type: authentik_core.user
         label: State
         enabled: false
-        flag_required: false
-        flag_unique: false
+        is_required: false
+        is_unique: false
         type: text
     - model: authentik_core.objectattribute
       identifiers:
@@ -51,8 +51,8 @@ entries:
         object_type: authentik_core.user
         label: Location
         enabled: false
-        flag_required: false
-        flag_unique: false
+        is_required: false
+        is_unique: false
         type: text
     - model: authentik_core.objectattribute
       identifiers:
@@ -63,8 +63,8 @@ entries:
         object_type: authentik_core.user
         label: Postal code
         enabled: false
-        flag_required: false
-        flag_unique: false
+        is_required: false
+        is_unique: false
         type: text
   contact:
     - model: authentik_core.objectattribute
@@ -76,8 +76,8 @@ entries:
         object_type: authentik_core.user
         label: Phone number(s)
         enabled: false
-        flag_required: false
-        flag_unique: false
+        is_required: false
+        is_unique: false
         type: text
         is_array: true
   unix:
@@ -90,8 +90,8 @@ entries:
         object_type: authentik_core.user
         label: Shell
         enabled: false
-        flag_required: false
-        flag_unique: false
+        is_required: false
+        is_unique: false
         type: text
   employee:
     - model: authentik_core.objectattribute
@@ -103,8 +103,8 @@ entries:
         object_type: authentik_core.user
         label: Employee Number
         enabled: false
-        flag_required: false
-        flag_unique: false
+        is_required: false
+        is_unique: false
         type: text
     - model: authentik_core.objectattribute
       identifiers:
@@ -115,6 +115,6 @@ entries:
         object_type: authentik_core.user
         label: Title
         enabled: false
-        flag_required: false
-        flag_unique: false
+        is_required: false
+        is_unique: false
         type: text

@@ -60,21 +60,21 @@ export abstract class ObjectAttributeModelForm<
                         label=${attr.label}
                         autocomplete="off"
                         .value="${attrs[attr.key]}"
-                        ?required=${attr.flagRequired}
+                        ?required=${attr.isRequired}
                     ></ak-text-input>`;
                 case ObjectAttributeTypeEnum.Number:
                     return html`<ak-number-input
                         name="attributes.${attr.key}"
                         label=${attr.label}
                         .value="${attrs[attr.key]}"
-                        ?required=${attr.flagRequired}
+                        ?required=${attr.isRequired}
                     ></ak-number-input>`;
                 case ObjectAttributeTypeEnum.Boolean:
                     return html`<ak-switch-input
                         name="attributes.${attr.key}"
                         label=${attr.label}
                         ?checked=${attrs[attr.key]}
-                        ?required=${attr.flagRequired}
+                        ?required=${attr.isRequired}
                     >
                     </ak-switch-input>`;
             }

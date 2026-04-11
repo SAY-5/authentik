@@ -42,8 +42,8 @@ class Migration(migrations.Migration):
                         choices=[("text", "Text"), ("number", "Number"), ("boolean", "Boolean")]
                     ),
                 ),
-                ("flag_unique", models.BooleanField(default=False)),
-                ("flag_required", models.BooleanField(default=False)),
+                ("is_unique", models.BooleanField(default=False)),
+                ("is_required", models.BooleanField(default=False)),
                 ("regex", models.TextField(blank=True)),
                 ("is_array", models.BooleanField(default=False)),
                 (

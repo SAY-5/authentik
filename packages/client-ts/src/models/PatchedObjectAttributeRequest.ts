@@ -77,13 +77,13 @@ export interface PatchedObjectAttributeRequest {
      * @type {boolean}
      * @memberof PatchedObjectAttributeRequest
      */
-    flagUnique?: boolean;
+    isUnique?: boolean;
     /**
      *
      * @type {boolean}
      * @memberof PatchedObjectAttributeRequest
      */
-    flagRequired?: boolean;
+    isRequired?: boolean;
     /**
      *
      * @type {boolean}
@@ -121,8 +121,8 @@ export function PatchedObjectAttributeRequestFromJSONTyped(
         type: json["type"] == null ? undefined : ObjectAttributeTypeEnumFromJSON(json["type"]),
         group: json["group"] == null ? undefined : json["group"],
         managed: json["managed"] == null ? undefined : json["managed"],
-        flagUnique: json["flag_unique"] == null ? undefined : json["flag_unique"],
-        flagRequired: json["flag_required"] == null ? undefined : json["flag_required"],
+        isUnique: json["is_unique"] == null ? undefined : json["is_unique"],
+        isRequired: json["is_required"] == null ? undefined : json["is_required"],
         isArray: json["is_array"] == null ? undefined : json["is_array"],
     };
 }
@@ -148,8 +148,8 @@ export function PatchedObjectAttributeRequestToJSONTyped(
         type: ObjectAttributeTypeEnumToJSON(value["type"]),
         group: value["group"],
         managed: value["managed"],
-        flag_unique: value["flagUnique"],
-        flag_required: value["flagRequired"],
+        is_unique: value["isUnique"],
+        is_required: value["isRequired"],
         is_array: value["isArray"],
     };
 }

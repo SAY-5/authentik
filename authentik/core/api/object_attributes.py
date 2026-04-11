@@ -69,8 +69,8 @@ class ObjectAttributeSerializer(ModelSerializer):
             "type",
             "group",
             "managed",
-            "flag_unique",
-            "flag_required",
+            "is_unique",
+            "is_required",
             "is_array",
         ]
         extra_kwargs = {

@@ -35,8 +35,8 @@ type ObjectAttribute struct {
 	Group         *string                 `json:"group,omitempty"`
 	// Objects that are managed by authentik. These objects are created and updated automatically. This flag only indicates that an object can be overwritten by migrations. You can still modify the objects via the API, but expect changes to be overwritten in a later update.
 	Managed              NullableString `json:"managed,omitempty"`
-	FlagUnique           *bool          `json:"flag_unique,omitempty"`
-	FlagRequired         *bool          `json:"flag_required,omitempty"`
+	IsUnique             *bool          `json:"is_unique,omitempty"`
+	IsRequired           *bool          `json:"is_required,omitempty"`
 	IsArray              *bool          `json:"is_array,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
@@ -399,68 +399,68 @@ func (o *ObjectAttribute) UnsetManaged() {
 	o.Managed.Unset()
 }
 
-// GetFlagUnique returns the FlagUnique field value if set, zero value otherwise.
-func (o *ObjectAttribute) GetFlagUnique() bool {
-	if o == nil || IsNil(o.FlagUnique) {
+// GetIsUnique returns the IsUnique field value if set, zero value otherwise.
+func (o *ObjectAttribute) GetIsUnique() bool {
+	if o == nil || IsNil(o.IsUnique) {
 		var ret bool
 		return ret
 	}
-	return *o.FlagUnique
+	return *o.IsUnique
 }
 
-// GetFlagUniqueOk returns a tuple with the FlagUnique field value if set, nil otherwise
+// GetIsUniqueOk returns a tuple with the IsUnique field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ObjectAttribute) GetFlagUniqueOk() (*bool, bool) {
-	if o == nil || IsNil(o.FlagUnique) {
+func (o *ObjectAttribute) GetIsUniqueOk() (*bool, bool) {
+	if o == nil || IsNil(o.IsUnique) {
 		return nil, false
 	}
-	return o.FlagUnique, true
+	return o.IsUnique, true
 }
 
-// HasFlagUnique returns a boolean if a field has been set.
-func (o *ObjectAttribute) HasFlagUnique() bool {
-	if o != nil && !IsNil(o.FlagUnique) {
+// HasIsUnique returns a boolean if a field has been set.
+func (o *ObjectAttribute) HasIsUnique() bool {
+	if o != nil && !IsNil(o.IsUnique) {
 		return true
 	}
 
 	return false
 }
 
-// SetFlagUnique gets a reference to the given bool and assigns it to the FlagUnique field.
-func (o *ObjectAttribute) SetFlagUnique(v bool) {
-	o.FlagUnique = &v
+// SetIsUnique gets a reference to the given bool and assigns it to the IsUnique field.
+func (o *ObjectAttribute) SetIsUnique(v bool) {
+	o.IsUnique = &v
 }
 
-// GetFlagRequired returns the FlagRequired field value if set, zero value otherwise.
-func (o *ObjectAttribute) GetFlagRequired() bool {
-	if o == nil || IsNil(o.FlagRequired) {
+// GetIsRequired returns the IsRequired field value if set, zero value otherwise.
+func (o *ObjectAttribute) GetIsRequired() bool {
+	if o == nil || IsNil(o.IsRequired) {
 		var ret bool
 		return ret
 	}
-	return *o.FlagRequired
+	return *o.IsRequired
 }
 
-// GetFlagRequiredOk returns a tuple with the FlagRequired field value if set, nil otherwise
+// GetIsRequiredOk returns a tuple with the IsRequired field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *ObjectAttribute) GetFlagRequiredOk() (*bool, bool) {
-	if o == nil || IsNil(o.FlagRequired) {
+func (o *ObjectAttribute) GetIsRequiredOk() (*bool, bool) {
+	if o == nil || IsNil(o.IsRequired) {
 		return nil, false
 	}
-	return o.FlagRequired, true
+	return o.IsRequired, true
 }
 
-// HasFlagRequired returns a boolean if a field has been set.
-func (o *ObjectAttribute) HasFlagRequired() bool {
-	if o != nil && !IsNil(o.FlagRequired) {
+// HasIsRequired returns a boolean if a field has been set.
+func (o *ObjectAttribute) HasIsRequired() bool {
+	if o != nil && !IsNil(o.IsRequired) {
 		return true
 	}
 
 	return false
 }
 
-// SetFlagRequired gets a reference to the given bool and assigns it to the FlagRequired field.
-func (o *ObjectAttribute) SetFlagRequired(v bool) {
-	o.FlagRequired = &v
+// SetIsRequired gets a reference to the given bool and assigns it to the IsRequired field.
+func (o *ObjectAttribute) SetIsRequired(v bool) {
+	o.IsRequired = &v
 }
 
 // GetIsArray returns the IsArray field value if set, zero value otherwise.
@@ -525,11 +525,11 @@ func (o ObjectAttribute) ToMap() (map[string]interface{}, error) {
 	if o.Managed.IsSet() {
 		toSerialize["managed"] = o.Managed.Get()
 	}
-	if !IsNil(o.FlagUnique) {
-		toSerialize["flag_unique"] = o.FlagUnique
+	if !IsNil(o.IsUnique) {
+		toSerialize["is_unique"] = o.IsUnique
 	}
-	if !IsNil(o.FlagRequired) {
-		toSerialize["flag_required"] = o.FlagRequired
+	if !IsNil(o.IsRequired) {
+		toSerialize["is_required"] = o.IsRequired
 	}
 	if !IsNil(o.IsArray) {
 		toSerialize["is_array"] = o.IsArray
@@ -596,8 +596,8 @@ func (o *ObjectAttribute) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "type")
 		delete(additionalProperties, "group")
 		delete(additionalProperties, "managed")
-		delete(additionalProperties, "flag_unique")
-		delete(additionalProperties, "flag_required")
+		delete(additionalProperties, "is_unique")
+		delete(additionalProperties, "is_required")
 		delete(additionalProperties, "is_array")
 		o.AdditionalProperties = additionalProperties
 	}

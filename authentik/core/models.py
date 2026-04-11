@@ -1367,16 +1367,16 @@ class ObjectAttribute(SerializerModel, ManagedModel, CreatedUpdatedModel):
     key = models.TextField()
 
     type = models.TextField(choices=AttributeType.choices)
-    flag_unique = models.BooleanField(default=False)
-    flag_required = models.BooleanField(default=False)
+    is_unique = models.BooleanField(default=False)
+    is_required = models.BooleanField(default=False)
     regex = models.TextField(blank=True)
     is_array = models.BooleanField(default=False)
 
     def run_validation(self, value: Any) -> None:
         err_key = f"attributes_{self.key.replace(".", "_")}"
-        if self.flag_required and value is None:
+        if self.is_required and value is None:
             raise ValidationError({err_key: _("This field is required")})
-        if self.flag_unique:
+        if self.is_unique:
             model: type[models.Model] = self.object_type.model_class()
             lookup_key = f"attributes__{self.key.replace(".", "__")}"
             if model.objects.filter(**{lookup_key: value}).exists():

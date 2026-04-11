@@ -36,10 +36,10 @@ pub struct ObjectAttributeRequest {
         skip_serializing_if = "Option::is_none"
     )]
     pub managed: Option<Option<String>>,
-    #[serde(rename = "flag_unique", skip_serializing_if = "Option::is_none")]
-    pub flag_unique: Option<bool>,
-    #[serde(rename = "flag_required", skip_serializing_if = "Option::is_none")]
-    pub flag_required: Option<bool>,
+    #[serde(rename = "is_unique", skip_serializing_if = "Option::is_none")]
+    pub is_unique: Option<bool>,
+    #[serde(rename = "is_required", skip_serializing_if = "Option::is_none")]
+    pub is_required: Option<bool>,
     #[serde(rename = "is_array", skip_serializing_if = "Option::is_none")]
     pub is_array: Option<bool>,
 }
@@ -60,8 +60,8 @@ impl ObjectAttributeRequest {
             r#type,
             group: None,
             managed: None,
-            flag_unique: None,
-            flag_required: None,
+            is_unique: None,
+            is_required: None,
             is_array: None,
         }
     }

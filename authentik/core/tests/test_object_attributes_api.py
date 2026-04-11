@@ -27,8 +27,8 @@ class TestObjectAttributesAPI(APITestCase):
                 "label": "Employee Number",
                 "type": "text",
                 "group": "Employee",
-                "flag_unique": False,
-                "flag_required": False,
+                "is_unique": False,
+                "is_required": False,
             },
         )
         self.assertEqual(res.status_code, 201)
@@ -45,8 +45,8 @@ class TestObjectAttributesAPI(APITestCase):
                 "label": "Employee Number",
                 "type": "text",
                 "group": "Employee",
-                "flag_unique": False,
-                "flag_required": False,
+                "is_unique": False,
+                "is_required": False,
             },
         )
         self.assertEqual(res.status_code, 400)
@@ -68,8 +68,8 @@ class TestObjectAttributesAPI(APITestCase):
                 "label": "Employee Number",
                 "type": "text",
                 "group": "Employee",
-                "flag_unique": False,
-                "flag_required": False,
+                "is_unique": False,
+                "is_required": False,
             },
         )
         self.assertEqual(res.status_code, 200)
@@ -82,7 +82,7 @@ class TestObjectAttributesAPI(APITestCase):
             label="foo",
             key=generate_id(),
             type=ObjectAttribute.AttributeType.TEXT,
-            flag_required=True,
+            is_required=True,
         )
         res = self.client.patch(
             reverse("authentik_api:user-detail", kwargs={"pk": self.user.pk}),
@@ -99,7 +99,7 @@ class TestObjectAttributesAPI(APITestCase):
             label="foo",
             key=generate_id(),
             type=ObjectAttribute.AttributeType.TEXT,
-            flag_unique=True,
+            is_unique=True,
         )
         other_user = create_test_user()
         other_user.attributes[attr.key] = "foo"

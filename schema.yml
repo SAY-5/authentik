@@ -44213,9 +44213,9 @@ components:
             and updated automatically. This flag only indicates that an object can
             be overwritten by migrations. You can still modify the objects via the
             API, but expect changes to be overwritten in a later update.
-        flag_unique:
+        is_unique:
           type: boolean
-        flag_required:
+        is_required:
           type: boolean
         is_array:
           type: boolean
@@ -44257,9 +44257,9 @@ components:
             and updated automatically. This flag only indicates that an object can
             be overwritten by migrations. You can still modify the objects via the
             API, but expect changes to be overwritten in a later update.
-        flag_unique:
+        is_unique:
           type: boolean
-        flag_required:
+        is_required:
           type: boolean
         is_array:
           type: boolean
@@ -49549,9 +49549,9 @@ components:
             and updated automatically. This flag only indicates that an object can
             be overwritten by migrations. You can still modify the objects via the
             API, but expect changes to be overwritten in a later update.
-        flag_unique:
+        is_unique:
           type: boolean
-        flag_required:
+        is_required:
           type: boolean
         is_array:
           type: boolean

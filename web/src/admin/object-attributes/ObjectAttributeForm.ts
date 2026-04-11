@@ -123,15 +123,15 @@ export class ObjectAttributeForm extends ModelForm<ObjectAttribute, string> {
             <ak-form-group label=${msg("Validation")} open>
                 <div class="pf-c-form">
                     <ak-switch-input
-                        name="flagRequired"
+                        name="isRequired"
                         label=${msg("Attribute is required")}
-                        ?checked=${this.instance?.flagRequired}
+                        ?checked=${this.instance?.isRequired}
                         help=${msg("Value of the attribute cannot be empty.")}
                     ></ak-switch-input>
                     <ak-switch-input
-                        name="flagUnique"
+                        name="isUnique"
                         label=${msg("Attribute is unique")}
-                        ?checked=${this.instance?.flagUnique}
+                        ?checked=${this.instance?.isUnique}
                         help=${msg(
                             "Value of the attribute must be unique across all instances of the selected object type.",
                         )}
