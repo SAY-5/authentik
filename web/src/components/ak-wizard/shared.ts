@@ -11,7 +11,7 @@ export type WizardButton =
     | { kind: "create"; label?: string; destination: string }
     | { kind: "finish"; label?: string; destination: string };
 
-export const DialogDismissalKinds: ReadonlySet<ButtonKind> = new Set(["close", "cancel"]);
+export const DialogDismissalKinds: ReadonlySet<ButtonKind> = new Set(["close", "cancel", "finish"]);
 
 export type NavigableButton = Extract<WizardButton, { destination: string }>;
 

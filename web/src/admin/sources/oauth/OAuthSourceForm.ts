@@ -471,7 +471,7 @@ export class OAuthSourceForm extends BaseSourceForm<OAuthSource> {
             <ak-form-group label="${msg("Flow settings")}">
                 <div class="pf-c-form">
                     <ak-form-element-horizontal
-                        label=${msg("Authentication flow")}
+                        label=${msg("Authentication Flow")}
                         name="authenticationFlow"
                     >
                         <ak-source-flow-search

@@ -20,6 +20,7 @@ export class CryptoCertificateForm extends ModelForm<CertificateKeyPair, string>
     public static override verboseNamePlural = msg("Certificate-Key Pairs");
     public static override createLabel = msg("Import Existing");
     public static override submitVerb = msg("Import");
+    public static override submittingVerb = msg("Importing");
 
     loadInstance(pk: string): Promise<CertificateKeyPair> {
         return new CryptoApi(DEFAULT_CONFIG).cryptoCertificatekeypairsRetrieve({

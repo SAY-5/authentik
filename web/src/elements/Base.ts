@@ -83,7 +83,7 @@ export class AKElement extends LitElement implements AKElementProps {
         return Array.from(elementSet).reverse().map(createCSSResult);
     }
 
-    protected static attachHostStyles(rootNode: ShadowRoot): void {
+    protected static attachHostStyles(rootNode: StyleRoot): void {
         const { hostStyleSheets } = this;
 
         if (!hostStyleSheets) return;
@@ -93,7 +93,7 @@ export class AKElement extends LitElement implements AKElementProps {
         });
     }
 
-    protected static detachHostStyles(rootNode: ShadowRoot): void {
+    protected static detachHostStyles(rootNode: StyleRoot): void {
         const { hostStyleSheets } = this;
 
         if (!hostStyleSheets) return;
@@ -157,7 +157,7 @@ export class AKElement extends LitElement implements AKElementProps {
 
         const rootNode = this.getRootNode();
 
-        if (rootNode instanceof ShadowRoot) {
+        if (rootNode instanceof ShadowRoot || rootNode instanceof Document) {
             (this.constructor as typeof AKElement).attachHostStyles(rootNode);
         }
     }

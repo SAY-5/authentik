@@ -21,15 +21,16 @@ import { customElement } from "lit/decorators.js";
 
 @customElement("ak-endpoints-device-access-groups-list")
 export class DeviceAccessGroupsListPage extends TablePage<DeviceAccessGroup> {
-    public pageIcon = "pf-icon pf-icon-server-group	";
-    public pageTitle = msg("Device access groups");
-    public pageDescription = msg("Create groups of devices to manage access.");
-
     protected searchEnabled: boolean = true;
     protected columns: TableColumn[] = [
         [msg("Name"), "name"],
         [msg("Actions"), null, msg("Row Actions")],
     ];
+
+    public override pageIcon = "pf-icon pf-icon-server-group	";
+    public override pageTitle = msg("Device access groups");
+    public override pageDescription = msg("Create groups of devices to manage access.");
+    public override searchPlaceholder = msg("Search device groups by name...");
 
     public override checkbox = true;
     public override expandable = true;

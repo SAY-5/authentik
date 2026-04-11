@@ -270,7 +270,10 @@ export class ApplicationWizardSubmitStep extends CustomEmitterElement(Applicatio
     protected get buttons(): WizardButton[] {
         return match(this.state)
             .with("submitted", () => {
-                return [{ kind: "close" }] satisfies WizardButton[];
+                return [
+                    { kind: "close" },
+                    { kind: "finish", destination: "close" },
+                ] satisfies WizardButton[];
             })
             .with("reviewing", () => {
                 return [

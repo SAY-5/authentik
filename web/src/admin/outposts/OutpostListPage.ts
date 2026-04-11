@@ -27,7 +27,9 @@ import { ifDefined } from "lit/directives/if-defined.js";
 export class OutpostListPage extends TablePage<Outpost> {
     protected override searchEnabled = true;
 
-    public override searchPlaceholder = msg("Search outposts...");
+    public override searchPlaceholder = msg(
+        "Search outposts by name, type or assigned integration...",
+    );
     public override pageTitle = msg("Outposts");
     public override pageDescription = msg(
         "Outposts are deployments of authentik components to support different environments and protocols, like reverse proxies.",

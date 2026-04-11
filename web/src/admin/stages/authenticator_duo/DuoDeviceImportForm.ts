@@ -33,6 +33,7 @@ export class DuoDeviceImportForm extends ModelForm<AuthenticatorDuoStage, string
     public static override submitVerb = msg("Import");
     public static override modifierLabel = msg("Import");
     public static override saveLabel = msg("Import");
+    public static override submittingVerb = msg("Importing");
 
     loadInstance(pk: string): Promise<AuthenticatorDuoStage> {
         return new StagesApi(DEFAULT_CONFIG).stagesAuthenticatorDuoRetrieve({

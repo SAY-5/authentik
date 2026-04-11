@@ -403,7 +403,11 @@ export class AKModal extends AKElement implements TransclusionParentElement {
 
         const modalTitleElement = this.modalTitleRef.value;
 
-        const label = modalTitleElement?.textContent?.trim() ?? ariaLabel ?? null;
+        let label = modalTitleElement?.textContent?.trim() ?? ariaLabel ?? null;
+
+        if (this.slottedElement) {
+            label ||= this.slottedElement.formatARIALabel?.() ?? null;
+        }
 
         dialogElement.ariaLabel = label;
     };
@@ -467,6 +471,12 @@ export class AKModal extends AKElement implements TransclusionParentElement {
                 return null;
             }
 
+            if (slottedElement && !slottedElement.renderHeader) {
+                // Slotted element is possibily nested, but does not implement a header render method,
+                // so we cannot render a header for it.
+                return null;
+            }
+
             const slottedHeader = slottedElement ? slottedElement.renderHeader?.(true) : null;
 
             const content =
@@ -498,6 +508,11 @@ export class AKModal extends AKElement implements TransclusionParentElement {
 
         return guard([hasActionsSlot, slottedElement, slottedElementUpdatedAt], () => {
             if (!hasActionsSlot && !slottedElement) {
+                return null;
+            }
+            if (slottedElement && !slottedElement.renderActions) {
+                // Slotted element is possibily nested, but does not implement an actions render method,
+                // so we cannot render actions for it.
                 return null;
             }
 

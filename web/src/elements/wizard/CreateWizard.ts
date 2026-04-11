@@ -13,6 +13,8 @@ import {
     modalInvoker,
     ModalInvokerDirectiveResult,
     renderModal,
+    TransclusionChildElement,
+    TransclusionChildSymbol,
 } from "#elements/dialogs";
 import { LitPropertyRecord, SlottedTemplateResult } from "#elements/types";
 import { ifPresent } from "#elements/utils/attributes";
@@ -32,7 +34,7 @@ import { guard } from "lit-html/directives/guard.js";
 import { createRef, ref } from "lit-html/directives/ref.js";
 import { property } from "lit/decorators.js";
 
-export class CreateWizard extends AKElement {
+export class CreateWizard extends AKElement implements TransclusionChildElement {
     /**
      * Optional singular label for the type of entity this form creates/edits.
      */
@@ -51,7 +53,7 @@ export class CreateWizard extends AKElement {
      * @see {@linkcode modalInvoker} for the underlying implementation.
      */
     public static asModalInvoker<T extends CreateWizard = CreateWizard>(
-        props?: LitPropertyRecord<T>,
+        props?: LitPropertyRecord<T> | null,
         init?: DialogInit,
     ): ModalInvokerDirectiveResult {
         return modalInvoker(this, props, init);
@@ -74,6 +76,8 @@ export class CreateWizard extends AKElement {
     }
 
     //#region Public Properties
+
+    public [TransclusionChildSymbol] = true;
 
     @property({ attribute: false })
     public creationTypes: TypeCreate[] | null = null;
@@ -200,6 +204,17 @@ export class CreateWizard extends AKElement {
             this.creationTypes = types;
         });
     };
+
+    /**
+     * Formats the ARIA label for the wizard, delegating to the wizard component if available,
+     * or using a default label if not.
+     */
+    public formatARIALabel(verboseName = this.verboseName): string {
+        return (
+            this.wizard?.formatARIALabel(verboseName) ??
+            AKWizard.prototype.formatARIALabel.call(this, verboseName)
+        );
+    }
 
     /**
      * An overridable method to filter the wizard's steps when a new type is selected.

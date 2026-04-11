@@ -47,7 +47,7 @@ export class ApplicationListPage extends WithBrandConfig(TablePage<Application>)
     protected override searchEnabled = true;
     public pageTitle = msg("Applications");
     public searchLabel = msg("Applications search");
-    public searchPlaceholder = msg("Search for applications…");
+    public searchPlaceholder = msg("Search for application by name, group or provider...");
 
     public get pageDescription() {
         return msg(
@@ -178,7 +178,7 @@ export class ApplicationListPage extends WithBrandConfig(TablePage<Application>)
                     aria-haspopup="menu"
                     aria-controls="new-application-menu"
                     tabindex="0"
-                    aria-label=${msg("Toggle new application menu")}
+                    aria-label=${msg("New Application options")}
                 >
                     <i class="fas fa-caret-down" aria-hidden="true"></i>
                 </button>

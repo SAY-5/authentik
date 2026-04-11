@@ -29,6 +29,9 @@ export class RuleListPage extends TablePage<NotificationRule> {
     public override expandable = true;
     public override checkbox = true;
     public override clearOnRefresh = true;
+    public override searchPlaceholder = msg(
+        "Search for a notification rule by name, severity or group...",
+    );
 
     protected override searchEnabled = true;
     public pageTitle = msg("Notification Rules");

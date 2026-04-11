@@ -114,7 +114,9 @@ export abstract class TablePage<T extends object> extends Table<T> {
                       <div slot="body">
                           ${this.searchEnabled ? this.renderEmptyClearSearch() : nothing}
                       </div>
-                      <div slot="primary">${this.renderObjectCreate()}</div>
+                      <div slot="primary" class="empty-state-primary">
+                          ${this.renderObjectCreate()}
+                      </div>
                   </ak-empty-state>`}
         `);
     }

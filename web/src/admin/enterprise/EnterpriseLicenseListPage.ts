@@ -29,8 +29,8 @@ import {
 } from "@goauthentik/api";
 
 import { msg, str } from "@lit/localize";
-import { css, CSSResult, html, nothing, TemplateResult } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { css, CSSResult, html, nothing } from "lit";
+import { customElement, state } from "lit/decorators.js";
 
 import PFBanner from "@patternfly/patternfly/components/Banner/banner.css";
 import PFButton from "@patternfly/patternfly/components/Button/button.css";
@@ -40,27 +40,7 @@ import PFGrid from "@patternfly/patternfly/layouts/Grid/grid.css";
 
 @customElement("ak-enterprise-license-list")
 export class EnterpriseLicenseListPage extends TablePage<License> {
-    checkbox = true;
-    clearOnRefresh = true;
-
-    protected override searchEnabled = true;
-    public pageTitle = msg("Licenses");
-    public pageDescription = msg("Manage enterprise licenses");
-    public pageIcon = "pf-icon pf-icon-key";
-
-    @property()
-    order = "name";
-
-    @state()
-    forecast?: LicenseForecast;
-
-    @state()
-    summary?: LicenseSummary;
-
-    @state()
-    installID?: string;
-
-    static styles: CSSResult[] = [
+    public static styles: CSSResult[] = [
         ...super.styles,
         PFGrid,
         PFBanner,
@@ -76,6 +56,25 @@ export class EnterpriseLicenseListPage extends TablePage<License> {
             }
         `,
     ];
+
+    public override checkbox = true;
+    public override clearOnRefresh = true;
+
+    protected override searchEnabled = true;
+    public override pageTitle = msg("Licenses");
+    public override pageDescription = msg("Manage enterprise licenses");
+    public override pageIcon = "pf-icon pf-icon-key";
+    public override searchPlaceholder = msg("Search for a license by name...");
+    public override order = "name";
+
+    @state()
+    protected forecast?: LicenseForecast;
+
+    @state()
+    protected summary?: LicenseSummary;
+
+    @state()
+    protected installID?: string;
 
     async apiEndpoint(): Promise<PaginatedResponse<License>> {
         this.forecast = await new EnterpriseApi(DEFAULT_CONFIG).enterpriseLicenseForecastRetrieve();
@@ -99,7 +98,7 @@ export class EnterpriseLicenseListPage extends TablePage<License> {
 
     // TODO: Make this more generic, maybe automatically get the plural name
     // of the object to use in the renderEmpty
-    renderEmpty(inner?: TemplateResult): SlottedTemplateResult {
+    protected override renderEmpty(inner?: SlottedTemplateResult): SlottedTemplateResult {
         return super.renderEmpty(html`
             ${inner
                 ? inner
@@ -113,7 +112,7 @@ export class EnterpriseLicenseListPage extends TablePage<License> {
         `);
     }
 
-    renderToolbarSelected(): TemplateResult {
+    protected override renderToolbarSelected(): SlottedTemplateResult {
         const disabled = this.selectedElements.length < 1;
         return html`<ak-forms-delete-bulk
             object-label=${msg("License(s)")}
@@ -141,7 +140,7 @@ export class EnterpriseLicenseListPage extends TablePage<License> {
         </ak-forms-delete-bulk>`;
     }
 
-    renderSectionBefore(): TemplateResult {
+    protected override renderSectionBefore(): SlottedTemplateResult {
         const {
             externalUsers = 0,
             internalUsers = 0,
@@ -234,7 +233,7 @@ export class EnterpriseLicenseListPage extends TablePage<License> {
         ];
     }
 
-    renderGetLicenseCard() {
+    protected renderGetLicenseCard() {
         const renderSpinner = () =>
             html` <div class="pf-c-card__body">
                 <ak-spinner></ak-spinner>

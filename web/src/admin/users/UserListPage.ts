@@ -26,6 +26,7 @@ import { WithSession } from "#elements/mixins/session";
 import { getURLParam, updateURLParams } from "#elements/router/RouteMatch";
 import { PaginatedResponse, TableColumn, Timestamp } from "#elements/table/Table";
 import { TablePage } from "#elements/table/TablePage";
+import { SlottedTemplateResult } from "#elements/types";
 
 import { AKUserWizard } from "#admin/users/ak-user-wizard";
 import { RecoveryButtons } from "#admin/users/recovery";
@@ -95,10 +96,10 @@ export class UserListPage extends WithBrandConfig(
     public activePath: string;
 
     @state()
-    hideDeactivated = getURLParam<boolean>("hideDeactivated", false);
+    protected hideDeactivated = getURLParam<boolean>("hideDeactivated", false);
 
     @state()
-    userPaths?: UserPath;
+    protected userPaths: UserPath | null = null;
 
     constructor() {
         super();
@@ -144,7 +145,7 @@ export class UserListPage extends WithBrandConfig(
     }
 
     protected columns: TableColumn[] = [
-        ["", undefined, msg("Avatar")],
+        ["", null, msg("Avatar")],
         [msg("Name"), "username"],
         [msg("Active"), "is_active"],
         [msg("Last login"), "last_login"],
@@ -347,28 +348,24 @@ export class UserListPage extends WithBrandConfig(
     };
 
     protected renderObjectCreate(): SlottedTemplateResult {
-        const defaultPath = this.uiConfig.defaults.userPath;
+        const { activePath } = this;
 
-        return guard([defaultPath], () => {
+        return guard([activePath], () => {
             return [
-                html`
-                    <button
-                        class="pf-c-button pf-m-primary"
-                        type="button"
-                        ${modalInvoker(AKUserWizard, {
-                            defaultPath,
-                        })}
-                        aria-description=${msg("Open the new user wizard")}
-                    >
-                        ${msg("New User")}
-                    </button>
-                `,
-                html`
-                    <ak-reports-export-button
-                        .createExport=${this.createExport}
-                        .exportParams=${this.buildExportParams}
-                    ></ak-reports-export-button>
-                `,
+                html`<button
+                    class="pf-c-button pf-m-primary"
+                    type="button"
+                    ${modalInvoker(AKUserWizard, {
+                        defaultPath: activePath,
+                    })}
+                    aria-description=${msg("Open the new user wizard")}
+                >
+                    ${msg("New User")}
+                </button> `,
+                html`<ak-reports-export-button
+                    .createExport=${this.createExport}
+                    .exportParams=${this.buildExportParams}
+                ></ak-reports-export-button> `,
             ];
         });
     }

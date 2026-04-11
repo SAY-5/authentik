@@ -138,6 +138,13 @@ export class Form<T = Record<string, unknown>, D = T>
         id: "form.submit.verb.create",
     });
 
+    /**
+     * The gerund to use in the message key for the submission message, e.g. "Creating" or "Updating".
+     */
+    public static submittingVerb: string = msg("Creating", {
+        id: "form.submit.verb.creating",
+    });
+
     //#region Modal helpers
 
     public [TransclusionChildSymbol] = true;
@@ -219,8 +226,16 @@ export class Form<T = Record<string, unknown>, D = T>
      * a default label will be generated based on `verboseName`,
      * falling back to "Create".
      */
-    @property({ type: String, attribute: "action-label", useDefault: true })
+    @property({ type: String, attribute: "submit-label", useDefault: true })
     public submitLabel: string | null = null;
+
+    /**
+     * The label for the submit button while the form is being submitted. If not provided,
+     * a default label will be generated based on `submittingVerb` and `verboseName`,
+     * falling back to "Submitting...".
+     */
+    @property({ type: String, attribute: "submitting-label", useDefault: true })
+    public submittingLabel: string | null = null;
 
     @property({ type: String, attribute: "cancel-label", useDefault: true })
     public cancelButtonLabel: string | null = msg("Cancel");
@@ -386,6 +401,22 @@ export class Form<T = Record<string, unknown>, D = T>
             : verb;
     }
 
+    /**
+     * An overridable method for formatting the message shown while the form is being submitted.
+     */
+    protected formatSubmittingLabel(submittingLabel = this.submittingLabel): string {
+        if (submittingLabel) {
+            return submittingLabel;
+        }
+
+        const { submittingVerb, verboseName } = this.constructor as typeof Form;
+
+        return msg(str`${submittingVerb} ${verboseName}...`, {
+            id: "form.submitting",
+            desc: "The message shown while a form is being submitted.",
+        });
+    }
+
     //#endregion
 
     //#region Public methods
@@ -467,6 +498,7 @@ export class Form<T = Record<string, unknown>, D = T>
             return Promise.resolve(false);
         }
 
+        const messageKey = `form-submission-${this.localName}-${Date.now()}`;
         let data: D;
 
         try {
@@ -478,6 +510,7 @@ export class Form<T = Record<string, unknown>, D = T>
                 level: MessageLevel.error,
                 message: msg("An unknown error occurred while submitting the form."),
                 description: pluckErrorDetail(error),
+                key: messageKey,
             });
 
             return Promise.resolve(false);
@@ -491,9 +524,23 @@ export class Form<T = Record<string, unknown>, D = T>
             return Promise.resolve(false);
         }
 
+        showMessage({
+            level: MessageLevel.info,
+            icon: "fas fa-spinner fa-spin",
+            message: this.formatSubmittingLabel(),
+            key: messageKey,
+        });
+
         return this.send(data)
             .then((response) => {
-                showMessage(this.formatAPISuccessMessage(response));
+                const successMessage = this.formatAPISuccessMessage(response);
+
+                if (successMessage) {
+                    showMessage({
+                        ...successMessage,
+                        key: messageKey,
+                    });
+                }
 
                 this.dispatchEvent(
                     new CustomEvent(EVENT_REFRESH, {
@@ -540,7 +587,15 @@ export class Form<T = Record<string, unknown>, D = T>
                             );
                         }
                     }
-                    showMessage(this.formatAPIErrorMessage(parsedError), true);
+
+                    const errorMessage = this.formatAPIErrorMessage(parsedError);
+
+                    if (errorMessage) {
+                        showMessage({
+                            ...errorMessage,
+                            key: messageKey,
+                        });
+                    }
                 }
 
                 // Rethrow the error so the form doesn't close.

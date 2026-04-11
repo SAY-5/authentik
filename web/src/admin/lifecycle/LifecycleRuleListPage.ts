@@ -29,7 +29,7 @@ export class LifecycleRuleListPage extends TablePage<LifecycleRule> {
     public override expandable = true;
     public override checkbox = true;
     public override clearOnRefresh = true;
-    public override searchPlaceholder = msg("Search for a lifecycle rule...");
+    public override searchPlaceholder = msg("Search for a lifecycle rule by name or target...");
     public override pageTitle = msg("Object Lifecycle Rules");
     public override pageDescription = msg("Schedule periodic reviews for objects in authentik.");
     public override pageIcon = "pf-icon pf-icon-history";

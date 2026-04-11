@@ -61,7 +61,7 @@ export class RolePermissionForm extends ModelForm<RolePermissionAssign, number> 
         return renderModal(
             html`<ak-form
                 headline=${msg("Select permissions to assign")}
-                action-label=${msg("Confirm")}
+                submit-label=${msg("Confirm")}
                 @submit=${(event: AKFormSubmitEvent<Permission[]>) => {
                     this.permissionsToAdd = event.target.toJSON();
                 }}

@@ -153,7 +153,7 @@ export abstract class SearchSelectBase<T>
      * @attr
      */
     @property({ type: String })
-    public placeholder: string | null = msg("Select an object.");
+    public placeholder: string | null = msg("Select an object...");
 
     /**
      * A textual string representing "The user has affirmed they want to leave the selection blank."

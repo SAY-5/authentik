@@ -171,12 +171,12 @@ export function renderForm({
                     htmlFor: "authorizationFlow",
                     required: true,
                 },
-                msg("Authorization flow"),
+                msg("Authorization Flow"),
             )}
 
             <ak-flow-search
                 id="authorizationFlow"
-                label=${msg("Authorization flow")}
+                label=${msg("Authorization Flow")}
                 placeholder=${msg("Select an authorization flow...")}
                 flowType=${FlowDesignationEnum.Authorization}
                 .currentFlow=${provider.authorizationFlow}
@@ -191,7 +191,7 @@ export function renderForm({
             <div class="pf-c-form">
                 <ak-radio-input
                     name="clientType"
-                    label=${msg("Client type")}
+                    label=${msg("Client Type")}
                     .value=${provider.clientType}
                     required
                     @change=${(ev: CustomEvent<{ value: ClientTypeEnum }>) => {
@@ -291,10 +291,10 @@ export function renderForm({
             <div class="pf-c-form">
                 <ak-form-element-horizontal
                     name="authenticationFlow"
-                    label=${msg("Authentication flow")}
+                    label=${msg("Authentication Flow")}
                 >
                     <ak-flow-search
-                        label=${msg("Authentication flow")}
+                        label=${msg("Authentication Flow")}
                         placeholder=${msg("Select an authentication flow...")}
                         flowType=${FlowDesignationEnum.Authentication}
                         .currentFlow=${provider.authenticationFlow}
@@ -306,12 +306,12 @@ export function renderForm({
                     </p>
                 </ak-form-element-horizontal>
                 <ak-form-element-horizontal
-                    label=${msg("Invalidation flow")}
+                    label=${msg("Invalidation Flow")}
                     name="invalidationFlow"
                     required
                 >
                     <ak-flow-search
-                        label=${msg("Invalidation flow")}
+                        label=${msg("Invalidation Flow")}
                         placeholder=${msg("Select an invalidation flow...")}
                         flowType=${FlowDesignationEnum.Invalidation}
                         .currentFlow=${provider.invalidationFlow}
@@ -329,7 +329,7 @@ export function renderForm({
             <div class="pf-c-form">
                 <ak-text-input
                     name="accessCodeValidity"
-                    label=${msg("Access code validity")}
+                    label=${msg("Access Code Validity")}
                     input-hint="code"
                     required
                     value="${provider.accessCodeValidity ?? "minutes=1"}"
@@ -341,7 +341,7 @@ export function renderForm({
                 </ak-text-input>
                 <ak-text-input
                     name="accessTokenValidity"
-                    label=${msg("Access Token validity")}
+                    label=${msg("Access Token Validity")}
                     value="${provider.accessTokenValidity ?? "minutes=5"}"
                     input-hint="code"
                     required
@@ -354,7 +354,7 @@ export function renderForm({
 
                 <ak-text-input
                     name="refreshTokenValidity"
-                    label=${msg("Refresh Token validity")}
+                    label=${msg("Refresh Token Validity")}
                     value="${provider.refreshTokenValidity ?? "days=30"}"
                     input-hint="code"
                     required
@@ -366,7 +366,7 @@ export function renderForm({
                 </ak-text-input>
                 <ak-text-input
                     name="refreshTokenThreshold"
-                    label=${msg("Refresh Token threshold")}
+                    label=${msg("Refresh Token Threshold")}
                     value="${provider?.refreshTokenThreshold ?? "hours=1"}"
                     input-hint="code"
                     required
@@ -411,7 +411,7 @@ export function renderForm({
 
                 <ak-radio-input
                     name="subMode"
-                    label=${msg("Subject mode")}
+                    label=${msg("Subject Mode")}
                     required
                     .options=${subjectModeOptions}
                     .value=${provider.subMode}

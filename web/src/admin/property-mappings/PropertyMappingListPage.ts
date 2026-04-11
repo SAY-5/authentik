@@ -46,6 +46,7 @@ export class PropertyMappingListPage extends TablePage<PropertyMapping> {
         "Control how authentik exposes and interprets information.",
     );
     public override pageIcon = "pf-icon pf-icon-blueprint";
+    public override searchPlaceholder = msg("Search for a property mapping by name or type...");
 
     public override checkbox = true;
     public override clearOnRefresh = true;

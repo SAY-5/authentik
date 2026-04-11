@@ -187,13 +187,6 @@ time {
     }
 }
 
-/**
- * TODO: Remove after <dialog> modals are implemented.
- */
-.pf-c-dropdown__menu:has(ak-forms-modal) {
-    z-index: var(--pf-global--ZIndex--lg);
-}
-
 :host {
     display: block;
     container-type: inline-size;

@@ -26,7 +26,7 @@ import { customElement } from "lit/decorators.js";
 @customElement("ak-stage-prompt-list")
 export class PromptListPage extends TablePage<Prompt> {
     protected override searchEnabled = true;
-    public override searchPlaceholder = msg("Search for a prompt...");
+    public override searchPlaceholder = msg("Search for a prompt by name, field or type...");
 
     public override pageTitle = msg("Prompts");
     public override pageDescription = msg("Single Prompts that can be used for Prompt Stages.");

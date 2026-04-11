@@ -200,7 +200,15 @@ export abstract class WizardStep extends AKElement {
             throw new Error("Non-navigable button sent to handleNavigationEvent");
         }
 
-        if (button.kind === "next" && !this.reportValidity()) {
+        if (button.kind === "next" || button.kind === "finish") {
+            // Check and report form validation to the user before allowing navigation to proceed.
+            if (!this.reportValidity()) {
+                return;
+            }
+        }
+
+        if (button.kind === "finish") {
+            this.requestClose("finish");
             return;
         }
 

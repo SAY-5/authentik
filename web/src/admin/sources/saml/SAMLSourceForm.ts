@@ -511,7 +511,7 @@ export class SAMLSourceForm extends BaseSourceForm<SAMLSource> {
                         </p>
                     </ak-form-element-horizontal>
                     <ak-form-element-horizontal
-                        label=${msg("Authentication flow")}
+                        label=${msg("Authentication Flow")}
                         name="authenticationFlow"
                     >
                         <ak-source-flow-search

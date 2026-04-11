@@ -195,7 +195,7 @@ export class BrandForm extends ModelForm<Brand, string> {
             <ak-form-group label="${msg("Default flows")} ">
                 <div class="pf-c-form">
                     <ak-form-element-horizontal
-                        label=${msg("Authentication flow")}
+                        label=${msg("Authentication Flow")}
                         name="flowAuthentication"
                     >
                         <ak-flow-search
@@ -210,7 +210,7 @@ export class BrandForm extends ModelForm<Brand, string> {
                         </p>
                     </ak-form-element-horizontal>
                     <ak-form-element-horizontal
-                        label=${msg("Invalidation flow")}
+                        label=${msg("Invalidation Flow")}
                         name="flowInvalidation"
                     >
                         <ak-flow-search

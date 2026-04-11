@@ -35,9 +35,11 @@ import PFDescriptionList from "@patternfly/patternfly/components/DescriptionList
 export class BlueprintImportForm extends Form<ManagedBlueprintsImportCreateRequest> {
     static styles: CSSResult[] = [...super.styles, PFDescriptionList, PFBanner];
 
-    public static override verboseName = msg("Blueprint");
-    public static override verboseNamePlural = msg("Blueprints");
+    public static override verboseName = msg("Flow Blueprint");
+    public static override verboseNamePlural = msg("Flow Blueprints");
     public static override createLabel = msg("Import");
+    public static override submitVerb = msg("Import");
+    public static override submittingVerb = msg("Importing");
 
     public override size = PFSize.Medium;
 

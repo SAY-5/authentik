@@ -5,6 +5,7 @@ import { AKRefreshEvent } from "#common/events";
 
 import { AKElement } from "#elements/Base";
 import { listen } from "#elements/decorators/listen";
+import { isTransclusionParentElement } from "#elements/dialogs";
 import { SlottedTemplateResult } from "#elements/types";
 import { findNearestDialog } from "#elements/utils/render-roots";
 import { WizardPage } from "#elements/wizard/WizardPage";
@@ -47,6 +48,11 @@ export const ApplyActionsSlot = "apply-actions";
  */
 @customElement("ak-wizard")
 export class AKWizard<S = Record<string, unknown>> extends AKElement {
+    /**
+     * Optional singular label for the type of entity this wizard creates.
+     */
+    public static verboseName: string | null = null;
+
     public static styles: CSSResult[] = [
         PFButton,
         PFTitle,
@@ -63,6 +69,12 @@ export class AKWizard<S = Record<string, unknown>> extends AKElement {
                 flex-flow: column;
             }
 
+            .pf-c-wizard__main,
+            .pf-c-wizard__main-body {
+                transform: translate3d(0, 0, 0);
+                will-change: transform;
+            }
+
             .pf-c-wizard__main-body {
                 display: flex;
                 flex: 1 1 auto;
@@ -76,26 +88,27 @@ export class AKWizard<S = Record<string, unknown>> extends AKElement {
 
     //#region Public Properties
 
-    public formatARIALabel = () => {
-        if (this.verboseName) {
-            return msg(str`New ${this.verboseName} Wizard`, {
-                id: "wizard.ariaLabel.entity-singular",
-                desc: "ARIA label for the creation wizard, where the entity singular is interpolated.",
-            });
-        }
-
-        return msg("Creation Wizard", {
-            id: "wizard.ariaLabel.default",
-            desc: "ARIA label for the creation wizard when no entity singular is provided.",
-        });
-    };
+    /**
+     * Formats the ARIA label for the wizard, using the {@linkcode verboseName} property if available.
+     */
+    public formatARIALabel(verboseName = this.verboseName): string {
+        return verboseName
+            ? msg(str`New ${verboseName} Wizard`, {
+                  id: "wizard.ariaLabel.entity-singular",
+                  desc: "ARIA label for the creation wizard, where the entity singular is interpolated.",
+              })
+            : msg("Wizard", {
+                  id: "wizard.ariaLabel.default",
+                  desc: "ARIA label for the creation wizard when no entity singular is provided.",
+              });
+    }
 
     /**
      * Formats the header text for the wizard, using the {@linkcode verboseName} property if available.
      */
-    public formatHeader(): string {
-        if (this.verboseName) {
-            return msg(str`Create New ${this.verboseName}`, {
+    public formatHeader(verboseName = this.verboseName): string {
+        if (verboseName) {
+            return msg(str`Create New ${verboseName}`, {
                 id: "wizard.header.entity-singular",
                 desc: "Header for the creation wizard, where the entity singular is interpolated.",
             });
@@ -127,11 +140,25 @@ export class AKWizard<S = Record<string, unknown>> extends AKElement {
     @property()
     public header?: string;
 
+    #verboseName: string | null = null;
+
     /**
-     * Optional singular label for the type of entity this wizard creates, used in messages and the like.
+     * Optional singular label for the type of entity this form creates/edits.
+     *
+     * Overrides the static `verboseName` property for this instance.
      */
     @property({ type: String, attribute: "entity-singular" })
-    public verboseName: string | null = null;
+    public set verboseName(value: string | null) {
+        this.#verboseName = value;
+
+        if (isTransclusionParentElement(this.parentElement)) {
+            this.parentElement.slottedElementUpdatedAt = new Date();
+        }
+    }
+
+    public get verboseName(): string | null {
+        return this.#verboseName || (this.constructor as typeof AKWizard).verboseName;
+    }
 
     /**
      * Optional plural label for the type of entity this wizard creates, used in messages and the like.

@@ -63,6 +63,14 @@ export abstract class ModelForm<
     });
 
     /**
+     * The label to use for the submit button while the form is being submitted
+     * when editing an instance, e.g. "Saving Changes...".
+     */
+    public static savingLabel: string | null = msg("Saving Changes...", {
+        id: "form.submit.saving-changes",
+    });
+
+    /**
      * A helper method to create an invoker for editing an instance of this form.
      *
      * The invoker will look for a `data-pk` attribute on the clicked element to determine which instance to load.
@@ -162,6 +170,16 @@ export abstract class ModelForm<
         }
 
         return super.formatSubmitLabel();
+    }
+
+    protected override formatSubmittingLabel(): string {
+        const { savingLabel } = this.constructor as typeof ModelForm;
+
+        if (this.instancePk && savingLabel) {
+            return savingLabel;
+        }
+
+        return super.formatSubmittingLabel();
     }
 
     protected override formatHeadline(): string {

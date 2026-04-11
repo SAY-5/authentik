@@ -74,7 +74,7 @@ export class BlueprintListPage extends TablePage<BlueprintInstance> {
     public override expandable = true;
     public override checkbox = true;
     public override clearOnRefresh = true;
-    public override searchPlaceholder = msg("Search for a blueprint...");
+    public override searchPlaceholder = msg("Search for a blueprint by name or path...");
 
     public override order = "name";
 

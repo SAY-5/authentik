@@ -99,7 +99,7 @@ export class AddRelatedUserForm extends Form<{ users: number[] }> {
         return renderModal(html`
             <ak-form
                 headline=${msg("Select users")}
-                action-label=${msg("Confirm")}
+                submit-label=${msg("Confirm")}
                 @submit=${(event: AKFormSubmitEvent<User[]>) => {
                     this.usersToAdd = event.target.toJSON();
                 }}
@@ -228,7 +228,7 @@ export class RelatedUserList extends WithBrandConfig(WithCapabilitiesConfig(Tabl
 
         return html`<ak-forms-delete-bulk
             object-label=${msg("User(s)")}
-            action-label=${msg("Remove User(s)")}
+            submit-label=${msg("Remove User(s)")}
             action=${msg("removed")}
             action-subtext=${targetLabel
                 ? msg(str`Are you sure you want to remove the selected users from ${targetLabel}?`)

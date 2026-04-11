@@ -65,7 +65,7 @@ export class AkBackchannelProvidersInput extends AKElement {
         return renderModal(html`
             <ak-form
                 headline=${this.label}
-                action-label=${msg("Confirm")}
+                submit-label=${msg("Confirm")}
                 @submit=${(event: AKFormSubmitEvent<Provider[]>) => {
                     const providers = event.target.toJSON();
 

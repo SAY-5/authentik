@@ -31,7 +31,7 @@ export class FlowListPage extends TablePage<Flow> {
     static styles = [...super.styles, PFBanner];
 
     protected override searchEnabled = true;
-    public override searchPlaceholder = msg("Search for a flow by name or identifier");
+    public override searchPlaceholder = msg("Search for a flow by name or identifier...");
 
     public override pageTitle = msg("Flows");
     public override pageDescription = msg(

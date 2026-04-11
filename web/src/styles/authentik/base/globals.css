@@ -31,8 +31,9 @@ body {
     }
 }
 
-html[data-dialog-count] {
+[data-dialog-count] {
     overscroll-behavior: none;
+    overflow: hidden;
 }
 
 /* #endregion */

@@ -43,9 +43,12 @@ export class OutpostServiceConnectionListPage extends TablePage<ServiceConnectio
     public pageIcon = "pf-icon pf-icon-integration";
     protected override searchEnabled = true;
 
-    checkbox = true;
-    expandable = true;
-    clearOnRefresh = true;
+    public override checkbox = true;
+    public override expandable = true;
+    public override clearOnRefresh = true;
+    public override searchPlaceholder = msg(
+        "Search for an outpost integration by name, type or assigned integration...",
+    );
 
     async apiEndpoint(): Promise<PaginatedResponse<ServiceConnection>> {
         const connections = await new OutpostsApi(DEFAULT_CONFIG).outpostsServiceConnectionsAllList(

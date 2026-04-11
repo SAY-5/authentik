@@ -49,7 +49,7 @@ export class ProviderListPage extends TablePage<Provider> {
     public order = "name";
 
     public searchLabel = msg("Provider Search");
-    public searchPlaceholder = msg("Search for providers…");
+    public searchPlaceholder = msg("Search for provider by name, type or assigned application...");
 
     override async apiEndpoint(): Promise<PaginatedResponse<Provider>> {
         return new ProvidersApi(DEFAULT_CONFIG).providersAllList(

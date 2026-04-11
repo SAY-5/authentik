@@ -28,23 +28,24 @@ import { PolicyTestForm } from "#admin/policies/PolicyTestForm";
 import { ModelEnum, PoliciesApi, Policy } from "@goauthentik/api";
 
 import { msg, str } from "@lit/localize";
-import { html, TemplateResult } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { html } from "lit";
+import { customElement } from "lit/decorators.js";
 
 @customElement("ak-policy-list")
 export class PolicyListPage extends TablePage<Policy> {
     protected override searchEnabled = true;
-    public pageTitle = msg("Policies");
-    public pageDescription = msg(
+
+    public override pageTitle = msg("Policies");
+    public override pageDescription = msg(
         "Allow users to use Applications based on properties, enforce Password Criteria and selectively apply Stages.",
     );
-    public pageIcon = "pf-icon pf-icon-infrastructure";
+    public override pageIcon = "pf-icon pf-icon-infrastructure";
 
-    checkbox = true;
-    clearOnRefresh = true;
+    public override searchPlaceholder = msg("Search for a policy by name or type...");
 
-    @property()
-    order = "name";
+    public override checkbox = true;
+    public override clearOnRefresh = true;
+    public override order = "name";
 
     async apiEndpoint(): Promise<PaginatedResponse<Policy>> {
         return new PoliciesApi(DEFAULT_CONFIG).policiesAllList(await this.defaultEndpointConfig());
@@ -57,7 +58,7 @@ export class PolicyListPage extends TablePage<Policy> {
         [msg("Actions")],
     ];
 
-    row(item: Policy): SlottedTemplateResult[] {
+    protected override row(item: Policy): SlottedTemplateResult[] {
         return [
             html`<div>${item.name}</div>
                 ${(item.boundTo || 0) > 0
@@ -93,7 +94,7 @@ export class PolicyListPage extends TablePage<Policy> {
         ];
     }
 
-    renderToolbarSelected(): TemplateResult {
+    protected override renderToolbarSelected(): SlottedTemplateResult {
         const disabled = this.selectedElements.length < 1;
         return html`<ak-forms-delete-bulk
             object-label=${msg("Policy / Policies")}
@@ -128,8 +129,8 @@ export class PolicyListPage extends TablePage<Policy> {
         `;
     }
 
-    renderToolbar(): TemplateResult {
-        return html` ${super.renderToolbar()}
+    protected override renderToolbar(): SlottedTemplateResult {
+        return html`${super.renderToolbar()}
             <ak-forms-confirm
                 successMessage=${msg("Successfully cleared policy cache")}
                 errorMessage=${msg("Failed to delete policy cache")}

@@ -34,6 +34,9 @@ export class TransportListPage extends TablePage<NotificationTransport> {
     public override checkbox = true;
     public override clearOnRefresh = true;
     public override expandable = true;
+    public override searchPlaceholder = msg(
+        "Search for a notification transport by name or mode...",
+    );
 
     public override order = "name";
 

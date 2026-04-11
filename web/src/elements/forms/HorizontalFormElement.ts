@@ -35,7 +35,9 @@ export class HorizontalFormElement extends AKElement {
             .pf-c-form__group {
                 display: grid;
                 grid-template-columns:
+                    [label]
                     var(--pf-c-form--m-horizontal__group-label--md--GridColumnWidth)
+                    [control]
                     var(--pf-c-form--m-horizontal__group-control--md--GridColumnWidth);
             }
         `,
@@ -130,23 +132,28 @@ export class HorizontalFormElement extends AKElement {
     render(): TemplateResult {
         this.#synchronizeAttributes();
 
-        return html`<div class="pf-c-form__group">
-            ${this.label
-                ? html`
-                      ${AKLabel(
-                          {
-                              className: "pf-c-form__group-label",
-                              htmlFor: this.fieldID,
-                              required: this.required,
-                          },
-                          this.label,
-                      )}
-                  </div>`
-                : html`<slot name="label"></slot>`}
+        const { label, required, fieldID } = this;
 
-            <div class="pf-c-form__group-control">
-                <slot class="pf-c-form__horizontal-group"></slot>
-                <div class="pf-c-form__horizontal-group">
+        const labelTemplate = label
+            ? AKLabel(
+                  {
+                      className: "pf-c-form__group-label",
+                      htmlFor: fieldID,
+                      required,
+                  },
+                  label,
+              )
+            : this.findSlotted("label")
+              ? html`<slot name="label"></slot>`
+              : null;
+
+        return html`<div class="pf-c-form__group" part="form-group">
+            ${labelTemplate}
+            ${this.findSlotted("label-end") ? html`<slot name="label-end"></slot>` : null}
+
+            <div class="pf-c-form__group-control" part="group-control">
+                <slot class="pf-c-form__horizontal-group" part="content"></slot>
+                <div class="pf-c-form__horizontal-group" part="errors">
                     ${AKFormErrors({ errors: this.errorMessages })}
                 </div>
             </div>

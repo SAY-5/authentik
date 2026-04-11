@@ -57,6 +57,9 @@
     border-width: var(--ak-c-dialog--BorderWidth);
     border-color: var(--ak-c-dialog--BorderColor);
 
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+
     &:focus-visible {
         outline: none;
     }

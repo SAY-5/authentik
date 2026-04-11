@@ -7,7 +7,7 @@ import "#elements/forms/ModalForm";
 
 import { DEFAULT_CONFIG } from "#common/api/config";
 
-import { IconEditButtonByTagName } from "#elements/dialogs";
+import { IconEditButtonByTagName, ModalInvokerButton } from "#elements/dialogs";
 import { PaginatedResponse, TableColumn } from "#elements/table/Table";
 import { TablePage } from "#elements/table/TablePage";
 import { SlottedTemplateResult } from "#elements/types";
@@ -22,28 +22,29 @@ import { customElement } from "lit/decorators.js";
 
 @customElement("ak-endpoints-connectors-list")
 export class ConnectorsListPage extends TablePage<Connector> {
-    public pageIcon = "pf-icon pf-icon-data-source";
-    public pageTitle = msg("Connectors");
-    public pageDescription = msg(
+    public override searchPlaceholder = msg("Search connectors by name or type...");
+    public override pageIcon = "pf-icon pf-icon-data-source";
+    public override pageTitle = msg("Connectors");
+    public override pageDescription = msg(
         "Configure how devices connect with authentik and ingest external device data.",
     );
 
-    protected searchEnabled: boolean = true;
-    protected columns: TableColumn[] = [
+    protected override searchEnabled: boolean = true;
+    protected override columns: TableColumn[] = [
         [msg("Name"), "name"],
         [msg("Type")],
         [msg("Actions"), null, msg("Row Actions")],
     ];
 
-    checkbox = true;
+    public override checkbox = true;
 
-    async apiEndpoint(): Promise<PaginatedResponse<Connector>> {
+    protected override async apiEndpoint(): Promise<PaginatedResponse<Connector>> {
         return new EndpointsApi(DEFAULT_CONFIG).endpointsConnectorsList(
             await this.defaultEndpointConfig(),
         );
     }
 
-    row(item: Connector): SlottedTemplateResult[] {
+    protected override row(item: Connector): SlottedTemplateResult[] {
         return [
             html`<a href="#/endpoints/connectors/${item.connectorUuid}">${item.name}</a>`,
             item.verboseName,
@@ -54,17 +55,10 @@ export class ConnectorsListPage extends TablePage<Connector> {
     }
 
     protected override renderObjectCreate(): SlottedTemplateResult {
-        return html`<button
-            class="pf-c-button pf-m-primary"
-            type="button"
-            aria-description="${msg("Open the wizard to create a new connector.")}"
-            ${AKEndpointConnectorWizard.asModalInvoker()}
-        >
-            ${msg("New Connector")}
-        </button>`;
+        return ModalInvokerButton(AKEndpointConnectorWizard);
     }
 
-    protected override renderToolbarSelected() {
+    protected override renderToolbarSelected(): SlottedTemplateResult {
         const disabled = this.selectedElements.length < 1;
         return html`<ak-forms-delete-bulk
             object-label=${msg("Connector(s)")}

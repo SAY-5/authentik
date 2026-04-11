@@ -5,6 +5,7 @@ import { ifPresent } from "#elements/utils/attributes";
 
 import { kebabCase } from "change-case";
 
+import { msg } from "@lit/localize";
 import { html } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
@@ -52,7 +53,7 @@ export class AkSlugInput extends HorizontalLightComponent<string> {
     private input!: HTMLInputElement;
 
     @property({ type: String })
-    public placeholder: string | null = null;
+    public placeholder: string | null = msg("e.g. my-slug");
 
     #origin?: HTMLInputElement | null;
 

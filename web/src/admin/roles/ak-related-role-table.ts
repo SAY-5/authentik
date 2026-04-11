@@ -61,7 +61,7 @@ export class AddRelatedRoleForm extends Form<{ roles: string[] }> {
         return renderModal(html`
             <ak-form
                 headline=${msg("Assign Additional Roles")}
-                action-label=${msg("Confirm")}
+                submit-label=${msg("Confirm")}
                 @submit=${(event: AKFormSubmitEvent<Role[]>) => {
                     this.rolesToAdd = event.target.toJSON();
                 }}
@@ -181,7 +181,7 @@ export class RelatedRoleTable extends Table<Role> {
         const disabled = !this.selectedElements.length;
         return html`<ak-forms-delete-bulk
             object-label=${msg("Role(s)")}
-            action-label=${msg("Remove from Role(s)")}
+            submit-label=${msg("Remove from Role(s)")}
             action-subtext=${msg(
                 str`Are you sure you want to remove user ${this.targetUser?.username} from the following roles?`,
             )}

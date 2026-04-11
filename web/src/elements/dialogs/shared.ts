@@ -139,6 +139,8 @@ export interface TransclusionChildElement extends LitElement {
      * when this element is transcluded.
      */
     cancelable?: boolean;
+
+    formatARIALabel?(): string;
 }
 
 /**

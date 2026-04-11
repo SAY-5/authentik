@@ -65,13 +65,13 @@ export function renderForm({ provider, errors, brand }: RADIUSProviderFormProps)
         </ak-text-input>
 
         <ak-form-element-horizontal
-            label=${msg("Authentication flow")}
+            label=${msg("Authentication Flow")}
             required
             name="authorizationFlow"
             .errorMessages=${errors.authorizationFlow}
         >
             <ak-branded-flow-search
-                label=${msg("Authentication flow")}
+                label=${msg("Authentication Flow")}
                 placeholder=${msg("Select an authentication flow...")}
                 flowType=${FlowDesignationEnum.Authentication}
                 .currentFlow=${provider.authorizationFlow}
@@ -135,12 +135,12 @@ export function renderForm({ provider, errors, brand }: RADIUSProviderFormProps)
         <ak-form-group label="${msg("Advanced flow settings")}">
             <div class="pf-c-form">
                 <ak-form-element-horizontal
-                    label=${msg("Invalidation flow")}
+                    label=${msg("Invalidation Flow")}
                     name="invalidationFlow"
                     required
                 >
                     <ak-flow-search
-                        label=${msg("Invalidation flow")}
+                        label=${msg("Invalidation Flow")}
                         placeholder=${msg("Select an invalidation flow...")}
                         flowType=${FlowDesignationEnum.Invalidation}
                         .currentFlow=${provider.invalidationFlow}
