@@ -21,7 +21,6 @@ import { formatUserDisplayName } from "#common/users";
 
 import { IconEditButton, modalInvoker } from "#elements/dialogs";
 import { WithBrandConfig } from "#elements/mixins/branding";
-import { showAPIErrorMessage } from "#elements/messages/MessageContainer";
 import { CapabilitiesEnum, WithCapabilitiesConfig } from "#elements/mixins/capabilities";
 import { WithLicenseSummary } from "#elements/mixins/license";
 import { WithSession } from "#elements/mixins/session";
