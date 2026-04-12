@@ -98,9 +98,9 @@ def user_save_propagate_agent_active(
         return
     agents = _agent_qs_for_owner(instance.pk)
     if not instance.is_active:
-        # Also clear any existing sessions on the agents being deactivated
-        for agent in agents.filter(is_active=True):
-            Session.objects.filter(authenticatedsession__user=agent).delete()
+        Session.objects.filter(
+            authenticatedsession__user__in=agents.filter(is_active=True)
+        ).delete()
     agents.update(is_active=instance.is_active)
 
 

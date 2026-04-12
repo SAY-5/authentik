@@ -862,7 +862,6 @@ class UserViewSet(
         if not request.user.is_superuser and not is_owner:
             return Response(status=403)
 
-        # Resolve the owner for access validation
         try:
             owner = User.objects.get(pk=owner_pk)
         except User.DoesNotExist:

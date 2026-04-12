@@ -21,8 +21,7 @@ def _deactivate_agent_users():
         attributes__contains={USER_ATTRIBUTE_IS_AGENT: True},
         is_active=True,
     )
-    for agent in agents:
-        Session.objects.filter(authenticatedsession__user=agent).delete()
+    Session.objects.filter(authenticatedsession__user__in=agents).delete()
     agents.update(is_active=False)
 
 
