@@ -75,9 +75,14 @@ from authentik.core.middleware import (
     SESSION_KEY_IMPERSONATE_USER,
 )
 from authentik.core.models import (
+    USER_ATTRIBUTE_AGENT_ALLOWED_APPS,
+    USER_ATTRIBUTE_AGENT_OWNER_PK,
+    USER_ATTRIBUTE_IS_AGENT,
     USER_ATTRIBUTE_TOKEN_EXPIRING,
+    USER_PATH_AGENT,
     USER_PATH_SERVICE_ACCOUNT,
     USERNAME_MAX_LENGTH,
+    Application,
     Group,
     Session,
     Token,
@@ -86,6 +91,7 @@ from authentik.core.models import (
     UserTypes,
     default_token_duration,
 )
+from authentik.core.apps import AppAccessWithoutBindings
 from authentik.endpoints.connectors.agent.auth import AgentAuth
 from authentik.events.models import Event, EventAction
 from authentik.flows.exceptions import FlowNonApplicableException
@@ -95,6 +101,7 @@ from authentik.flows.views.executor import QS_KEY_TOKEN
 from authentik.lib.avatars import get_avatar
 from authentik.lib.utils.reflection import ConditionalInheritance
 from authentik.lib.utils.time import timedelta_from_string, timedelta_string_validator
+from authentik.policies.engine import PolicyEngine
 from authentik.rbac.api.roles import RoleSerializer
 from authentik.rbac.decorators import permission_required
 from authentik.rbac.models import Role, get_permission_choices
@@ -249,7 +256,26 @@ class UserSerializer(ModelSerializer):
             raise ValidationError(_("Can't change internal service account to other user type."))
         if not self.instance and user_type == UserTypes.INTERNAL_SERVICE_ACCOUNT.value:
             raise ValidationError(_("Setting a user to internal service account is not allowed."))
+        if (
+            self.instance
+            and self.instance.attributes.get(USER_ATTRIBUTE_IS_AGENT)
+            and user_type != UserTypes.SERVICE_ACCOUNT.value
+        ):
+            raise ValidationError(_("Can't change agent user to other user type."))
         return user_type
+
+    def validate_attributes(self, attrs: dict) -> dict:
+        """Prevent removal of agent marker or change of agent owner"""
+        if not self.instance:
+            return attrs
+        if self.instance.attributes.get(USER_ATTRIBUTE_IS_AGENT):
+            if not attrs.get(USER_ATTRIBUTE_IS_AGENT):
+                raise ValidationError(_("Can't remove agent marker from agent user."))
+            existing_owner = self.instance.attributes.get(USER_ATTRIBUTE_AGENT_OWNER_PK)
+            new_owner = attrs.get(USER_ATTRIBUTE_AGENT_OWNER_PK)
+            if existing_owner is not None and new_owner != existing_owner:
+                raise ValidationError(_("Can't change owner of agent user."))
+        return attrs
 
     def validate(self, attrs: dict) -> dict:
         if self.instance and self.instance.type == UserTypes.INTERNAL_SERVICE_ACCOUNT:
@@ -402,6 +428,24 @@ class UserServiceAccountSerializer(PassiveSerializer):
     expires = DateTimeField(
         required=False,
         help_text="If not provided, valid for 360 days",
+    )
+
+
+class UserAgentSerializer(PassiveSerializer):
+    """Payload to create an agent user"""
+
+    name = CharField(
+        required=True,
+        validators=[UniqueValidator(queryset=User.objects.all().order_by("username"))],
+    )
+
+
+class UserAgentAllowedAppsSerializer(PassiveSerializer):
+    """Payload to replace the allowed application list for an agent user"""
+
+    allowed_apps = ListField(
+        child=UUIDField(),
+        help_text="List of application UUIDs the agent is permitted to access.",
     )
 
 
@@ -690,6 +734,176 @@ class UserViewSet(
                     data={"non_field_errors": [_("Unknown error occurred")]},
                     status=500,
                 )
+
+    @permission_required(None, ["authentik_core.add_agent_user"])
+    @extend_schema(
+        request=UserAgentSerializer,
+        responses={
+            200: inline_serializer(
+                "UserAgentResponse",
+                {
+                    "username": CharField(required=True),
+                    "token": CharField(required=True),
+                    "user_uid": CharField(required=True),
+                    "user_pk": IntegerField(required=True),
+                },
+            )
+        },
+    )
+    @action(
+        detail=False,
+        methods=["POST"],
+        pagination_class=None,
+        filter_backends=[],
+    )
+    @validate(UserAgentSerializer)
+    def agent(self, request: Request, body: UserAgentSerializer) -> Response:
+        """Create a new agent user. Enterprise only. Caller must be an internal user."""
+        from authentik.enterprise.license import LicenseKey
+
+        if not LicenseKey.cached_summary().status.is_valid:
+            raise ValidationError(_("Enterprise is required to use this endpoint."))
+
+        if request.user.type != UserTypes.INTERNAL:
+            raise ValidationError(_("Only internal users can create agent users."))
+
+        username = body.validated_data["name"]
+        with atomic():
+            try:
+                user: User = User.objects.create(
+                    username=username,
+                    name=username,
+                    type=UserTypes.SERVICE_ACCOUNT,
+                    attributes={
+                        USER_ATTRIBUTE_IS_AGENT: True,
+                        USER_ATTRIBUTE_AGENT_OWNER_PK: str(request.user.pk),
+                        USER_ATTRIBUTE_AGENT_ALLOWED_APPS: [],
+                    },
+                    path=USER_PATH_AGENT,
+                )
+                user.set_unusable_password()
+                user.save()
+
+                token = Token.objects.create(
+                    identifier=slugify(f"agent-{username}-token"),
+                    intent=TokenIntents.INTENT_API,
+                    user=user,
+                    expires=now() + timedelta(hours=24),
+                    expiring=True,
+                )
+                # Allow the agent to read its own rotated token key
+                user.assign_perms_to_managed_role("authentik_core.view_token_key", token)
+
+                return Response(
+                    {
+                        "username": user.username,
+                        "user_uid": user.uid,
+                        "user_pk": user.pk,
+                        "token": token.key,
+                    }
+                )
+            except IntegrityError as exc:
+                error_msg = str(exc).lower()
+                if "unique" in error_msg:
+                    return Response(
+                        data={
+                            "non_field_errors": [
+                                _("A user with this username already exists")
+                            ]
+                        },
+                        status=400,
+                    )
+                else:
+                    LOGGER.warning("Agent user creation failed", exc=exc)
+                    return Response(
+                        data={"non_field_errors": [_("Unable to create user")]},
+                        status=400,
+                    )
+            except (ValueError, TypeError) as exc:
+                LOGGER.error("Unexpected error during agent user creation", exc=exc)
+                return Response(
+                    data={"non_field_errors": [_("Unknown error occurred")]},
+                    status=500,
+                )
+
+    @extend_schema(
+        request=UserAgentAllowedAppsSerializer,
+        responses={
+            200: UserAgentAllowedAppsSerializer,
+            400: OpenApiResponse(description="Invalid app UUIDs or owner lacks access"),
+            403: OpenApiResponse(description="Not the agent's owner or superuser"),
+        },
+    )
+    @action(
+        detail=True,
+        methods=["PUT"],
+        url_path="agent_allowed_apps",
+        url_name="agent-allowed-apps",
+        pagination_class=None,
+        filter_backends=[],
+    )
+    @validate(UserAgentAllowedAppsSerializer)
+    def agent_allowed_apps(
+        self, request: Request, pk: int, body: UserAgentAllowedAppsSerializer
+    ) -> Response:
+        """Replace the allowed application list for an agent user.
+        Caller must be the agent's owner or a superuser. Each supplied application UUID
+        is validated against the owner's current access."""
+        agent: User = self.get_object()
+
+        if not agent.attributes.get(USER_ATTRIBUTE_IS_AGENT):
+            return Response(
+                data={"non_field_errors": [_("User is not an agent user.")]},
+                status=400,
+            )
+
+        owner_pk = agent.attributes.get(USER_ATTRIBUTE_AGENT_OWNER_PK)
+        is_owner = str(request.user.pk) == owner_pk
+        if not request.user.is_superuser and not is_owner:
+            return Response(status=403)
+
+        # Resolve the owner for access validation
+        try:
+            owner = User.objects.get(pk=owner_pk)
+        except User.DoesNotExist:
+            return Response(
+                data={"non_field_errors": [_("Agent owner not found.")]},
+                status=400,
+            )
+
+        app_uuids = body.validated_data["allowed_apps"]
+        errors = []
+        for app_uuid in app_uuids:
+            try:
+                app = Application.objects.get(pk=app_uuid)
+            except Application.DoesNotExist:
+                errors.append(str(app_uuid))
+                continue
+            engine = PolicyEngine(app, owner, request)
+            engine.empty_result = AppAccessWithoutBindings.get()
+            engine.use_cache = False
+            engine.build()
+            if not engine.passing:
+                errors.append(str(app_uuid))
+
+        if errors:
+            return Response(
+                data={
+                    "allowed_apps": [
+                        _(
+                            "Owner does not have access to application %(uuid)s "
+                            "or application does not exist."
+                        )
+                        % {"uuid": uuid}
+                        for uuid in errors
+                    ]
+                },
+                status=400,
+            )
+
+        agent.attributes[USER_ATTRIBUTE_AGENT_ALLOWED_APPS] = [str(u) for u in app_uuids]
+        agent.save(update_fields=["attributes"])
+        return Response({"allowed_apps": [str(u) for u in app_uuids]})
 
     @extend_schema(responses={200: SessionUserSerializer(many=False)})
     @action(

@@ -5,6 +5,7 @@ import {
     EventActions,
     IntentEnum,
     SeverityEnum,
+    User,
     UserTypeEnum,
 } from "@goauthentik/api";
 
@@ -122,3 +123,8 @@ const _userTypeToLabel = new Map<UserTypeEnum | undefined, string>([
 
 export const userTypeToLabel = (type?: UserTypeEnum): string =>
     _userTypeToLabel.get(type) ?? type ?? "";
+
+const USER_ATTRIBUTE_IS_AGENT = "goauthentik.io/agent/is-agent";
+
+export const userDisplayTypeLabel = (user: User): string =>
+    user.attributes?.[USER_ATTRIBUTE_IS_AGENT] ? msg("Agent account") : userTypeToLabel(user.type);

@@ -1,3 +1,4 @@
+import "#admin/users/AgentForm";
 import "#admin/users/ServiceAccountForm";
 import "#admin/users/UserForm";
 import "#components/ak-hidden-text-input";
@@ -13,7 +14,7 @@ import { WizardPage } from "#elements/wizard/WizardPage";
 
 import { UserForm } from "#admin/users/UserForm";
 
-import { TypeCreate, UserServiceAccountResponse, UserTypeEnum } from "@goauthentik/api";
+import { TypeCreate, UserAgentResponse, UserServiceAccountResponse, UserTypeEnum } from "@goauthentik/api";
 
 import { msg } from "@lit/localize";
 import { CSSResult, html } from "lit";
@@ -25,6 +26,10 @@ import PFFormControl from "@patternfly/patternfly/components/FormControl/form-co
 const SERVICE_ACCOUNT_FORM_SLOT =
     `type-ak-user-service-account-form-${UserTypeEnum.ServiceAccount}` as const;
 const SERVICE_ACCOUNT_RESULT_SLOT = `${SERVICE_ACCOUNT_FORM_SLOT}-result` as const;
+
+const AGENT_FORM_SLOT = "type-ak-user-agent-form-agent" as const;
+const AGENT_RESULT_SLOT = `${AGENT_FORM_SLOT}-result` as const;
+const AGENT_MODEL_NAME = "agent" as const;
 
 const DEFAULT_USER_TYPES: TypeCreate[] = [
     {
@@ -42,6 +47,15 @@ const DEFAULT_USER_TYPES: TypeCreate[] = [
         ),
     },
     {
+        component: "ak-user-agent-form",
+        modelName: AGENT_MODEL_NAME,
+        name: msg("Agent User"),
+        description: msg(
+            "AI agent acting on behalf of an internal user, with scoped application access.",
+        ),
+        requiresEnterprise: true,
+    },
+    {
         component: "ak-user-service-account-form",
         modelName: UserTypeEnum.ServiceAccount,
         name: msg("Service Account"),
@@ -51,6 +65,7 @@ const DEFAULT_USER_TYPES: TypeCreate[] = [
 
 export interface UserWizardState {
     [SERVICE_ACCOUNT_FORM_SLOT]?: UserServiceAccountResponse;
+    [AGENT_FORM_SLOT]?: UserAgentResponse;
 }
 
 @customElement("ak-user-service-account-result-page")
@@ -110,6 +125,64 @@ export class ServiceAccountResultPage extends WizardPage<UserWizardState> {
     }
 }
 
+@customElement("ak-user-agent-result-page")
+export class AgentResultPage extends WizardPage<UserWizardState> {
+    public static styles: CSSResult[] = [PFForm, PFFormControl];
+
+    public override headline = msg("Review Credentials");
+
+    @state()
+    protected result: UserAgentResponse | null = null;
+
+    public override activeCallback = async (): Promise<void> => {
+        const result = this.host.state[AGENT_FORM_SLOT];
+
+        if (!result) {
+            throw new TypeError("Expected agent creation result in wizard state.");
+        }
+
+        this.result = result;
+
+        this.host.valid = true;
+        this.host.cancelable = false;
+    };
+
+    public override nextCallback = async (): Promise<boolean> => true;
+
+    protected override render(): SlottedTemplateResult {
+        if (!this.result) {
+            return null;
+        }
+
+        const { username, token } = this.result;
+
+        return html`<h3 class="pf-c-wizard__main-title">${msg("Review Credentials")}</h3>
+            <h4 class="pf-c-title pf-m-md">
+                ${msg(
+                    "Use the username and token below to authenticate the agent. The token expires "
+                        + "after 24 hours and must be rotated before expiry.",
+                )}
+            </h4>
+            <form class="pf-c-form pf-m-horizontal">
+                <ak-text-input
+                    label=${msg("Username")}
+                    value=${username}
+                    input-hint="code"
+                    readonly
+                ></ak-text-input>
+                <ak-hidden-text-input
+                    label=${msg("Token")}
+                    value="${token}"
+                    input-hint="code"
+                    readonly
+                    .help=${msg(
+                        "Valid for 24 hours. Rotate before expiry or retrieve from the Token List.",
+                    )}
+                ></ak-hidden-text-input>
+            </form>`;
+    }
+}
+
 @customElement("ak-user-wizard")
 export class AKUserWizard extends CreateWizard {
     /**
@@ -128,17 +201,16 @@ export class AKUserWizard extends CreateWizard {
 
     protected override selectSteps(type: TypeCreate, currentSteps: string[]): string[] {
         const { modelName } = type;
-        const serviceAccount = modelName === UserTypeEnum.ServiceAccount;
 
-        if (!serviceAccount) {
-            return super.selectSteps(type, currentSteps);
+        if (modelName === UserTypeEnum.ServiceAccount) {
+            return [SERVICE_ACCOUNT_FORM_SLOT, SERVICE_ACCOUNT_RESULT_SLOT];
         }
 
-        return [
-            // ---
-            SERVICE_ACCOUNT_FORM_SLOT,
-            SERVICE_ACCOUNT_RESULT_SLOT,
-        ];
+        if (modelName === AGENT_MODEL_NAME) {
+            return [AGENT_FORM_SLOT, AGENT_RESULT_SLOT];
+        }
+
+        return super.selectSteps(type, currentSteps);
     }
 
     protected override renderWizardStep(type: TypeCreate): SlottedTemplateResult {
@@ -151,11 +223,23 @@ export class AKUserWizard extends CreateWizard {
             ];
         }
 
+        if (type.modelName === AGENT_MODEL_NAME) {
+            return [
+                super.renderWizardStep(type),
+                html`<ak-user-agent-result-page
+                    slot=${AGENT_RESULT_SLOT}
+                ></ak-user-agent-result-page>`,
+            ];
+        }
+
         return super.renderWizardStep(type);
     }
 
     protected override assembleFormProps(type: TypeCreate): LitPropertyRecord<UserForm | object> {
-        if (type.modelName === UserTypeEnum.ServiceAccount) {
+        if (
+            type.modelName === UserTypeEnum.ServiceAccount ||
+            type.modelName === AGENT_MODEL_NAME
+        ) {
             return {};
         }
 
@@ -172,5 +256,7 @@ declare global {
     interface HTMLElementTagNameMap {
         "ak-user-wizard": AKUserWizard;
         "ak-user-service-account-result-page": ServiceAccountResultPage;
+        "ak-user-agent-result-page": AgentResultPage;
+        "ak-user-agent-form": AgentForm;
     }
 }

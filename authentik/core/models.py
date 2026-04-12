@@ -66,7 +66,12 @@ USER_ATTRIBUTE_TOKEN_MAXIMUM_LIFETIME = f"{_USER_ATTR_PREFIX}/token-maximum-life
 USER_ATTRIBUTE_CHANGE_USERNAME = f"{_USER_ATTR_PREFIX}/can-change-username"
 USER_ATTRIBUTE_CHANGE_NAME = f"{_USER_ATTR_PREFIX}/can-change-name"
 USER_ATTRIBUTE_CHANGE_EMAIL = f"{_USER_ATTR_PREFIX}/can-change-email"
+_USER_ATTR_AGENT_PREFIX = f"{USER_PATH_SYSTEM_PREFIX}/agent"
+USER_ATTRIBUTE_IS_AGENT = f"{_USER_ATTR_AGENT_PREFIX}/is-agent"
+USER_ATTRIBUTE_AGENT_OWNER_PK = f"{_USER_ATTR_AGENT_PREFIX}/owner-pk"
+USER_ATTRIBUTE_AGENT_ALLOWED_APPS = f"{_USER_ATTR_AGENT_PREFIX}/allowed-apps"
 USER_PATH_SERVICE_ACCOUNT = f"{USER_PATH_SYSTEM_PREFIX}/service-accounts"
+USER_PATH_AGENT = f"{USER_PATH_SYSTEM_PREFIX}/agents"
 
 options.DEFAULT_NAMES = options.DEFAULT_NAMES + (
     # used_by API that allows models to specify if they shadow an object
@@ -385,6 +390,7 @@ class User(SerializerModel, AttributesMixin, AbstractUser):
             ("impersonate", _("Can impersonate other users")),
             ("preview_user", _("Can preview user data sent to providers")),
             ("view_user_applications", _("View applications the user has access to")),
+            ("add_agent_user", _("Can create agent users")),
         ]
         indexes = [
             models.Index(fields=["last_login"]),

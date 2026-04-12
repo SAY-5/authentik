@@ -22,6 +22,8 @@ import { css, CSSResult, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 
+const USER_ATTRIBUTE_IS_AGENT = "goauthentik.io/agent/is-agent";
+
 const UserTypeOptions: readonly RadioOption<UserTypeEnum>[] = [
     {
         label: msg("Internal"),
@@ -64,6 +66,10 @@ export class UserForm extends ModelForm<User, number> {
     @property({ attribute: false })
     public userType: UserTypeEnum | null = null;
 
+    private get isAgent(): boolean {
+        return !!this.instance?.attributes?.[USER_ATTRIBUTE_IS_AGENT];
+    }
+
     static get defaultUserAttributes(): { [key: string]: unknown } {
         return {};
     }
@@ -89,23 +95,25 @@ export class UserForm extends ModelForm<User, number> {
     protected override assignInstance(instance: User): void {
         super.assignInstance(instance);
 
-        const { verboseName, verboseNamePlural } = match(instance.type)
-            .with(UserTypeEnum.Internal, () => ({
-                verboseName: msg("Internal User"),
-                verboseNamePlural: msg("Internal Users"),
-            }))
-            .with(UserTypeEnum.External, () => ({
-                verboseName: msg("External User"),
-                verboseNamePlural: msg("External Users"),
-            }))
-            .with(UserTypeEnum.ServiceAccount, () => ({
-                verboseName: msg("Service Account"),
-                verboseNamePlural: msg("Service Accounts"),
-            }))
-            .otherwise(() => ({
-                verboseName: msg("User"),
-                verboseNamePlural: msg("Users"),
-            }));
+        const { verboseName, verboseNamePlural } = this.isAgent
+            ? { verboseName: msg("Agent User"), verboseNamePlural: msg("Agent Users") }
+            : match(instance.type)
+                  .with(UserTypeEnum.Internal, () => ({
+                      verboseName: msg("Internal User"),
+                      verboseNamePlural: msg("Internal Users"),
+                  }))
+                  .with(UserTypeEnum.External, () => ({
+                      verboseName: msg("External User"),
+                      verboseNamePlural: msg("External Users"),
+                  }))
+                  .with(UserTypeEnum.ServiceAccount, () => ({
+                      verboseName: msg("Service Account"),
+                      verboseNamePlural: msg("Service Accounts"),
+                  }))
+                  .otherwise(() => ({
+                      verboseName: msg("User"),
+                      verboseNamePlural: msg("Users"),
+                  }));
 
         this.verboseName = verboseName;
         this.verboseNamePlural = verboseNamePlural;
@@ -208,21 +216,32 @@ export class UserForm extends ModelForm<User, number> {
                       required
                       name="type"
                       .value=${this.instance?.type}
-                      .options=${[
-                          ...UserTypeOptions,
-                          ...(this.instance
-                              ? [
-                                    {
-                                        label: msg("Internal Service account"),
-                                        value: UserTypeEnum.InternalServiceAccount,
-                                        disabled: true,
-                                        description: html`${msg(
-                                            "Managed by authentik and cannot be assigned manually.",
-                                        )}`,
-                                    },
-                                ]
-                              : []),
-                      ] satisfies RadioOption<UserTypeEnum>[]}
+                      .options=${(this.isAgent
+                          ? [
+                                {
+                                    label: msg("Agent account"),
+                                    value: UserTypeEnum.ServiceAccount,
+                                    disabled: true,
+                                    description: html`${msg(
+                                        "AI agent acting on behalf of an internal user. Type cannot be changed.",
+                                    )}`,
+                                },
+                            ]
+                          : [
+                                ...UserTypeOptions,
+                                ...(this.instance
+                                    ? [
+                                          {
+                                              label: msg("Internal Service account"),
+                                              value: UserTypeEnum.InternalServiceAccount,
+                                              disabled: true,
+                                              description: html`${msg(
+                                                  "Managed by authentik and cannot be assigned manually.",
+                                              )}`,
+                                          },
+                                      ]
+                                    : []),
+                            ]) satisfies RadioOption<UserTypeEnum>[]}
                   ></ak-radio-input>`}
             <ak-text-input
                 name="email"
