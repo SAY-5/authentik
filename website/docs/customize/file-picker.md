@@ -24,9 +24,54 @@ The file picker accepts the following value types.
 | Uploaded file path    | `branding/company-logo.svg`                     | Relative path to a file stored in authentik's media storage. You can upload these from **Customization** > **Files**. When authentik serves these files, it uses a short-lived protected URL rather than a fixed public path. |
 | Built-in static asset | `/static/dist/assets/icons/icon_left_brand.svg` | Absolute path to a built-in asset shipped with authentik.                                                                                                                                                                     |
 | External URL          | `https://cdn.example.com/branding/logo.svg`     | Useful when files are hosted outside authentik.                                                                                                                                                                               |
-| Font Awesome icon     | `fa://fa-circle-user`                           | Supported for icon fields. This is not useful for background image fields.                                                                                                                                                    |
+| Font Awesome icon     | `fa://fa-circle-user`                           | Supported for icon fields. See [Font Awesome icons](#font-awesome-icons) for syntax, supported families, and usage notes. This is not useful for background image fields.                                                     |
 
 When you open the picker, authentik lists uploaded files and built-in static assets. You can also type a custom value directly into the field.
+
+## Font Awesome icons
+
+Use Font Awesome values only in icon fields such as application icons, source icons, and similar picker-backed icon settings. They are not useful for logo or background image fields.
+
+The simplest format is `fa://<icon>`. If you omit the family, authentik uses Font Awesome Solid.
+
+Examples:
+
+- `fa://fa-shield-halved`
+- `fa://shield-halved`
+- `fa://fa-circle-user`
+
+To choose a specific family, use `fa://<family>/<icon>`. The icon name can include or omit the `fa-` prefix.
+
+Examples:
+
+- `fa://brands/fa-google`
+- `fa://fab/fa-linkedin`
+- `fa://regular/fa-circle-user`
+- `fa://light/fa-coffee`
+- `fa://sharp-solid/fa-check`
+
+authentik also accepts raw Font Awesome class syntax such as `fa://fab fa-github` when you already have the class list and want to pass it through directly.
+
+Supported family prefixes:
+
+| Family                | Aliases                                                      | Resulting classes             |
+| --------------------- | ------------------------------------------------------------ | ----------------------------- |
+| Solid                 | `solid`, `fas`, `fa-solid`                                   | `fa-solid`                    |
+| Regular               | `regular`, `far`, `fa-regular`                               | `fa-regular`                  |
+| Brands                | `brands`, `fab`, `fa-brands`                                 | `fa-brands`                   |
+| Light                 | `light`, `fal`, `fa-light`                                   | `fa-light`                    |
+| Thin                  | `thin`, `fat`, `fa-thin`                                     | `fa-thin`                     |
+| Duotone               | `duotone`, `fad`, `fa-duotone`                               | `fa-duotone`                  |
+| Sharp solid           | `sharp-solid`, `fass`, `fa-sharp-solid`                      | `fa-sharp fa-solid`           |
+| Sharp regular         | `sharp-regular`, `fasr`, `fa-sharp-regular`                  | `fa-sharp fa-regular`         |
+| Sharp light           | `sharp-light`, `fasl`, `fa-sharp-light`                      | `fa-sharp fa-light`           |
+| Sharp thin            | `sharp-thin`, `fast`, `fa-sharp-thin`                        | `fa-sharp fa-thin`            |
+| Sharp duotone solid   | `sharp-duotone-solid`, `fasds`, `fa-sharp-duotone-solid`     | `fa-sharp-duotone fa-solid`   |
+| Sharp duotone regular | `sharp-duotone-regular`, `fasdr`, `fa-sharp-duotone-regular` | `fa-sharp-duotone fa-regular` |
+| Sharp duotone light   | `sharp-duotone-light`, `fasdl`, `fa-sharp-duotone-light`     | `fa-sharp-duotone fa-light`   |
+| Sharp duotone thin    | `sharp-duotone-thin`, `fasdt`, `fa-sharp-duotone-thin`       | `fa-sharp-duotone fa-thin`    |
+
+authentik ships the Font Awesome Free styles needed for `solid`, `regular`, and `brands`. The Pro families, such as `light`, `thin`, `duotone`, and the sharp variants, work when you load the matching Font Awesome Pro CSS yourself, for example through a Kit embed or brand custom CSS. authentik does not bundle Font Awesome Pro; it only passes the requested family classes through to the rendered icon.
 
 ## Theme-aware values with `%(theme)s`
 

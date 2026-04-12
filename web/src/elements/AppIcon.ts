@@ -10,8 +10,6 @@ import { msg, str } from "@lit/localize";
 import { CSSResult, html, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
-import PFFontAwesomeIcons from "@patternfly/patternfly/base/patternfly-fa-icons.css";
-
 export interface IAppIcon {
     name?: string | null;
     icon?: string | null;
@@ -23,7 +21,7 @@ export interface IAppIcon {
 export class AppIcon extends AKElement implements IAppIcon {
     public static readonly FontAwesomeProtocol = FontAwesomeProtocol;
 
-    static styles: CSSResult[] = [PFFontAwesomeIcons, Styles];
+    static styles: CSSResult[] = [Styles];
 
     @property({ type: String })
     public name: string | null = null;
@@ -38,8 +36,7 @@ export class AppIcon extends AKElement implements IAppIcon {
     public size: PFSize = PFSize.Medium;
 
     #wrap(icon: TemplateResult): TemplateResult {
-        // PatternFly's font awesome rules use descendant selectors (`* .fa-*`),
-        // so the icon needs at least one ancestor inside the shadow DOM to pick up those styles.
+        // Keep the icon wrapped so image and font-based variants share the same layout box.
         return html`<span class="icon-wrapper">${icon}</span>`;
     }
 

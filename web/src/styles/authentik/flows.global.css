@@ -1,7 +1,10 @@
 @import "@patternfly/patternfly/base/patternfly-common.css";
 @import "@patternfly/patternfly/base/patternfly-globals.css";
 @import "@patternfly/patternfly/base/patternfly-themes.css";
-@import "@patternfly/patternfly/base/patternfly-fa-icons.css";
+@import "@fortawesome/fontawesome-free/css/fontawesome.min.css";
+@import "@fortawesome/fontawesome-free/css/solid.min.css";
+@import "@fortawesome/fontawesome-free/css/regular.min.css";
+@import "@fortawesome/fontawesome-free/css/brands.min.css";
 @import "@patternfly/patternfly/base/patternfly-pf-icons.css";
 
 @import "@patternfly/patternfly/components/Spinner/spinner.css";

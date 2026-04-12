@@ -20,7 +20,7 @@ To upload and use image files, follow these steps:
 :::info Accepted values in picker fields
 Fields such as brand logos, favicons, flow backgrounds, application icons, and source icons all use the same file picker. Those fields can accept uploaded files, built-in static assets, external URLs, Font Awesome icons, and theme-aware paths using `%(theme)s`.
 
-See [File picker values](./file-picker.md) for the full list of supported values and path rules.
+See [File picker values](./file-picker.md) for the full list of supported values, Font Awesome family syntax, and path rules.
 :::
 
 ## Technical deep dive

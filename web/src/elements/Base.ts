@@ -13,6 +13,11 @@ import PFBase from "#styles/patternfly/base.css" with { type: "bundled-text" };
 import { CSSResult, CSSResultGroup, CSSResultOrNative, LitElement, PropertyValues } from "lit";
 import { property } from "lit/decorators.js";
 
+import FABrands from "@fortawesome/fontawesome-free/css/brands.min.css";
+import FAFontAwesome from "@fortawesome/fontawesome-free/css/fontawesome.min.css";
+import FARegular from "@fortawesome/fontawesome-free/css/regular.min.css";
+import FASolid from "@fortawesome/fontawesome-free/css/solid.min.css";
+
 /**
  * Patternfly base styles, providing common variables and resets.
  *
@@ -21,6 +26,10 @@ import { property } from "lit/decorators.js";
  * This style sheet **must** be included before any other styles that depend on Patternfly variables.
  */
 const $PFBase = createStyleSheetUnsafe(PFBase);
+const $FAFontAwesome = createStyleSheetUnsafe(FAFontAwesome);
+const $FASolid = createStyleSheetUnsafe(FASolid);
+const $FARegular = createStyleSheetUnsafe(FARegular);
+const $FABrands = createStyleSheetUnsafe(FABrands);
 
 /**
  * authentik base styles, providing overrides to Patternfly's initial definitions,
@@ -69,6 +78,10 @@ export class AKElement extends LitElement implements AKElementProps {
     protected static override finalizeStyles(styles: CSSResultGroup = []): CSSResultOrNative[] {
         const elementStyles = [
             $PFBase,
+            $FAFontAwesome,
+            $FASolid,
+            $FARegular,
+            $FABrands,
             // Route around TSC`s known-to-fail typechecking of `.flat(Infinity)`. Removes types.
             ...([styles] as Array<unknown>).flat(Infinity),
             $AKBase,

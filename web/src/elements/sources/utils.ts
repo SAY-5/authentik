@@ -15,7 +15,7 @@ export function renderSourceIcon(
     const fallback = html`<i
         part="source-icon"
         role="img"
-        class="fas fa-share-square"
+        class="fa-solid fa-share-square"
         title="${name}"
     ></i>`;
     const icon = renderDynamicIcon({

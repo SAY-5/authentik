@@ -5,6 +5,14 @@ asgi
 azuread
 Azuread
 buildx
+fass
+fasdl
+fasdr
+fasds
+fasdt
+fasl
+fasr
+fast
 goauthentik
 lxml
 pässwörd

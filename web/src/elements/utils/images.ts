@@ -11,6 +11,94 @@ import { ImgHTMLAttributes } from "react";
 import { html, nothing, TemplateResult } from "lit";
 
 export const FontAwesomeProtocol = "fa://";
+export const FA_FAMILY_MAP: Record<string, string[]> = {
+    "brands": ["fa-brands"],
+    "fab": ["fa-brands"],
+    "fa-brands": ["fa-brands"],
+    "duotone": ["fa-duotone"],
+    "fad": ["fa-duotone"],
+    "fa-duotone": ["fa-duotone"],
+    "light": ["fa-light"],
+    "fal": ["fa-light"],
+    "fa-light": ["fa-light"],
+    "regular": ["fa-regular"],
+    "far": ["fa-regular"],
+    "fa-regular": ["fa-regular"],
+    "solid": ["fa-solid"],
+    "fas": ["fa-solid"],
+    "fa-solid": ["fa-solid"],
+    "thin": ["fa-thin"],
+    "fat": ["fa-thin"],
+    "fa-thin": ["fa-thin"],
+    "sharp-solid": ["fa-sharp", "fa-solid"],
+    "fass": ["fa-sharp", "fa-solid"],
+    "fa-sharp-solid": ["fa-sharp", "fa-solid"],
+    "sharp-regular": ["fa-sharp", "fa-regular"],
+    "fasr": ["fa-sharp", "fa-regular"],
+    "fa-sharp-regular": ["fa-sharp", "fa-regular"],
+    "sharp-light": ["fa-sharp", "fa-light"],
+    "fasl": ["fa-sharp", "fa-light"],
+    "fa-sharp-light": ["fa-sharp", "fa-light"],
+    "sharp-thin": ["fa-sharp", "fa-thin"],
+    "fast": ["fa-sharp", "fa-thin"],
+    "fa-sharp-thin": ["fa-sharp", "fa-thin"],
+    "sharp-duotone-solid": ["fa-sharp-duotone", "fa-solid"],
+    "fasds": ["fa-sharp-duotone", "fa-solid"],
+    "fa-sharp-duotone-solid": ["fa-sharp-duotone", "fa-solid"],
+    "sharp-duotone-regular": ["fa-sharp-duotone", "fa-regular"],
+    "fasdr": ["fa-sharp-duotone", "fa-regular"],
+    "fa-sharp-duotone-regular": ["fa-sharp-duotone", "fa-regular"],
+    "sharp-duotone-light": ["fa-sharp-duotone", "fa-light"],
+    "fasdl": ["fa-sharp-duotone", "fa-light"],
+    "fa-sharp-duotone-light": ["fa-sharp-duotone", "fa-light"],
+    "sharp-duotone-thin": ["fa-sharp-duotone", "fa-thin"],
+    "fasdt": ["fa-sharp-duotone", "fa-thin"],
+    "fa-sharp-duotone-thin": ["fa-sharp-duotone", "fa-thin"],
+};
+const FontAwesomeStyleClasses = new Set([
+    "fa",
+    "fab",
+    "fad",
+    "fal",
+    "far",
+    "fas",
+    "fat",
+    "fa-brands",
+    "fa-duotone",
+    "fa-light",
+    "fa-regular",
+    "fa-sharp",
+    "fa-sharp-duotone",
+    "fa-solid",
+    "fa-thin",
+]);
+
+export function getFontAwesomeClasses(src: string, className?: string): string {
+    const rawValue = src.slice(FontAwesomeProtocol.length).trim();
+    const [familyKey, iconFromFamily] = rawValue.split("/", 2);
+    const familyClasses = FA_FAMILY_MAP[familyKey] ?? [];
+    const rawClasses = (familyClasses.length ? iconFromFamily : rawValue)
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
+    const iconClasses = rawClasses
+        .filter((token) => !FontAwesomeStyleClasses.has(token))
+        .map((token) => (token.startsWith("fa-") ? token : `fa-${token}`));
+    const styleClasses = rawClasses.filter((token) => FontAwesomeStyleClasses.has(token));
+
+    return [
+        className,
+        "font-awesome",
+        ...(familyClasses.length
+            ? familyClasses
+            : styleClasses.length
+              ? styleClasses
+              : ["fa-solid"]),
+        ...iconClasses,
+    ]
+        .filter(Boolean)
+        .join(" ");
+}
 
 export interface VariantUrls {
     fallback?: string | null;
@@ -90,9 +178,7 @@ export const ThemedImage: LitFC<ThemedImageProps> = ({
 
     // Handle Font Awesome icons
     if (src.startsWith(FontAwesomeProtocol)) {
-        const classes = [className, "font-awesome", "fas", src.slice(FontAwesomeProtocol.length)]
-            .filter(Boolean)
-            .join(" ");
+        const classes = getFontAwesomeClasses(src, className);
 
         return html`<i part="icon font-awesome" role="img" class=${classes} ${spread(props)}></i>`;
     }

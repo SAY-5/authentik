@@ -7,7 +7,7 @@ import { AKElement } from "#elements/Base";
 import { WithBrandConfig } from "#elements/mixins/branding";
 import { WithSession } from "#elements/mixins/session";
 import { isAdminRoute } from "#elements/router/utils";
-import { ThemedImage } from "#elements/utils/images";
+import { FontAwesomeProtocol, getFontAwesomeClasses, ThemedImage } from "#elements/utils/images";
 
 import Styles from "#components/ak-page-navbar.css";
 
@@ -145,7 +145,7 @@ export class AKPageNavbar
     protected renderIcon() {
         return guard([this.icon, this.iconImage], () => {
             if (this.icon) {
-                if (this.iconImage && !this.icon.startsWith("fa://")) {
+                if (this.iconImage && !this.icon.startsWith(FontAwesomeProtocol)) {
                     return html`<img
                         aria-hidden="true"
                         class="accent-icon pf-icon"
@@ -154,9 +154,10 @@ export class AKPageNavbar
                     />`;
                 }
 
-                const icon = this.icon.replaceAll("fa://", "fa ");
-
-                return html`<i class="accent-icon ${icon}" aria-hidden="true"></i>`;
+                return html`<i
+                    class=${`accent-icon ${getFontAwesomeClasses(this.icon)}`}
+                    aria-hidden="true"
+                ></i>`;
             }
 
             return nothing;
