@@ -26,13 +26,7 @@ from authentik.core.api.used_by import UsedByMixin
 from authentik.core.api.users import UserSerializer
 from authentik.core.api.utils import ModelSerializer, ThemedUrlsSerializer
 from authentik.core.apps import AppAccessWithoutBindings
-from authentik.core.models import (
-    USER_ATTRIBUTE_AGENT_ALLOWED_APPS,
-    USER_ATTRIBUTE_AGENT_OWNER_PK,
-    Application,
-    User,
-    UserTypes,
-)
+from authentik.core.models import Application, User
 from authentik.events.logs import LogEventSerializer, capture_logs
 from authentik.policies.api.exec import PolicyTestResultSerializer
 from authentik.policies.engine import PolicyEngine
@@ -170,29 +164,9 @@ class ApplicationViewSet(UsedByMixin, ModelViewSet):
     ) -> list[Application]:
         applications = []
         request = self.request._request
-        check_user = user or request.user
         if user:
             request = copy(request)
             request.user = user
-
-        if check_user.type == UserTypes.AGENT:
-            allowed_pks = set(
-                check_user.attributes.get(USER_ATTRIBUTE_AGENT_ALLOWED_APPS, [])
-            )
-            owner_pk = check_user.attributes.get(USER_ATTRIBUTE_AGENT_OWNER_PK)
-            owner = User.objects.filter(pk=owner_pk).first() if owner_pk else None
-            if not owner:
-                return []
-            for application in paginated_apps:
-                if str(application.pk) not in allowed_pks:
-                    continue
-                engine = PolicyEngine(application, owner, request)
-                engine.empty_result = AppAccessWithoutBindings.get()
-                engine.build()
-                if engine.passing:
-                    applications.append(application)
-            return applications
-
         for application in paginated_apps:
             engine = PolicyEngine(application, request.user, request)
             engine.empty_result = AppAccessWithoutBindings.get()
