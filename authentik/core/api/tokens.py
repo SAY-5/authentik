@@ -190,11 +190,9 @@ class TokenViewSet(UsedByMixin, ModelViewSet):
 
         if not request.user.is_superuser:
             is_token_owner = token.user_id == request.user.pk
-            is_agent_owner = (
-                token.user.type == UserTypes.AGENT
-                and str(request.user.pk)
-                == token.user.attributes.get(USER_ATTRIBUTE_AGENT_OWNER_PK)
-            )
+            is_agent_owner = token.user.type == UserTypes.AGENT and str(
+                request.user.pk
+            ) == token.user.attributes.get(USER_ATTRIBUTE_AGENT_OWNER_PK)
             if not is_token_owner and not is_agent_owner:
                 return Response(status=403)
 

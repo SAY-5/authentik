@@ -1063,9 +1063,7 @@ class TestAgentUserAPI(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
         agent.refresh_from_db()
-        self.assertEqual(
-            agent.attributes[USER_ATTRIBUTE_AGENT_ALLOWED_APPS].count(str(app.pk)), 1
-        )
+        self.assertEqual(agent.attributes[USER_ATTRIBUTE_AGENT_ALLOWED_APPS].count(str(app.pk)), 1)
 
     def test_agent_allowed_app_remove(self):
         """PATCH remove: owner can remove a single app from agent's allowed list"""

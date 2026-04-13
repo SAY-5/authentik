@@ -803,9 +803,7 @@ class UserViewSet(
                 owner.assign_perms_to_managed_role("authentik_core.view_user", user)
                 owner.assign_perms_to_managed_role("authentik_core.change_user", user)
                 owner.assign_perms_to_managed_role("authentik_core.delete_user", user)
-                owner.assign_perms_to_managed_role(
-                    "authentik_core.view_user_applications", user
-                )
+                owner.assign_perms_to_managed_role("authentik_core.view_user_applications", user)
 
                 Event.new(
                     EventAction.MODEL_CREATED,
@@ -825,11 +823,7 @@ class UserViewSet(
                 error_msg = str(exc).lower()
                 if "unique" in error_msg:
                     return Response(
-                        data={
-                            "non_field_errors": [
-                                _("A user with this username already exists")
-                            ]
-                        },
+                        data={"non_field_errors": [_("A user with this username already exists")]},
                         status=400,
                     )
                 else:
@@ -987,8 +981,8 @@ class UserViewSet(
 
         try:
             owner = User.objects.get(pk=owner_pk)
-        except User.DoesNotExist:
-            raise ValidationError(_("Agent owner not found."))
+        except User.DoesNotExist as exc:
+            raise ValidationError(_("Agent owner not found.")) from exc
 
         return agent, owner
 

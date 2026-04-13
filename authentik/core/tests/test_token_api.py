@@ -255,5 +255,3 @@ class TestTokenAPI(APITestCase):
                 }
             ).is_valid(raise_exception=True)
         )
-
-

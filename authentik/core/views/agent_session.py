@@ -39,9 +39,7 @@ class AgentSessionView(APIView):
         if token.is_expired:
             return Response({"detail": "Token has expired."}, status=403)
         if token.user.type != UserTypes.AGENT:
-            return Response(
-                {"detail": "Token does not belong to an agent user."}, status=400
-            )
+            return Response({"detail": "Token does not belong to an agent user."}, status=400)
         if not token.user.is_active:
             return Response({"detail": "Agent user is inactive."}, status=403)
 
