@@ -947,11 +947,9 @@ class TestAgentUserAPI(APITestCase):
 
     def test_agent_create_non_internal_user(self):
         """Only internal users can create agent users"""
-        external = create_test_user()
-        external.type = UserTypes.EXTERNAL
-        external.save()
-        external.assign_perms_to_managed_role("authentik_core.add_agent_user")
-        self.client.force_login(external)
+        self.admin.type = UserTypes.EXTERNAL
+        self.admin.save(update_fields=["type"])
+        self.client.force_login(self.admin)
         with patch(
             "authentik.enterprise.license.LicenseKey.cached_summary",
             MagicMock(return_value=MagicMock(status=MagicMock(is_valid=True))),
@@ -1019,7 +1017,7 @@ class TestAgentUserAPI(APITestCase):
         """Non-owner, non-superuser is rejected when updating allowed apps"""
         other = create_test_user()
         agent = self._create_agent(owner=other)
-        self.client.force_login(self.admin)
+        self.client.force_login(self.user)
         response = self.client.put(
             reverse("authentik_api:user-agent-allowed-apps", kwargs={"pk": agent.pk}),
             data={"allowed_apps": []},

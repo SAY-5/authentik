@@ -797,6 +797,8 @@ class UserViewSet(
                     expiring=True,
                 )
                 user.assign_perms_to_managed_role("authentik_core.view_token_key", token)
+                owner.assign_perms_to_managed_role("authentik_core.view_token", token)
+                owner.assign_perms_to_managed_role("authentik_core.view_token_key", token)
 
                 owner.assign_perms_to_managed_role("authentik_core.view_user", user)
                 owner.assign_perms_to_managed_role("authentik_core.change_user", user)
