@@ -1094,15 +1094,21 @@ class TestAgentUserAPI(APITestCase):
 
     def test_token_rotate_by_agent_owner(self):
         """Agent owner can rotate the agent's token"""
-        agent = self._create_agent(owner=self.user)
-        token = Token.objects.create(
-            identifier=generate_id(),
-            intent=TokenIntents.INTENT_API,
-            user=agent,
-            expiring=True,
+        self.user.assign_perms_to_managed_role("authentik_core.add_agent_user")
+        self.client.force_login(self.user)
+        with patch(
+            "authentik.enterprise.license.LicenseKey.cached_summary",
+            MagicMock(return_value=MagicMock(status=MagicMock(is_valid=True))),
+        ):
+            response = self.client.post(
+                reverse("authentik_api:user-agent"),
+                data={"name": "rotate-test-agent"},
+            )
+        self.assertEqual(response.status_code, 200)
+        token = Token.objects.get(
+            user__username="rotate-test-agent", intent=TokenIntents.INTENT_API
         )
         original_key = token.key
-        self.client.force_login(self.user)
         response = self.client.post(
             reverse("authentik_api:token-rotate", kwargs={"identifier": token.identifier}),
         )
