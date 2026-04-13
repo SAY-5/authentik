@@ -2,6 +2,7 @@
 
 from datetime import datetime, timedelta
 from json import loads
+from unittest.mock import MagicMock, patch
 
 from django.urls.base import reverse
 from django.utils.timezone import now
@@ -9,10 +10,15 @@ from rest_framework.test import APITestCase
 
 from authentik.brands.models import Brand
 from authentik.core.models import (
+    USER_ATTRIBUTE_AGENT_ALLOWED_APPS,
+    USER_ATTRIBUTE_AGENT_OWNER_PK,
     USER_ATTRIBUTE_TOKEN_EXPIRING,
+    USER_PATH_AGENT,
+    Application,
     AuthenticatedSession,
     Session,
     Token,
+    TokenIntents,
     User,
     UserTypes,
 )
@@ -878,3 +884,173 @@ class TestUsersAPI(APITestCase):
         self.assertIn(user2.pk, pks)
         # Verify user2 comes before user1 in descending order
         self.assertLess(pks.index(user2.pk), pks.index(user1.pk))
+
+
+class TestAgentUserAPI(APITestCase):
+    """Test agent user API"""
+
+    def setUp(self) -> None:
+        self.admin = create_test_admin_user()
+        self.admin.assign_perms_to_managed_role("authentik_core.add_agent_user")
+        self.user = create_test_user()
+
+    def _create_agent(self, name="test-agent", owner=None):
+        owner = owner or self.admin
+        agent = User.objects.create(
+            username=name,
+            name=name,
+            type=UserTypes.AGENT,
+            attributes={
+                USER_ATTRIBUTE_AGENT_OWNER_PK: str(owner.pk),
+                USER_ATTRIBUTE_AGENT_ALLOWED_APPS: [],
+            },
+            path=USER_PATH_AGENT,
+        )
+        agent.set_unusable_password()
+        agent.save()
+        return agent
+
+    def test_agent_create(self):
+        """Agent user creation"""
+        self.client.force_login(self.admin)
+        with patch(
+            "authentik.enterprise.license.LicenseKey.cached_summary",
+            MagicMock(return_value=MagicMock(status=MagicMock(is_valid=True))),
+        ):
+            response = self.client.post(
+                reverse("authentik_api:user-agent"),
+                data={"name": "test-agent"},
+            )
+        self.assertEqual(response.status_code, 200)
+        agent = User.objects.get(username="test-agent")
+        self.assertEqual(agent.type, UserTypes.AGENT)
+        self.assertEqual(agent.path, USER_PATH_AGENT)
+        self.assertEqual(agent.attributes.get(USER_ATTRIBUTE_AGENT_OWNER_PK), str(self.admin.pk))
+        self.assertEqual(agent.attributes.get(USER_ATTRIBUTE_AGENT_ALLOWED_APPS), [])
+        self.assertFalse(agent.has_usable_password())
+        token = Token.objects.filter(user=agent, intent=TokenIntents.INTENT_API).first()
+        self.assertIsNotNone(token)
+        self.assertTrue(token.expiring)
+
+    def test_agent_create_no_license(self):
+        """Agent creation is rejected without a valid enterprise license"""
+        self.client.force_login(self.admin)
+        with patch(
+            "authentik.enterprise.license.LicenseKey.cached_summary",
+            MagicMock(return_value=MagicMock(status=MagicMock(is_valid=False))),
+        ):
+            response = self.client.post(
+                reverse("authentik_api:user-agent"),
+                data={"name": "test-agent"},
+            )
+        self.assertEqual(response.status_code, 400)
+
+    def test_agent_create_non_internal_user(self):
+        """Only internal users can create agent users"""
+        external = create_test_user()
+        external.type = UserTypes.EXTERNAL
+        external.save()
+        external.assign_perms_to_managed_role("authentik_core.add_agent_user")
+        self.client.force_login(external)
+        with patch(
+            "authentik.enterprise.license.LicenseKey.cached_summary",
+            MagicMock(return_value=MagicMock(status=MagicMock(is_valid=True))),
+        ):
+            response = self.client.post(
+                reverse("authentik_api:user-agent"),
+                data={"name": "test-agent"},
+            )
+        self.assertEqual(response.status_code, 400)
+
+    def test_agent_create_duplicate(self):
+        """Duplicate agent username returns a user-friendly error"""
+        self._create_agent("test-agent-dup")
+        self.client.force_login(self.admin)
+        with patch(
+            "authentik.enterprise.license.LicenseKey.cached_summary",
+            MagicMock(return_value=MagicMock(status=MagicMock(is_valid=True))),
+        ):
+            response = self.client.post(
+                reverse("authentik_api:user-agent"),
+                data={"name": "test-agent-dup"},
+            )
+        self.assertEqual(response.status_code, 400)
+
+    def test_agent_type_cannot_be_changed(self):
+        """Agent user type cannot be changed via the users API"""
+        agent = self._create_agent()
+        self.client.force_login(self.admin)
+        response = self.client.patch(
+            reverse("authentik_api:user-detail", kwargs={"pk": agent.pk}),
+            data={"type": UserTypes.INTERNAL},
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_agent_owner_cannot_be_changed(self):
+        """Agent owner cannot be changed via the users API"""
+        agent = self._create_agent()
+        other = create_test_user()
+        self.client.force_login(self.admin)
+        new_attrs = dict(agent.attributes)
+        new_attrs[USER_ATTRIBUTE_AGENT_OWNER_PK] = str(other.pk)
+        response = self.client.patch(
+            reverse("authentik_api:user-detail", kwargs={"pk": agent.pk}),
+            data={"attributes": new_attrs},
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_agent_allowed_apps_update(self):
+        """Owner can update the agent's allowed apps list"""
+        agent = self._create_agent(owner=self.admin)
+        app = Application.objects.create(name=generate_id(), slug=generate_id())
+        self.client.force_login(self.admin)
+        response = self.client.put(
+            reverse("authentik_api:user-agent-allowed-apps", kwargs={"pk": agent.pk}),
+            data={"allowed_apps": [str(app.pk)]},
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+        agent.refresh_from_db()
+        self.assertIn(str(app.pk), agent.attributes[USER_ATTRIBUTE_AGENT_ALLOWED_APPS])
+
+    def test_agent_allowed_apps_update_unauthorized(self):
+        """Non-owner cannot update the agent's allowed apps list"""
+        other = create_test_user()
+        agent = self._create_agent(owner=other)
+        self.client.force_login(self.admin)
+        response = self.client.put(
+            reverse("authentik_api:user-agent-allowed-apps", kwargs={"pk": agent.pk}),
+            data={"allowed_apps": []},
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_agent_allowed_apps_update_non_agent(self):
+        """Endpoint rejects non-agent users"""
+        self.client.force_login(self.admin)
+        response = self.client.put(
+            reverse("authentik_api:user-agent-allowed-apps", kwargs={"pk": self.user.pk}),
+            data={"allowed_apps": []},
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_token_rotate_by_agent_owner(self):
+        """Agent owner can rotate the agent's token"""
+        agent = self._create_agent(owner=self.user)
+        token = Token.objects.create(
+            identifier=generate_id(),
+            intent=TokenIntents.INTENT_API,
+            user=agent,
+            expiring=True,
+        )
+        original_key = token.key
+        self.client.force_login(self.user)
+        response = self.client.post(
+            reverse("authentik_api:token-rotate", kwargs={"identifier": token.identifier}),
+        )
+        self.assertEqual(response.status_code, 200)
+        token.refresh_from_db()
+        self.assertNotEqual(token.key, original_key)

@@ -53,6 +53,10 @@ import type {
     UsedBy,
     User,
     UserAccountRequest,
+    UserAgentAllowedApps,
+    UserAgentAllowedAppsRequest,
+    UserAgentRequest,
+    UserAgentResponse,
     UserConsent,
     UserPasswordSetRequest,
     UserPath,
@@ -102,6 +106,10 @@ import {
     TransactionApplicationResponseFromJSON,
     UsedByFromJSON,
     UserAccountRequestToJSON,
+    UserAgentAllowedAppsFromJSON,
+    UserAgentAllowedAppsRequestToJSON,
+    UserAgentRequestToJSON,
+    UserAgentResponseFromJSON,
     UserConsentFromJSON,
     UserFromJSON,
     UserPasswordSetRequestToJSON,
@@ -358,6 +366,10 @@ export interface CoreTokensRetrieveRequest {
     identifier: string;
 }
 
+export interface CoreTokensRotateCreateRequest {
+    identifier: string;
+}
+
 export interface CoreTokensSetKeyCreateRequest {
     identifier: string;
     tokenSetKeyRequest: TokenSetKeyRequest;
@@ -399,6 +411,15 @@ export interface CoreUserConsentRetrieveRequest {
 
 export interface CoreUserConsentUsedByListRequest {
     id: number;
+}
+
+export interface CoreUsersAgentAllowedAppsUpdateRequest {
+    id: number;
+    userAgentAllowedAppsRequest: UserAgentAllowedAppsRequest;
+}
+
+export interface CoreUsersAgentCreateRequest {
+    userAgentRequest: UserAgentRequest;
 }
 
 export interface CoreUsersCreateRequest {
@@ -3576,6 +3597,70 @@ export class CoreApi extends runtime.BaseAPI {
     }
 
     /**
+     * Creates request options for coreTokensRotateCreate without sending the request
+     */
+    async coreTokensRotateCreateRequestOpts(
+        requestParameters: CoreTokensRotateCreateRequest,
+    ): Promise<runtime.RequestOpts> {
+        if (requestParameters["identifier"] == null) {
+            throw new runtime.RequiredError(
+                "identifier",
+                'Required parameter "identifier" was null or undefined when calling coreTokensRotateCreate().',
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("authentik", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/core/tokens/{identifier}/rotate/`;
+        urlPath = urlPath.replace(
+            `{${"identifier"}}`,
+            encodeURIComponent(String(requestParameters["identifier"])),
+        );
+
+        return {
+            path: urlPath,
+            method: "POST",
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Rotate the token key and reset the expiry to 24 hours. Only callable by the token owner, the owning agent\'s human owner, or a superuser.
+     */
+    async coreTokensRotateCreateRaw(
+        requestParameters: CoreTokensRotateCreateRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<runtime.ApiResponse<TokenView>> {
+        const requestOptions = await this.coreTokensRotateCreateRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => TokenViewFromJSON(jsonValue));
+    }
+
+    /**
+     * Rotate the token key and reset the expiry to 24 hours. Only callable by the token owner, the owning agent\'s human owner, or a superuser.
+     */
+    async coreTokensRotateCreate(
+        requestParameters: CoreTokensRotateCreateRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<TokenView> {
+        const response = await this.coreTokensRotateCreateRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Creates request options for coreTokensSetKeyCreate without sending the request
      */
     async coreTokensSetKeyCreateRequestOpts(
@@ -4179,6 +4264,150 @@ export class CoreApi extends runtime.BaseAPI {
         initOverrides?: RequestInit | runtime.InitOverrideFunction,
     ): Promise<Array<UsedBy>> {
         const response = await this.coreUserConsentUsedByListRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for coreUsersAgentAllowedAppsUpdate without sending the request
+     */
+    async coreUsersAgentAllowedAppsUpdateRequestOpts(
+        requestParameters: CoreUsersAgentAllowedAppsUpdateRequest,
+    ): Promise<runtime.RequestOpts> {
+        if (requestParameters["id"] == null) {
+            throw new runtime.RequiredError(
+                "id",
+                'Required parameter "id" was null or undefined when calling coreUsersAgentAllowedAppsUpdate().',
+            );
+        }
+
+        if (requestParameters["userAgentAllowedAppsRequest"] == null) {
+            throw new runtime.RequiredError(
+                "userAgentAllowedAppsRequest",
+                'Required parameter "userAgentAllowedAppsRequest" was null or undefined when calling coreUsersAgentAllowedAppsUpdate().',
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters["Content-Type"] = "application/json";
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("authentik", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/core/users/{id}/agent_allowed_apps/`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters["id"])));
+
+        return {
+            path: urlPath,
+            method: "PUT",
+            headers: headerParameters,
+            query: queryParameters,
+            body: UserAgentAllowedAppsRequestToJSON(
+                requestParameters["userAgentAllowedAppsRequest"],
+            ),
+        };
+    }
+
+    /**
+     * Replace the allowed application list for an agent user. Caller must be the agent\'s owner or a superuser.
+     */
+    async coreUsersAgentAllowedAppsUpdateRaw(
+        requestParameters: CoreUsersAgentAllowedAppsUpdateRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<runtime.ApiResponse<UserAgentAllowedApps>> {
+        const requestOptions =
+            await this.coreUsersAgentAllowedAppsUpdateRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) =>
+            UserAgentAllowedAppsFromJSON(jsonValue),
+        );
+    }
+
+    /**
+     * Replace the allowed application list for an agent user. Caller must be the agent\'s owner or a superuser.
+     */
+    async coreUsersAgentAllowedAppsUpdate(
+        requestParameters: CoreUsersAgentAllowedAppsUpdateRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<UserAgentAllowedApps> {
+        const response = await this.coreUsersAgentAllowedAppsUpdateRaw(
+            requestParameters,
+            initOverrides,
+        );
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for coreUsersAgentCreate without sending the request
+     */
+    async coreUsersAgentCreateRequestOpts(
+        requestParameters: CoreUsersAgentCreateRequest,
+    ): Promise<runtime.RequestOpts> {
+        if (requestParameters["userAgentRequest"] == null) {
+            throw new runtime.RequiredError(
+                "userAgentRequest",
+                'Required parameter "userAgentRequest" was null or undefined when calling coreUsersAgentCreate().',
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters["Content-Type"] = "application/json";
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("authentik", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/core/users/agent/`;
+
+        return {
+            path: urlPath,
+            method: "POST",
+            headers: headerParameters,
+            query: queryParameters,
+            body: UserAgentRequestToJSON(requestParameters["userAgentRequest"]),
+        };
+    }
+
+    /**
+     * Create a new agent user. Enterprise only. Caller must be an internal user.
+     */
+    async coreUsersAgentCreateRaw(
+        requestParameters: CoreUsersAgentCreateRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<runtime.ApiResponse<UserAgentResponse>> {
+        const requestOptions = await this.coreUsersAgentCreateRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) =>
+            UserAgentResponseFromJSON(jsonValue),
+        );
+    }
+
+    /**
+     * Create a new agent user. Enterprise only. Caller must be an internal user.
+     */
+    async coreUsersAgentCreate(
+        requestParameters: CoreUsersAgentCreateRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<UserAgentResponse> {
+        const response = await this.coreUsersAgentCreateRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

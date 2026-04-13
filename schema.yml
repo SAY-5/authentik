@@ -3896,6 +3896,33 @@ paths:
           $ref: '#/components/responses/ValidationErrorResponse'
         '403':
           $ref: '#/components/responses/GenericErrorResponse'
+  /core/tokens/{identifier}/rotate/:
+    post:
+      operationId: core_tokens_rotate_create
+      description: |-
+        Rotate the token key and reset the expiry to 24 hours. Only callable by the token
+        owner, the owning agent's human owner, or a superuser.
+      parameters:
+      - in: path
+        name: identifier
+        schema:
+          type: string
+        required: true
+      tags:
+      - core
+      security:
+      - authentik: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenView'
+          description: ''
+        '403':
+          description: Not the token owner, agent owner, or superuser
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
   /core/tokens/{identifier}/set_key/:
     post:
       operationId: core_tokens_set_key_create
@@ -4406,6 +4433,40 @@ paths:
           $ref: '#/components/responses/ValidationErrorResponse'
         '403':
           $ref: '#/components/responses/GenericErrorResponse'
+  /core/users/{id}/agent_allowed_apps/:
+    put:
+      operationId: core_users_agent_allowed_apps_update
+      description: |-
+        Replace the allowed application list for an agent user.
+        Caller must be the agent's owner or a superuser.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this User.
+        required: true
+      tags:
+      - core
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserAgentAllowedAppsRequest'
+        required: true
+      security:
+      - authentik: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAgentAllowedApps'
+          description: ''
+        '400':
+          description: Invalid app UUIDs or owner lacks access
+        '403':
+          description: Not the agent's owner or superuser
   /core/users/{id}/impersonate/:
     post:
       operationId: core_users_impersonate_create
@@ -4545,6 +4606,32 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/UsedBy'
+          description: ''
+        '400':
+          $ref: '#/components/responses/ValidationErrorResponse'
+        '403':
+          $ref: '#/components/responses/GenericErrorResponse'
+  /core/users/agent/:
+    post:
+      operationId: core_users_agent_create
+      description: Create a new agent user. Enterprise only. Caller must be an internal
+        user.
+      tags:
+      - core
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserAgentRequest'
+        required: true
+      security:
+      - authentik: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAgentResponse'
           description: ''
         '400':
           $ref: '#/components/responses/ValidationErrorResponse'
@@ -56801,6 +56888,56 @@ components:
           type: integer
       required:
       - pk
+    UserAgentAllowedApps:
+      type: object
+      description: Payload to update an agent's allowed applications
+      properties:
+        allowed_apps:
+          type: array
+          items:
+            type: string
+            format: uuid
+      required:
+      - allowed_apps
+    UserAgentAllowedAppsRequest:
+      type: object
+      description: Payload to update an agent's allowed applications
+      properties:
+        allowed_apps:
+          type: array
+          items:
+            type: string
+            format: uuid
+      required:
+      - allowed_apps
+    UserAgentRequest:
+      type: object
+      description: Payload to create an agent user
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 150
+        owner:
+          type: integer
+      required:
+      - name
+    UserAgentResponse:
+      type: object
+      properties:
+        username:
+          type: string
+        token:
+          type: string
+        user_uid:
+          type: string
+        user_pk:
+          type: integer
+      required:
+      - token
+      - user_pk
+      - user_uid
+      - username
     UserAttributeEnum:
       enum:
       - username
@@ -57706,6 +57843,7 @@ components:
       - external
       - service_account
       - internal_service_account
+      - agent
       type: string
     UserVerificationEnum:
       enum:

@@ -1,0 +1,42 @@
+# Generated manually
+
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ("authentik_core", "0057_remove_user_groups_remove_user_user_permissions_and_more"),
+    ]
+
+    operations = [
+        migrations.AlterField(
+            model_name="user",
+            name="type",
+            field=models.CharField(
+                choices=[
+                    ("internal", "Internal"),
+                    ("external", "External"),
+                    ("service_account", "Service Account"),
+                    ("internal_service_account", "Internal Service Account"),
+                    ("agent", "Agent"),
+                ],
+                default="internal",
+                max_length=100,
+            ),
+        ),
+        migrations.AlterModelOptions(
+            name="user",
+            options={
+                "permissions": [
+                    ("reset_user_password", "Reset Password"),
+                    ("impersonate", "Can impersonate other users"),
+                    ("preview_user", "Can preview user data sent to providers"),
+                    ("view_user_applications", "View applications the user has access to"),
+                    ("add_agent_user", "Can create agent users"),
+                ],
+                "verbose_name": "User",
+                "verbose_name_plural": "Users",
+            },
+        ),
+    ]
