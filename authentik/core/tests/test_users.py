@@ -119,7 +119,11 @@ class TestAgentUserSignals(TestCase):
         """Deactivating an owner removes authenticated sessions for their agents"""
         owner = self._create_owner()
         agent = self._create_agent(owner)
-        session = Session.objects.create(session_key=generate_id())
+        session = Session.objects.create(
+            session_key=generate_id(),
+            last_ip="255.255.255.255",
+            last_user_agent="",
+        )
         AuthenticatedSession.objects.create(user=agent, session=session)
 
         owner.is_active = False
