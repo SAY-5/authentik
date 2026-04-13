@@ -186,7 +186,14 @@ class TokenViewSet(UsedByMixin, ModelViewSet):
     def rotate(self, request: Request, identifier: str) -> Response:
         """Rotate the token key and reset the expiry to 24 hours. Only callable by the token
         owner, the owning agent's human owner, or a superuser."""
-        token: Token = self.get_object()
+        token = (
+            Token.objects.including_expired()
+            .select_related("user")
+            .filter(identifier=identifier)
+            .first()
+        )
+        if not token:
+            return Response(status=404)
 
         if not request.user.is_superuser:
             is_token_owner = token.user_id == request.user.pk
