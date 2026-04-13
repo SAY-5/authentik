@@ -218,6 +218,17 @@ class TestPolicyEngine(TestCase):
         self.assertLess(ctx.final_queries, 1000)
         self.assertTrue(engine.result.passing)
 
+    def test_anonymous_user(self):
+        """AnonymousUser (no type attribute) does not break policy evaluation"""
+        from django.contrib.auth.models import AnonymousUser
+
+        pbm = PolicyBindingModel.objects.create()
+        engine = PolicyEngine(pbm, AnonymousUser())
+        engine.empty_result = True
+        engine.use_cache = False
+        engine.build()
+        self.assertTrue(engine.passing)
+
 
 class TestPolicyEngineAgent(TestCase):
     """PolicyEngine agent access enforcement tests"""

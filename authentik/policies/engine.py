@@ -214,7 +214,7 @@ class PolicyEngine:
         )
 
         user = self.request.user
-        if user.type != UserTypes.AGENT:
+        if not hasattr(user, "type") or user.type != UserTypes.AGENT:
             return None
         if not isinstance(self.__pbm, Application):
             return None
