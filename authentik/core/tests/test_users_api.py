@@ -1016,7 +1016,7 @@ class TestAgentUserAPI(APITestCase):
         self.assertIn(str(app.pk), agent.attributes[USER_ATTRIBUTE_AGENT_ALLOWED_APPS])
 
     def test_agent_allowed_apps_update_unauthorized(self):
-        """Non-owner cannot update the agent's allowed apps list"""
+        """Non-owner, non-superuser is rejected when updating allowed apps"""
         other = create_test_user()
         agent = self._create_agent(owner=other)
         self.client.force_login(self.admin)
@@ -1025,7 +1025,7 @@ class TestAgentUserAPI(APITestCase):
             data={"allowed_apps": []},
             content_type="application/json",
         )
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 400)
 
     def test_agent_allowed_apps_update_non_agent(self):
         """Endpoint rejects non-agent users"""
@@ -1033,6 +1033,65 @@ class TestAgentUserAPI(APITestCase):
         response = self.client.put(
             reverse("authentik_api:user-agent-allowed-apps", kwargs={"pk": self.user.pk}),
             data={"allowed_apps": []},
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_agent_allowed_app_add(self):
+        """PATCH add: owner can add a single app to agent's allowed list"""
+        agent = self._create_agent(owner=self.admin)
+        app = Application.objects.create(name=generate_id(), slug=generate_id())
+        self.client.force_login(self.admin)
+        response = self.client.patch(
+            reverse("authentik_api:user-agent-allowed-app", kwargs={"pk": agent.pk}),
+            data={"app": str(app.pk), "action": "add"},
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+        agent.refresh_from_db()
+        self.assertIn(str(app.pk), agent.attributes[USER_ATTRIBUTE_AGENT_ALLOWED_APPS])
+
+    def test_agent_allowed_app_add_duplicate(self):
+        """PATCH add: adding an already-allowed app is idempotent"""
+        agent = self._create_agent(owner=self.admin)
+        app = Application.objects.create(name=generate_id(), slug=generate_id())
+        agent.attributes[USER_ATTRIBUTE_AGENT_ALLOWED_APPS] = [str(app.pk)]
+        agent.save(update_fields=["attributes"])
+        self.client.force_login(self.admin)
+        response = self.client.patch(
+            reverse("authentik_api:user-agent-allowed-app", kwargs={"pk": agent.pk}),
+            data={"app": str(app.pk), "action": "add"},
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+        agent.refresh_from_db()
+        self.assertEqual(
+            agent.attributes[USER_ATTRIBUTE_AGENT_ALLOWED_APPS].count(str(app.pk)), 1
+        )
+
+    def test_agent_allowed_app_remove(self):
+        """PATCH remove: owner can remove a single app from agent's allowed list"""
+        agent = self._create_agent(owner=self.admin)
+        app = Application.objects.create(name=generate_id(), slug=generate_id())
+        agent.attributes[USER_ATTRIBUTE_AGENT_ALLOWED_APPS] = [str(app.pk)]
+        agent.save(update_fields=["attributes"])
+        self.client.force_login(self.admin)
+        response = self.client.patch(
+            reverse("authentik_api:user-agent-allowed-app", kwargs={"pk": agent.pk}),
+            data={"app": str(app.pk), "action": "remove"},
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 204)
+        agent.refresh_from_db()
+        self.assertNotIn(str(app.pk), agent.attributes[USER_ATTRIBUTE_AGENT_ALLOWED_APPS])
+
+    def test_agent_allowed_app_add_nonexistent(self):
+        """PATCH add: nonexistent app UUID is rejected"""
+        agent = self._create_agent(owner=self.admin)
+        self.client.force_login(self.admin)
+        response = self.client.patch(
+            reverse("authentik_api:user-agent-allowed-app", kwargs={"pk": agent.pk}),
+            data={"app": "00000000-0000-0000-0000-000000000000", "action": "add"},
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 400)

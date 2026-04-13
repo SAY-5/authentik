@@ -41,6 +41,7 @@ import type {
     PatchedBrandRequest,
     PatchedGroupRequest,
     PatchedTokenRequest,
+    PatchedUserAgentAllowedAppRequest,
     PatchedUserRequest,
     PolicyTestResult,
     SessionUser,
@@ -95,6 +96,7 @@ import {
     PatchedBrandRequestToJSON,
     PatchedGroupRequestToJSON,
     PatchedTokenRequestToJSON,
+    PatchedUserAgentAllowedAppRequestToJSON,
     PatchedUserRequestToJSON,
     PolicyTestResultFromJSON,
     SessionUserFromJSON,
@@ -415,6 +417,11 @@ export interface CoreUserConsentRetrieveRequest {
 
 export interface CoreUserConsentUsedByListRequest {
     id: number;
+}
+
+export interface CoreUsersAgentAllowedAppPartialUpdateRequest {
+    id: number;
+    patchedUserAgentAllowedAppRequest?: PatchedUserAgentAllowedAppRequest;
 }
 
 export interface CoreUsersAgentAllowedAppsUpdateRequest {
@@ -4331,6 +4338,85 @@ export class CoreApi extends runtime.BaseAPI {
     ): Promise<Array<UsedBy>> {
         const response = await this.coreUserConsentUsedByListRaw(requestParameters, initOverrides);
         return await response.value();
+    }
+
+    /**
+     * Creates request options for coreUsersAgentAllowedAppPartialUpdate without sending the request
+     */
+    async coreUsersAgentAllowedAppPartialUpdateRequestOpts(
+        requestParameters: CoreUsersAgentAllowedAppPartialUpdateRequest,
+    ): Promise<runtime.RequestOpts> {
+        if (requestParameters["id"] == null) {
+            throw new runtime.RequiredError(
+                "id",
+                'Required parameter "id" was null or undefined when calling coreUsersAgentAllowedAppPartialUpdate().',
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters["Content-Type"] = "application/json";
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("authentik", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/core/users/{id}/agent_allowed_app/`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters["id"])));
+
+        return {
+            path: urlPath,
+            method: "PATCH",
+            headers: headerParameters,
+            query: queryParameters,
+            body: PatchedUserAgentAllowedAppRequestToJSON(
+                requestParameters["patchedUserAgentAllowedAppRequest"],
+            ),
+        };
+    }
+
+    /**
+     * Add or remove a single application from an agent\'s allowed list. Caller must be the agent\'s owner or a superuser.
+     */
+    async coreUsersAgentAllowedAppPartialUpdateRaw(
+        requestParameters: CoreUsersAgentAllowedAppPartialUpdateRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<runtime.ApiResponse<UserAgentAllowedApps>> {
+        const requestOptions =
+            await this.coreUsersAgentAllowedAppPartialUpdateRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) =>
+            UserAgentAllowedAppsFromJSON(jsonValue),
+        );
+    }
+
+    /**
+     * Add or remove a single application from an agent\'s allowed list. Caller must be the agent\'s owner or a superuser.
+     */
+    async coreUsersAgentAllowedAppPartialUpdate(
+        requestParameters: CoreUsersAgentAllowedAppPartialUpdateRequest,
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<UserAgentAllowedApps | null | undefined> {
+        const response = await this.coreUsersAgentAllowedAppPartialUpdateRaw(
+            requestParameters,
+            initOverrides,
+        );
+        switch (response.raw.status) {
+            case 200:
+                return await response.value();
+            case 204:
+                return null;
+            default:
+                return await response.value();
+        }
     }
 
     /**

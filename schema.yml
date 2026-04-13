@@ -4456,6 +4456,41 @@ paths:
           $ref: '#/components/responses/ValidationErrorResponse'
         '403':
           $ref: '#/components/responses/GenericErrorResponse'
+  /core/users/{id}/agent_allowed_app/:
+    patch:
+      operationId: core_users_agent_allowed_app_partial_update
+      description: |-
+        Add or remove a single application from an agent's allowed list.
+        Caller must be the agent's owner or a superuser.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this User.
+        required: true
+      tags:
+      - core
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserAgentAllowedAppRequest'
+      security:
+      - authentik: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAgentAllowedApps'
+          description: ''
+        '204':
+          description: Application removed
+        '400':
+          description: Invalid app UUID or owner lacks access
+        '403':
+          description: Not the agent's owner or superuser
   /core/users/{id}/agent_allowed_apps/:
     put:
       operationId: core_users_agent_allowed_apps_update
@@ -50732,6 +50767,15 @@ components:
           maximum: 2147483647
           minimum: 0
           description: Number of passwords to check against.
+    PatchedUserAgentAllowedAppRequest:
+      type: object
+      description: Payload to add or remove a single allowed application
+      properties:
+        app:
+          type: string
+          format: uuid
+        action:
+          $ref: '#/components/schemas/UserAgentAllowedAppActionEnum'
     PatchedUserDeleteStageRequest:
       type: object
       description: UserDeleteStage Serializer
@@ -56911,9 +56955,14 @@ components:
           type: integer
       required:
       - pk
+    UserAgentAllowedAppActionEnum:
+      enum:
+      - add
+      - remove
+      type: string
     UserAgentAllowedApps:
       type: object
-      description: Payload to update an agent's allowed applications
+      description: Payload to replace an agent's allowed applications
       properties:
         allowed_apps:
           type: array
@@ -56924,7 +56973,7 @@ components:
       - allowed_apps
     UserAgentAllowedAppsRequest:
       type: object
-      description: Payload to update an agent's allowed applications
+      description: Payload to replace an agent's allowed applications
       properties:
         allowed_apps:
           type: array

@@ -19,7 +19,7 @@ import (
 // checks if the UserAgentAllowedApps type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &UserAgentAllowedApps{}
 
-// UserAgentAllowedApps Payload to update an agent's allowed applications
+// UserAgentAllowedApps Payload to replace an agent's allowed applications
 type UserAgentAllowedApps struct {
 	AllowedApps          []string `json:"allowed_apps"`
 	AdditionalProperties map[string]interface{}

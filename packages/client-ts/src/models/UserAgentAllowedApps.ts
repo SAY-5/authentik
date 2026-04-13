@@ -13,7 +13,7 @@
  */
 
 /**
- * Payload to update an agent's allowed applications
+ * Payload to replace an agent's allowed applications
  * @export
  * @interface UserAgentAllowedApps
  */

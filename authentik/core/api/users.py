@@ -435,9 +435,16 @@ class UserAgentSerializer(PassiveSerializer):
 
 
 class UserAgentAllowedAppsSerializer(PassiveSerializer):
-    """Payload to update an agent's allowed applications"""
+    """Payload to replace an agent's allowed applications"""
 
     allowed_apps = ListField(child=UUIDField())
+
+
+class UserAgentAllowedAppSerializer(PassiveSerializer):
+    """Payload to add or remove a single allowed application"""
+
+    app = UUIDField()
+    action = ChoiceField(choices=[("add", "Add"), ("remove", "Remove")])
 
 
 class UserRecoveryLinkSerializer(PassiveSerializer):
@@ -861,26 +868,7 @@ class UserViewSet(
         from authentik.core.apps import AppAccessWithoutBindings
         from authentik.policies.engine import PolicyEngine
 
-        agent: User = self.get_object()
-
-        if agent.type != UserTypes.AGENT:
-            return Response(
-                data={"non_field_errors": [_("User is not an agent user.")]},
-                status=400,
-            )
-
-        owner_pk = agent.attributes.get(USER_ATTRIBUTE_AGENT_OWNER_PK)
-        is_owner = str(request.user.pk) == owner_pk
-        if not request.user.is_superuser and not is_owner:
-            return Response(status=403)
-
-        try:
-            owner = User.objects.get(pk=owner_pk)
-        except User.DoesNotExist:
-            return Response(
-                data={"non_field_errors": [_("Agent owner not found.")]},
-                status=400,
-            )
+        agent, owner = self._get_agent_and_owner(request)
 
         app_uuids = body.validated_data["allowed_apps"]
         errors = []
@@ -915,6 +903,87 @@ class UserViewSet(
         agent.attributes[USER_ATTRIBUTE_AGENT_ALLOWED_APPS] = [str(u) for u in app_uuids]
         agent.save(update_fields=["attributes"])
         return Response({"allowed_apps": [str(u) for u in app_uuids]})
+
+    @extend_schema(
+        request=UserAgentAllowedAppSerializer,
+        responses={
+            200: UserAgentAllowedAppsSerializer,
+            204: OpenApiResponse(description="Application removed"),
+            400: OpenApiResponse(description="Invalid app UUID or owner lacks access"),
+            403: OpenApiResponse(description="Not the agent's owner or superuser"),
+        },
+    )
+    @action(
+        detail=True,
+        methods=["PATCH"],
+        url_path="agent_allowed_app",
+        url_name="agent-allowed-app",
+        pagination_class=None,
+        filter_backends=[],
+    )
+    @validate(UserAgentAllowedAppSerializer)
+    def agent_allowed_app(
+        self, request: Request, pk: int, body: UserAgentAllowedAppSerializer
+    ) -> Response:
+        """Add or remove a single application from an agent's allowed list.
+        Caller must be the agent's owner or a superuser."""
+        from authentik.core.apps import AppAccessWithoutBindings
+        from authentik.policies.engine import PolicyEngine
+
+        agent, owner = self._get_agent_and_owner(request)
+
+        app_uuid = str(body.validated_data["app"])
+        action = body.validated_data["action"]
+        current = agent.attributes.get(USER_ATTRIBUTE_AGENT_ALLOWED_APPS, [])
+
+        if action == "add":
+            try:
+                app = Application.objects.get(pk=app_uuid)
+            except Application.DoesNotExist:
+                return Response(
+                    data={"app": [_("Application does not exist.")]},
+                    status=400,
+                )
+            engine = PolicyEngine(app, owner, request)
+            engine.empty_result = AppAccessWithoutBindings.get()
+            engine.use_cache = False
+            engine.build()
+            if not engine.passing:
+                return Response(
+                    data={"app": [_("Owner does not have access to this application.")]},
+                    status=400,
+                )
+            if app_uuid not in current:
+                current.append(app_uuid)
+                agent.attributes[USER_ATTRIBUTE_AGENT_ALLOWED_APPS] = current
+                agent.save(update_fields=["attributes"])
+            return Response({"allowed_apps": current})
+
+        if action == "remove":
+            if app_uuid in current:
+                current.remove(app_uuid)
+                agent.attributes[USER_ATTRIBUTE_AGENT_ALLOWED_APPS] = current
+                agent.save(update_fields=["attributes"])
+            return Response(status=204)
+
+    def _get_agent_and_owner(self, request: Request) -> tuple[User, User]:
+        """Validate that the target is an agent and the caller is authorized."""
+        agent: User = self.get_object()
+
+        if agent.type != UserTypes.AGENT:
+            raise ValidationError(_("User is not an agent user."))
+
+        owner_pk = agent.attributes.get(USER_ATTRIBUTE_AGENT_OWNER_PK)
+        is_owner = str(request.user.pk) == owner_pk
+        if not request.user.is_superuser and not is_owner:
+            raise ValidationError(_("Not the agent's owner or superuser."))
+
+        try:
+            owner = User.objects.get(pk=owner_pk)
+        except User.DoesNotExist:
+            raise ValidationError(_("Agent owner not found."))
+
+        return agent, owner
 
     @extend_schema(responses={200: SessionUserSerializer(many=False)})
     @action(

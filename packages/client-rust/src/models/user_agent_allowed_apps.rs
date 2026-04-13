@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::models;
 
-/// UserAgentAllowedApps : Payload to update an agent's allowed applications
+/// UserAgentAllowedApps : Payload to replace an agent's allowed applications
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct UserAgentAllowedApps {
     #[serde(rename = "allowed_apps")]
@@ -18,7 +18,7 @@ pub struct UserAgentAllowedApps {
 }
 
 impl UserAgentAllowedApps {
-    /// Payload to update an agent's allowed applications
+    /// Payload to replace an agent's allowed applications
     pub fn new(allowed_apps: Vec<uuid::Uuid>) -> UserAgentAllowedApps {
         UserAgentAllowedApps { allowed_apps }
     }
