@@ -1,6 +1,7 @@
 """Agent token-to-session exchange view"""
 
 from django.contrib.auth import login
+from rest_framework.authentication import BaseAuthentication
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -10,10 +11,17 @@ from authentik.core.models import AuthenticatedSession, Token, TokenIntents, Use
 from authentik.stages.password import BACKEND_INBUILT
 
 
+class NoAuthentication(BaseAuthentication):
+    """Explicitly skip DRF authentication; the view authenticates via the request body."""
+
+    def authenticate(self, request):
+        return None
+
+
 class AgentSessionView(APIView):
     """Exchange an agent's API token for an authenticated session."""
 
-    authentication_classes = []
+    authentication_classes = [NoAuthentication]
     permission_classes = [AllowAny]
 
     def post(self, request: Request) -> Response:
