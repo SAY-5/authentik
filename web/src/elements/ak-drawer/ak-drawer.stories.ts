@@ -17,7 +17,7 @@ const contentBlock = html`
         <h2>Main Content</h2>
         <p><button @click=${toggle}>Toggle Drawer</button></p>
         <p>
-            This is the drawer's main: populate it by creating slotted content without a slot name.
+            This is the drawer's main: fill it by inserting slotted content without a slot name.
             This is the part that stays visible most of the time.
         </p>
         <p>
@@ -52,6 +52,17 @@ const panelBlock = html`
         <p><button @click=${toggle}>Toggle Drawer</button></p>
     </div>
 `;
+
+interface DrawerProps {
+    expanded?: boolean;
+    inline?: boolean;
+    static?: boolean;
+    resizable?: boolean;
+    width?: string;
+    position?: string;
+    content?: TemplateResult;
+    panel?: TemplateResult;
+}
 
 const meta = {
     title: "Components/Drawer",
@@ -88,6 +99,7 @@ const Template: Story = {
         inline: false,
         static: false,
         resizable: false,
+        width: undefined,
         position: undefined,
         content: contentBlock,
         panel: panelBlock,
@@ -98,6 +110,7 @@ const Template: Story = {
             ?inline=${args.inline}
             ?resizable=${args.resizable}
             position=${ifDefined(args.position)}
+            width=${ifDefined(args.width)}
         >
             ${args.content} ${args.panel}
         </ak-drawer>`;
@@ -108,62 +121,31 @@ export const Default: Story = {
     render: () => html` <ak-drawer> ${contentBlock} ${panelBlock} </ak-drawer> `,
 };
 
-export const Expanded: Story = {
+export const story = (args: DrawerProps = {}, name?: string): Story => ({
     ...Template,
+    ...(name ? { name } : {}),
     args: {
         ...Template.args,
-        expanded: true,
+        ...args,
     },
-};
+});
 
-export const PanelLeft: Story = {
-    name: "Panel Left",
-    render: () => html`
-        <ak-drawer expanded position="left"> ${contentBlock} ${panelBlock} </ak-drawer>
-    `,
-};
+export const Expanded: Story = story({ expanded: true });
 
-export const PanelBottom: Story = {
-    name: "Panel Bottom",
-    render: () => html`
-        <ak-drawer expanded position="bottom"> ${contentBlock} ${panelBlock} </ak-drawer>
-    `,
-};
+export const PanelLeft: Story = story({ expanded: true, position: "left" });
 
-export const Inline: Story = {
-    render: () => html` <ak-drawer expanded inline> ${contentBlock} ${panelBlock} </ak-drawer> `,
-};
+export const PanelBottom = story({ expanded: true, position: "bottom" });
 
-export const Static: Story = {
-    render: () => html` <ak-drawer expanded static> ${contentBlock} ${panelBlock} </ak-drawer> `,
-};
+export const Inline = story({ expanded: true, inline: true });
 
-export const Resizable: Story = {
-    render: () => html` <ak-drawer expanded resizable> ${contentBlock} ${panelBlock} </ak-drawer> `,
-};
+export const Static = story({ expanded: true, static: true });
 
-export const ResizableLeft: Story = {
-    render: () => html`
-        <ak-drawer expanded resizable position="left"> ${contentBlock} ${panelBlock} </ak-drawer>
-    `,
-};
+export const Resizable = story({ expanded: true, resizable: true });
 
-export const ResizableBottom: Story = {
-    render: () => html`
-        <ak-drawer expanded resizable position="bottom"> ${contentBlock} ${panelBlock} </ak-drawer>
-    `,
-};
+export const ResizableLeft = story({ expanded: true, resizable: true, position: "left" });
 
-export const CustomWidth: Story = {
-    name: "Custom Width",
-    render: () => html`
-        <ak-drawer expanded width="33"> ${contentBlock} ${panelBlock} </ak-drawer>
-    `,
-};
+export const ResizableBottom = story({ expanded: true, resizable: true, position: "bottom" });
 
-export const ResponsiveWidth: Story = {
-    name: "Responsive Width",
-    render: () => html`
-        <ak-drawer expanded width="75-on-xl"> ${contentBlock} ${panelBlock} </ak-drawer>
-    `,
-};
+export const CustomWidth = story({ expanded: true, width: "33" });
+
+export const ResponsiveWidth = story({ expanded: true, width: "75-on-xl" });

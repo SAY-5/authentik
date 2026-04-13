@@ -26,6 +26,9 @@ export class AkDrawer extends LitElement {
     @property({ type: Boolean, reflect: true })
     public resizing = false;
 
+    @property({ type: String, reflect: true })
+    public width = "33";
+
     private resize = new DrawerResizeController(this);
 
     onDrawerRequest = (ev: DrawerExpandRequest) => {
@@ -84,7 +87,7 @@ export class AkDrawer extends LitElement {
                 new ToggleEvent("toggle", {
                     newState: expandedMsg(this.expanded),
                     oldState: expandedMsg(expanded),
-                }),
+                })
             );
         }
     }

@@ -11,6 +11,7 @@
 @import "./components/Form/form.css";
 @import "./components/Login/login.css";
 @import "./components/Icon/icon.css";
+@import "#elements/ak-drawer/ak-drawer.root.css";
 @import "#elements/locale/ak-locale-select.css";
 @import "#elements/locale/ak-locale-select.css";
 @import "#flow/FlowExecutor.css";
