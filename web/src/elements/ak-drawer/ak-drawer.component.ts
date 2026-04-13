@@ -87,7 +87,7 @@ export class AkDrawer extends LitElement {
                 new ToggleEvent("toggle", {
                     newState: expandedMsg(this.expanded),
                     oldState: expandedMsg(expanded),
-                })
+                }),
             );
         }
     }

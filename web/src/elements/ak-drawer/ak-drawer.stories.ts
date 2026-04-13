@@ -4,7 +4,7 @@ import { DrawerExpandRequest } from "./ak-drawer.component";
 
 import type { Meta, StoryObj } from "@storybook/web-components-vite";
 
-import { html } from "lit";
+import { html, TemplateResult } from "lit";
 import { ifDefined } from "lit/directives/if-defined.js";
 
 const toggle = (e: Event) => {
