@@ -54,9 +54,7 @@ const DEFAULT_USER_TYPES: TypeCreate[] = [
         component: "ak-user-agent-form",
         modelName: UserTypeEnum.Agent,
         name: msg("Agent"),
-        description: msg(
-            "Machine user owned by an internal user, with scoped application access.",
-        ),
+        description: msg("Machine user owned by an internal user, with scoped application access."),
         requiresEnterprise: true,
     },
     {
