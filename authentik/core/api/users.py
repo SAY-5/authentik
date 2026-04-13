@@ -966,6 +966,11 @@ class UserViewSet(
                 agent.save(update_fields=["attributes"])
             return Response(status=204)
 
+        return Response(
+            data={"action": [_("Invalid action.")]},
+            status=400,
+        )
+
     def _get_agent_and_owner(self, request: Request) -> tuple[User, User]:
         """Validate that the target is an agent and the caller is authorized."""
         agent: User = self.get_object()
