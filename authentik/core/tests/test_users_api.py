@@ -1023,7 +1023,7 @@ class TestAgentUserAPI(APITestCase):
             data={"allowed_apps": []},
             content_type="application/json",
         )
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
 
     def test_agent_allowed_apps_update_non_agent(self):
         """Endpoint rejects non-agent users"""
