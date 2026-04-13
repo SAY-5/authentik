@@ -372,10 +372,6 @@ export interface CoreTokensRotateCreateRequest {
     identifier: string;
 }
 
-export interface CoreTokensSessionCreateRequest {
-    tokenSetKeyRequest: TokenSetKeyRequest;
-}
-
 export interface CoreTokensSetKeyCreateRequest {
     identifier: string;
     tokenSetKeyRequest: TokenSetKeyRequest;
@@ -553,6 +549,45 @@ export interface CoreUsersUsedByListRequest {
  *
  */
 export class CoreApi extends runtime.BaseAPI {
+    /**
+     * Creates request options for coreAgentSessionCreate without sending the request
+     */
+    async coreAgentSessionCreateRequestOpts(): Promise<runtime.RequestOpts> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        let urlPath = `/core/agent/session/`;
+
+        return {
+            path: urlPath,
+            method: "POST",
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Exchange an agent\'s API token for an authenticated session.
+     */
+    async coreAgentSessionCreateRaw(
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<runtime.ApiResponse<void>> {
+        const requestOptions = await this.coreAgentSessionCreateRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Exchange an agent\'s API token for an authenticated session.
+     */
+    async coreAgentSessionCreate(
+        initOverrides?: RequestInit | runtime.InitOverrideFunction,
+    ): Promise<void> {
+        await this.coreAgentSessionCreateRaw(initOverrides);
+    }
+
     /**
      * Creates request options for coreApplicationEntitlementsCreate without sending the request
      */
@@ -3669,68 +3704,6 @@ export class CoreApi extends runtime.BaseAPI {
     ): Promise<TokenView> {
         const response = await this.coreTokensRotateCreateRaw(requestParameters, initOverrides);
         return await response.value();
-    }
-
-    /**
-     * Creates request options for coreTokensSessionCreate without sending the request
-     */
-    async coreTokensSessionCreateRequestOpts(
-        requestParameters: CoreTokensSessionCreateRequest,
-    ): Promise<runtime.RequestOpts> {
-        if (requestParameters["tokenSetKeyRequest"] == null) {
-            throw new runtime.RequiredError(
-                "tokenSetKeyRequest",
-                'Required parameter "tokenSetKeyRequest" was null or undefined when calling coreTokensSessionCreate().',
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters["Content-Type"] = "application/json";
-
-        if (this.configuration && this.configuration.accessToken) {
-            const token = this.configuration.accessToken;
-            const tokenString = await token("authentik", []);
-
-            if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
-            }
-        }
-
-        let urlPath = `/core/tokens/session/`;
-
-        return {
-            path: urlPath,
-            method: "POST",
-            headers: headerParameters,
-            query: queryParameters,
-            body: TokenSetKeyRequestToJSON(requestParameters["tokenSetKeyRequest"]),
-        };
-    }
-
-    /**
-     * Exchange an agent\'s API token for an authenticated session. Only valid for active agent users with non-expired INTENT_API tokens.
-     */
-    async coreTokensSessionCreateRaw(
-        requestParameters: CoreTokensSessionCreateRequest,
-        initOverrides?: RequestInit | runtime.InitOverrideFunction,
-    ): Promise<runtime.ApiResponse<void>> {
-        const requestOptions = await this.coreTokensSessionCreateRequestOpts(requestParameters);
-        const response = await this.request(requestOptions, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     * Exchange an agent\'s API token for an authenticated session. Only valid for active agent users with non-expired INTENT_API tokens.
-     */
-    async coreTokensSessionCreate(
-        requestParameters: CoreTokensSessionCreateRequest,
-        initOverrides?: RequestInit | runtime.InitOverrideFunction,
-    ): Promise<void> {
-        await this.coreTokensSessionCreateRaw(requestParameters, initOverrides);
     }
 
     /**

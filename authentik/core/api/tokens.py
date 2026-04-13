@@ -3,7 +3,6 @@
 from datetime import timedelta
 from typing import Any
 
-from django.contrib.auth import login
 from django.utils.timezone import now
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework.decorators import action
@@ -204,54 +203,6 @@ class TokenViewSet(UsedByMixin, ModelViewSet):
         token.save()
         Event.new(EventAction.SECRET_ROTATE, secret=token).from_http(request)  # noqa # nosec
         return Response(TokenViewSerializer({"key": token.key}).data)
-
-    @extend_schema(
-        request=TokenSetKeySerializer,
-        responses={
-            204: OpenApiResponse(description="Session created, session cookie set"),
-            400: OpenApiResponse(description="Invalid token or not an agent user"),
-            403: OpenApiResponse(description="Token expired or agent inactive"),
-        },
-    )
-    @action(detail=False, pagination_class=None, filter_backends=[], methods=["POST"])
-    @validate(TokenSetKeySerializer)
-    def session(self, request: Request, body: TokenSetKeySerializer) -> Response:
-        """Exchange an agent's API token for an authenticated session. Only valid for
-        active agent users with non-expired INTENT_API tokens."""
-        from authentik.core.models import AuthenticatedSession
-        from authentik.stages.password import BACKEND_INBUILT
-
-        key = body.validated_data.get("key")
-        token = (
-            Token.objects.filter(key=key, intent=TokenIntents.INTENT_API)
-            .select_related("user")
-            .first()
-        )
-        if not token:
-            return Response(
-                data={"non_field_errors": ["Invalid token."]},
-                status=400,
-            )
-        if token.is_expired:
-            return Response(
-                data={"non_field_errors": ["Token has expired."]},
-                status=403,
-            )
-        if token.user.type != UserTypes.AGENT:
-            return Response(
-                data={"non_field_errors": ["Token does not belong to an agent user."]},
-                status=400,
-            )
-        if not token.user.is_active:
-            return Response(
-                data={"non_field_errors": ["Agent user is inactive."]},
-                status=403,
-            )
-        login(request._request, token.user, backend=BACKEND_INBUILT)
-        session = AuthenticatedSession.from_request(request._request, token.user)
-        if session:
-            session.save()
-        return Response(status=204)
 
     @permission_required("authentik_core.set_token_key")
     @extend_schema(
