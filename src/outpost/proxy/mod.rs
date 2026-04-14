@@ -1,12 +1,11 @@
-use ak_client::apis::outposts_api::outposts_proxy_list;
-use eyre::Result;
 use std::sync::Arc;
 
+use ak_client::apis::outposts_api::outposts_proxy_list;
 use argh::FromArgs;
-
-use crate::outpost::Outpost;
-use crate::outpost::OutpostController;
+use eyre::Result;
 use tracing::warn;
+
+use crate::outpost::{Outpost, OutpostController};
 
 #[derive(Debug, Default, FromArgs, PartialEq, Eq)]
 /// Run the authentik proxy outpost.
@@ -26,6 +25,10 @@ impl Outpost for ProxyOutpost {
 
     async fn new(controller: Arc<OutpostController>) -> Result<Self> {
         Ok(Self { controller })
+    }
+
+    async fn controller(&self) -> Arc<OutpostController> {
+        Arc::clone(&self.controller)
     }
 
     async fn refresh(&self) -> Result<()> {
