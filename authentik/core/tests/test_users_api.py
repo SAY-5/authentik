@@ -1094,8 +1094,7 @@ class TestAgentUserAPI(APITestCase):
 
     def test_token_rotate_by_agent_owner(self):
         """Agent owner can rotate the agent's token"""
-        self.user.assign_perms_to_managed_role("authentik_core.add_agent_user")
-        self.client.force_login(self.user)
+        self.client.force_login(self.admin)
         with patch(
             "authentik.enterprise.license.LicenseKey.cached_summary",
             MagicMock(return_value=MagicMock(status=MagicMock(is_valid=True))),
