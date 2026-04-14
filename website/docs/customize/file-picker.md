@@ -50,7 +50,7 @@ Examples:
 - `fa://light/fa-coffee`
 - `fa://sharp-solid/fa-check`
 
-authentik also accepts raw Font Awesome class syntax such as `fa://fab fa-github` when you already have the class list and want to pass it through directly.
+authentik also accepts raw Font Awesome class syntax, such as `fa://fab fa-github`, when you already have the class list and want to pass it through directly.
 
 Supported family prefixes:
 
@@ -71,7 +71,7 @@ Supported family prefixes:
 | Sharp duotone light   | `sharp-duotone-light`, `fasdl`, `fa-sharp-duotone-light`     | `fa-sharp-duotone fa-light`   |
 | Sharp duotone thin    | `sharp-duotone-thin`, `fasdt`, `fa-sharp-duotone-thin`       | `fa-sharp-duotone fa-thin`    |
 
-authentik ships the Font Awesome Free styles needed for `solid`, `regular`, and `brands`. The Pro families, such as `light`, `thin`, `duotone`, and the sharp variants, work when you load the matching Font Awesome Pro CSS yourself, for example through a Kit embed or brand custom CSS. authentik does not bundle Font Awesome Pro; it only passes the requested family classes through to the rendered icon.
+authentik ships the Font Awesome Free styles needed for `solid`, `regular`, and `brands`. The Pro families, such as `light`, `thin`, `duotone`, and the sharp variants, work when you load the matching Font Awesome Pro CSS yourself, for example through a Kit embed or [brand custom CSS](../sys-mgmt/brands/custom-css.mdx). authentik does not bundle Font Awesome Pro; it only passes the requested family classes through to the rendered icon.
 
 ## Theme-aware values with `%(theme)s`
 
