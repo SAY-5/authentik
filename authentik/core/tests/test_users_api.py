@@ -891,8 +891,11 @@ class TestAgentUserAPI(APITestCase):
 
     def setUp(self) -> None:
         self.admin = create_test_admin_user()
-        self.admin.assign_perms_to_managed_role("authentik_core.add_agent_user")
         self.user = create_test_user()
+        self.owner = create_test_user()
+        self.owner.assign_perms_to_managed_role("authentik_core.add_agent_user")
+        self.owner.assign_perms_to_managed_role("authentik_core.add_user")
+        self.owner.assign_perms_to_managed_role("authentik_core.add_token")
 
     def _create_agent(self, name="test-agent", owner=None):
         owner = owner or self.admin
@@ -911,8 +914,8 @@ class TestAgentUserAPI(APITestCase):
         return agent
 
     def test_agent_create(self):
-        """Agent user creation"""
-        self.client.force_login(self.admin)
+        """Non-admin owner with correct permissions can create an agent"""
+        self.client.force_login(self.owner)
         with patch(
             "authentik.enterprise.license.LicenseKey.cached_summary",
             MagicMock(return_value=MagicMock(status=MagicMock(is_valid=True))),
@@ -925,7 +928,7 @@ class TestAgentUserAPI(APITestCase):
         agent = User.objects.get(username="test-agent")
         self.assertEqual(agent.type, UserTypes.AGENT)
         self.assertEqual(agent.path, USER_PATH_AGENT)
-        self.assertEqual(agent.attributes.get(USER_ATTRIBUTE_AGENT_OWNER_PK), str(self.admin.pk))
+        self.assertEqual(agent.attributes.get(USER_ATTRIBUTE_AGENT_OWNER_PK), str(self.owner.pk))
         self.assertEqual(agent.attributes.get(USER_ATTRIBUTE_AGENT_ALLOWED_APPS), [])
         self.assertFalse(agent.has_usable_password())
         token = Token.objects.filter(user=agent, intent=TokenIntents.INTENT_API).first()
@@ -934,7 +937,7 @@ class TestAgentUserAPI(APITestCase):
 
     def test_agent_create_no_license(self):
         """Agent creation is rejected without a valid enterprise license"""
-        self.client.force_login(self.admin)
+        self.client.force_login(self.owner)
         with patch(
             "authentik.enterprise.license.LicenseKey.cached_summary",
             MagicMock(return_value=MagicMock(status=MagicMock(is_valid=False))),
@@ -947,9 +950,9 @@ class TestAgentUserAPI(APITestCase):
 
     def test_agent_create_non_internal_user(self):
         """Only internal users can create agent users"""
-        self.admin.type = UserTypes.EXTERNAL
-        self.admin.save(update_fields=["type"])
-        self.client.force_login(self.admin)
+        self.owner.type = UserTypes.EXTERNAL
+        self.owner.save(update_fields=["type"])
+        self.client.force_login(self.owner)
         with patch(
             "authentik.enterprise.license.LicenseKey.cached_summary",
             MagicMock(return_value=MagicMock(status=MagicMock(is_valid=True))),
@@ -960,10 +963,23 @@ class TestAgentUserAPI(APITestCase):
             )
         self.assertEqual(response.status_code, 400)
 
+    def test_agent_create_no_permission(self):
+        """User without add_agent_user permission is rejected"""
+        self.client.force_login(self.user)
+        with patch(
+            "authentik.enterprise.license.LicenseKey.cached_summary",
+            MagicMock(return_value=MagicMock(status=MagicMock(is_valid=True))),
+        ):
+            response = self.client.post(
+                reverse("authentik_api:user-agent"),
+                data={"name": "test-agent"},
+            )
+        self.assertEqual(response.status_code, 403)
+
     def test_agent_create_duplicate(self):
         """Duplicate agent username returns a user-friendly error"""
         self._create_agent("test-agent-dup")
-        self.client.force_login(self.admin)
+        self.client.force_login(self.owner)
         with patch(
             "authentik.enterprise.license.LicenseKey.cached_summary",
             MagicMock(return_value=MagicMock(status=MagicMock(is_valid=True))),
@@ -1093,8 +1109,8 @@ class TestAgentUserAPI(APITestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_token_rotate_by_agent_owner(self):
-        """Agent owner can rotate the agent's token"""
-        self.client.force_login(self.admin)
+        """Non-admin owner can rotate the agent's token"""
+        self.client.force_login(self.owner)
         with patch(
             "authentik.enterprise.license.LicenseKey.cached_summary",
             MagicMock(return_value=MagicMock(status=MagicMock(is_valid=True))),
