@@ -1,5 +1,6 @@
 import "#elements/LicenseNotice";
 import "#elements/Alert";
+
 import { WithLicenseSummary } from "#elements/mixins/license";
 import { SlottedTemplateResult } from "#elements/types";
 import { ifPresent } from "#elements/utils/attributes";
