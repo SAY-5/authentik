@@ -32,6 +32,7 @@ These settings control how authentik creates and manages Kubernetes resources. F
 - `kubernetes_service_type`: Sets the generated Service type, for example `ClusterIP` or `LoadBalancer`.
 - `kubernetes_image_pull_secrets`: Uses existing image pull secrets for private registries. Create these secrets in the target namespace before you use this setting.
 - `kubernetes_json_patches`: Applies [RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902) JSON patches to generated Kubernetes objects.
+- `kubernetes_disable_x509_strict`: Disable strict X.509 validation for the Kubernetes integration. Enable this setting if your cluster's root CA certificate was generated without certain key usage extensions. Seeing `certificate verify failed` errors in the outpost logs is an indicator that this setting should be set to `true`.
 
 ### Ingress settings
 
