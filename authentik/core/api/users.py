@@ -734,7 +734,8 @@ class UserViewSet(
                 )
 
     @permission_required(
-        None, ["authentik_core.add_user", "authentik_core.add_token", "authentik_core.add_agent_user"]
+        None,
+        ["authentik_core.add_user", "authentik_core.add_token", "authentik_core.add_agent_user"],
     )
     @extend_schema(
         request=UserAgentSerializer,
