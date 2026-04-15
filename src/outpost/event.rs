@@ -1,13 +1,13 @@
 use std::sync::Arc;
-use futures::{SinkExt, StreamExt};
-use axum::http::{HeaderValue, header::AUTHORIZATION};
-use nix::unistd::gethostname;
-use tokio::time::{interval, Duration, sleep};
-use ak_common::{Arbiter, Tasks, VERSION, authentik_build_hash};
-use eyre::{eyre, Result};
 
-use serde::{Serialize, Deserialize};
-use serde_repr::{Serialize_repr, Deserialize_repr};
+use ak_common::{Arbiter, Tasks, VERSION, authentik_build_hash};
+use axum::http::{HeaderValue, header::AUTHORIZATION};
+use eyre::{Result, eyre};
+use futures::{SinkExt, StreamExt};
+use nix::unistd::gethostname;
+use serde::{Deserialize, Serialize};
+use serde_repr::{Deserialize_repr, Serialize_repr};
+use tokio::time::{Duration, interval, sleep};
 use tokio_tungstenite::tungstenite::{Message, client::IntoClientRequest};
 use tracing::{debug, info, warn};
 use url::Url;
@@ -49,9 +49,12 @@ fn build_ws_url(ak_host: Url, outpost_pk: &str, instance_uuid: &str, attempt: u3
         other => return Err(eyre!("Unsupported scheme for WebSocket URL: {other}")),
     };
 
-    url.set_scheme(ws_scheme).map_err(|()| eyre!("Failed to set URL scheme to {ws_scheme}"))?;
+    url.set_scheme(ws_scheme)
+        .map_err(|()| eyre!("Failed to set URL scheme to {ws_scheme}"))?;
     url.set_path(&format!("{}ws/outpost/{outpost_pk}/", url.path()));
-    url.query_pairs_mut().append_pair("instance_uuid", instance_uuid).append_pair("attempt", &attempt.to_string());
+    url.query_pairs_mut()
+        .append_pair("instance_uuid", instance_uuid)
+        .append_pair("attempt", &attempt.to_string());
 
     Ok(url)
 }
@@ -69,13 +72,17 @@ fn hello_args(instance_uuid: &str) -> serde_json::Value {
     })
 }
 
-async fn handle_event<O: Outpost>(controller: Arc<OutpostController>, outpost: Arc<O>, event: Event) -> Result<()> {
+async fn handle_event<O: Outpost>(
+    controller: Arc<OutpostController>,
+    outpost: Arc<O>,
+    event: Event,
+) -> Result<()> {
     match event.instruction {
-        EventKind::Ack | EventKind::Hello => {},
+        EventKind::Ack | EventKind::Hello => {}
         EventKind::TriggerUpdate => {
             controller.refresh().await?;
             outpost.refresh().await?;
-        },
+        }
         EventKind::SessionEnd => {
             let event: EventSessionEnd = serde_json::from_value(event.args)?;
             outpost.end_session(event).await?;
@@ -85,18 +92,38 @@ async fn handle_event<O: Outpost>(controller: Arc<OutpostController>, outpost: A
     Ok(())
 }
 
-async fn watch_events_inner<O: Outpost>(arbiter: Arbiter, controller: Arc<OutpostController>, outpost: Arc<O>, attempt: u32) -> Result<()> {
-    let ws_url = build_ws_url(controller.ak_host.clone(), &controller.outpost.load().pk.to_string(), &controller.instance_uuid.to_string(), attempt)?;
+async fn watch_events_inner<O: Outpost>(
+    arbiter: Arbiter,
+    controller: Arc<OutpostController>,
+    outpost: Arc<O>,
+    attempt: u32,
+) -> Result<()> {
+    let ws_url = build_ws_url(
+        controller.ak_host.clone(),
+        &controller.outpost.load().pk.to_string(),
+        &controller.instance_uuid.to_string(),
+        attempt,
+    )?;
     dbg!(&ws_url);
 
     let mut request = ws_url.into_client_request()?;
-    let token = controller.api_config.bearer_access_token.as_deref().unwrap_or("");
-    request.headers_mut().insert(AUTHORIZATION, HeaderValue::from_str(&format!("Bearer {token}"))?);
+    let token = controller
+        .api_config
+        .bearer_access_token
+        .as_deref()
+        .unwrap_or("");
+    request.headers_mut().insert(
+        AUTHORIZATION,
+        HeaderValue::from_str(&format!("Bearer {token}"))?,
+    );
 
     let (ws_stream, _response) = tokio_tungstenite::connect_async(request).await?;
     let (mut ws_write, mut ws_read) = ws_stream.split();
 
-    info!(outpost = controller.outpost.load().name, "Connected to WebSocket");
+    info!(
+        outpost = controller.outpost.load().name,
+        "Connected to WebSocket"
+    );
 
     let mut heartbeat = interval(Duration::from_secs(10));
 
@@ -142,7 +169,11 @@ async fn watch_events_inner<O: Outpost>(arbiter: Arbiter, controller: Arc<Outpos
     Ok(())
 }
 
-async fn watch_events<O: Outpost>(arbiter: Arbiter, controller: Arc<OutpostController>, outpost: Arc<O>) -> Result<()> {
+async fn watch_events<O: Outpost>(
+    arbiter: Arbiter,
+    controller: Arc<OutpostController>,
+    outpost: Arc<O>,
+) -> Result<()> {
     let mut backoff = Duration::from_secs(1);
     const MAX_BACKOFF: Duration = Duration::from_secs(300);
     let mut attempt: u32 = 0;
@@ -174,7 +205,11 @@ async fn watch_events<O: Outpost>(arbiter: Arbiter, controller: Arc<OutpostContr
     Ok(())
 }
 
-pub(crate) fn run<O: Outpost + 'static>(tasks: &mut Tasks, controller: Arc<OutpostController>, outpost: Arc<O>) -> Result<()> {
+pub(crate) fn run<O: Outpost + 'static>(
+    tasks: &mut Tasks,
+    controller: Arc<OutpostController>,
+    outpost: Arc<O>,
+) -> Result<()> {
     let arbiter = tasks.arbiter();
     tasks
         .build_task()

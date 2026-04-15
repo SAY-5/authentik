@@ -1,17 +1,15 @@
 use std::{sync::Arc, time::Duration};
-use url::Url;
 
 use ak_client::{
-    apis::{
-        configuration::Configuration, outposts_api::outposts_instances_list,
-    },
+    apis::{configuration::Configuration, outposts_api::outposts_instances_list},
     models::Outpost as OutpostModel,
 };
-use ak_common::{Tasks, config};
+use ak_common::{Tasks, api, config};
 use arc_swap::ArcSwap;
 use eyre::{Error, Result, eyre};
 use tokio_retry2::{Retry, RetryError, strategy::FixedInterval};
 use tracing::{debug, error};
+use url::Url;
 use uuid::Uuid;
 
 pub(crate) mod event;
@@ -25,7 +23,8 @@ pub(crate) trait Outpost: Send + Sync + Sized {
 
     fn refresh(&self) -> impl Future<Output = Result<()>> + Send;
 
-    fn end_session(&self, event: event::EventSessionEnd) -> impl Future<Output = Result<()>> + Send;
+    fn end_session(&self, event: event::EventSessionEnd)
+    -> impl Future<Output = Result<()>> + Send;
 }
 
 #[derive(Debug)]
@@ -78,27 +77,8 @@ impl OutpostController {
     }
 
     async fn new(ak_host: String, ak_token: String, ak_insecure: bool) -> Result<Self> {
-        let api_config = Configuration {
-            base_path: format!("{ak_host}/api/v3"),
-            bearer_access_token: Some(ak_token.clone()),
-            ..Default::default()
-        };
-
-        let outpost = {
-            let retry_strategy = FixedInterval::new(Duration::from_secs(3));
-            let retrieve_outposts = async || {
-                Self::get_outpost(&api_config)
-                    .await
-                    .map_err(RetryError::transient)
-            };
-            let retry_notify = |err: &Error, _duration| {
-                error!(
-                    ?err,
-                    "Failed to fetch outpost configuration, retrying in 3 seconds"
-                );
-            };
-            Retry::spawn_notify(retry_strategy, retrieve_outposts, retry_notify).await?
-        };
+        let api_config = api::make_config()?;
+        let outpost = Self::get_outpost(&api_config).await?;
 
         Ok(Self {
             api_config,
@@ -126,10 +106,7 @@ pub(crate) async fn run<O: Outpost + 'static>(_cli: O::Cli, tasks: &mut Tasks) -
         .token
         .clone()
         .ok_or_else(|| eyre!("environment variable `AUTHENTIK_TOKEN` not set"))?;
-    let ak_insecure = config::get()
-        .insecure
-        .clone()
-        .unwrap_or(false);
+    let ak_insecure = config::get().insecure.clone().unwrap_or(false);
 
     let controller = Arc::new(OutpostController::new(ak_host, ak_token, ak_insecure).await?);
     let outpost = Arc::new(O::new(Arc::clone(&controller)).await?);
