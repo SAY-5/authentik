@@ -9,7 +9,7 @@ from django.urls import reverse
 from authentik.core.models import Application
 from authentik.core.tests.utils import create_test_flow
 from authentik.lib.generators import generate_id
-from authentik.providers.oauth2.models import OAuth2Provider
+from authentik.providers.oauth2.models import GrantType, OAuth2Provider
 from authentik.providers.oauth2.tests.utils import OAuthTestCase
 
 
@@ -21,6 +21,7 @@ class TesOAuth2DeviceBackchannel(OAuthTestCase):
             name=generate_id(),
             client_id="test",
             authorization_flow=create_test_flow(),
+            grant_types=[GrantType.DEVICE_CODE],
         )
         self.application = Application.objects.create(
             name=generate_id(),
