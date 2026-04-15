@@ -74,6 +74,8 @@ pub struct OAuth2Provider {
     /// Public clients are incapable
     #[serde(rename = "client_type", skip_serializing_if = "Option::is_none")]
     pub client_type: Option<models::ClientTypeEnum>,
+    #[serde(rename = "grant_types", skip_serializing_if = "Option::is_none")]
+    pub grant_types: Option<Vec<models::GrantTypesEnum>>,
     #[serde(rename = "client_id", skip_serializing_if = "Option::is_none")]
     pub client_id: Option<String>,
     #[serde(rename = "client_secret", skip_serializing_if = "Option::is_none")]
@@ -189,6 +191,7 @@ impl OAuth2Provider {
             verbose_name_plural,
             meta_model_name,
             client_type: None,
+            grant_types: None,
             client_id: None,
             client_secret: None,
             access_code_validity: None,

@@ -47,9 +47,10 @@ type OAuth2Provider struct {
 	// Return internal model name
 	MetaModelName string `json:"meta_model_name"`
 	// Confidential clients are capable of maintaining the confidentiality of their credentials. Public clients are incapable
-	ClientType   *ClientTypeEnum `json:"client_type,omitempty"`
-	ClientId     *string         `json:"client_id,omitempty"`
-	ClientSecret *string         `json:"client_secret,omitempty"`
+	ClientType   *ClientTypeEnum  `json:"client_type,omitempty"`
+	GrantTypes   []GrantTypesEnum `json:"grant_types,omitempty"`
+	ClientId     *string          `json:"client_id,omitempty"`
+	ClientSecret *string          `json:"client_secret,omitempty"`
 	// Access codes not valid on or after current time + this value (Format: hours=1;minutes=2;seconds=3).
 	AccessCodeValidity *string `json:"access_code_validity,omitempty"`
 	// Tokens not valid on or after current time + this value (Format: hours=1;minutes=2;seconds=3).
@@ -510,6 +511,38 @@ func (o *OAuth2Provider) HasClientType() bool {
 // SetClientType gets a reference to the given ClientTypeEnum and assigns it to the ClientType field.
 func (o *OAuth2Provider) SetClientType(v ClientTypeEnum) {
 	o.ClientType = &v
+}
+
+// GetGrantTypes returns the GrantTypes field value if set, zero value otherwise.
+func (o *OAuth2Provider) GetGrantTypes() []GrantTypesEnum {
+	if o == nil || IsNil(o.GrantTypes) {
+		var ret []GrantTypesEnum
+		return ret
+	}
+	return o.GrantTypes
+}
+
+// GetGrantTypesOk returns a tuple with the GrantTypes field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *OAuth2Provider) GetGrantTypesOk() ([]GrantTypesEnum, bool) {
+	if o == nil || IsNil(o.GrantTypes) {
+		return nil, false
+	}
+	return o.GrantTypes, true
+}
+
+// HasGrantTypes returns a boolean if a field has been set.
+func (o *OAuth2Provider) HasGrantTypes() bool {
+	if o != nil && !IsNil(o.GrantTypes) {
+		return true
+	}
+
+	return false
+}
+
+// SetGrantTypes gets a reference to the given []GrantTypesEnum and assigns it to the GrantTypes field.
+func (o *OAuth2Provider) SetGrantTypes(v []GrantTypesEnum) {
+	o.GrantTypes = v
 }
 
 // GetClientId returns the ClientId field value if set, zero value otherwise.
@@ -1069,6 +1102,9 @@ func (o OAuth2Provider) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.ClientType) {
 		toSerialize["client_type"] = o.ClientType
 	}
+	if !IsNil(o.GrantTypes) {
+		toSerialize["grant_types"] = o.GrantTypes
+	}
 	if !IsNil(o.ClientId) {
 		toSerialize["client_id"] = o.ClientId
 	}
@@ -1185,6 +1221,7 @@ func (o *OAuth2Provider) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "verbose_name_plural")
 		delete(additionalProperties, "meta_model_name")
 		delete(additionalProperties, "client_type")
+		delete(additionalProperties, "grant_types")
 		delete(additionalProperties, "client_id")
 		delete(additionalProperties, "client_secret")
 		delete(additionalProperties, "access_code_validity")

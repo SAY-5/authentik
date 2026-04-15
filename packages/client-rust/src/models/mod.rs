@@ -436,6 +436,8 @@ pub mod google_workspace_provider_user;
 pub use self::google_workspace_provider_user::GoogleWorkspaceProviderUser;
 pub mod google_workspace_provider_user_request;
 pub use self::google_workspace_provider_user_request::GoogleWorkspaceProviderUserRequest;
+pub mod grant_types_enum;
+pub use self::grant_types_enum::GrantTypesEnum;
 pub mod group;
 pub use self::group::Group;
 pub mod group_kerberos_source_connection;
