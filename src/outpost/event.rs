@@ -3,12 +3,12 @@ use std::sync::Arc;
 use ak_common::{Arbiter, Tasks, VERSION, api, authentik_build_hash};
 use axum::http::{HeaderValue, header::AUTHORIZATION};
 use eyre::{Result, eyre};
-use futures::{SinkExt, StreamExt};
+use futures::{SinkExt as _, StreamExt as _};
 use nix::unistd::gethostname;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use tokio::time::{Duration, interval, sleep};
-use tokio_tungstenite::tungstenite::{Message, client::IntoClientRequest};
+use tokio_tungstenite::tungstenite::{Message, client::IntoClientRequest as _};
 use tracing::{debug, info, warn};
 use url::Url;
 
@@ -40,9 +40,7 @@ pub(crate) struct EventSessionEnd {
     session_id: String,
 }
 
-fn build_ws_url(ak_host: Url, outpost_pk: &str, instance_uuid: &str, attempt: u32) -> Result<Url> {
-    let mut url = ak_host;
-
+fn build_ws_url(mut url: Url, outpost_pk: &str, instance_uuid: &str, attempt: u32) -> Result<Url> {
     let ws_scheme = match url.scheme() {
         "https" => "wss",
         "http" => "ws",
@@ -87,6 +85,7 @@ async fn handle_event<O: Outpost>(
             let event: EventSessionEnd = serde_json::from_value(event.args)?;
             outpost.end_session(event).await?;
         }
+        #[expect(clippy::unimplemented, reason = "this is only relevant for the RAC provider")]
         EventKind::ProviderSpecific => unimplemented!(),
     }
     Ok(())
@@ -100,12 +99,11 @@ async fn watch_events_inner<O: Outpost>(
 ) -> Result<()> {
     let server_config = api::ServerConfig::new()?;
     let ws_url = build_ws_url(
-        server_config.host.parse()?,
+        server_config.host,
         &controller.outpost.load().pk.to_string(),
         &controller.instance_uuid.to_string(),
         attempt,
     )?;
-    dbg!(&ws_url);
 
     let mut request = ws_url.into_client_request()?;
     let token = controller
@@ -151,7 +149,6 @@ async fn watch_events_inner<O: Outpost>(
                         };
                         if let Err(err) = handle_event(Arc::clone(&controller), Arc::clone(&outpost), event).await {
                             warn!(?err, "Failed to handle event");
-                            continue;
                         }
                     },
                     Message::Ping(data) => {
@@ -161,7 +158,7 @@ async fn watch_events_inner<O: Outpost>(
                         break;
                     },
                     _ => {},
-                };
+                }
             },
             () = arbiter.shutdown() => break,
         }
@@ -175,8 +172,8 @@ async fn watch_events<O: Outpost>(
     controller: Arc<OutpostController>,
     outpost: Arc<O>,
 ) -> Result<()> {
-    let mut backoff = Duration::from_secs(1);
     const MAX_BACKOFF: Duration = Duration::from_secs(300);
+    let mut backoff = Duration::from_secs(1);
     let mut attempt: u32 = 0;
 
     loop {
@@ -196,7 +193,7 @@ async fn watch_events<O: Outpost>(
                 }
 
                 backoff = (backoff * 2).min(MAX_BACKOFF);
-                attempt += 1
+                attempt += 1;
             }
         }
     }

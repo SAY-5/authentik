@@ -33,18 +33,9 @@ pub(crate) struct OutpostController {
 }
 
 impl OutpostController {
-    pub(crate) fn is_embedded(&self) -> bool {
-        self.outpost
-            .load()
-            .managed
-            .as_ref()
-            .and_then(|m| m.as_deref())
-            .is_some_and(|m| m == "goauthentik.io/outposts/embedded")
-    }
-
     async fn get_outpost(api_config: &Configuration) -> Result<OutpostModel> {
         let outposts = outposts_instances_list(
-            &api_config,
+            api_config,
             None,
             None,
             None,
