@@ -57,10 +57,7 @@ fn main() -> Result<()> {
     config::init()?;
     tls::init()?;
 
-    let _sentry = config::get()
-        .error_reporting
-        .enabled
-        .then(ak_tracing::sentry::install);
+    let _sentry = ak_tracing::sentry::install()?;
     ak_tracing::install()?;
     drop(tracing_crude);
 

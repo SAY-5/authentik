@@ -252,6 +252,7 @@ name = "authentik-common"
 version = "2026.5.0-rc1"
 dependencies = [
  "arc-swap",
+ "authentik-client",
  "aws-lc-rs",
  "axum-server",
  "config",
@@ -263,6 +264,8 @@ dependencies = [
  "nix 0.31.2",
  "notify",
  "pin-project-lite",
+ "reqwest",
+ "reqwest-middleware",
  "rustls",
  "sentry",
  "serde",
@@ -272,6 +275,7 @@ dependencies = [
  "thiserror 2.0.18",
  "time",
  "tokio",
+ "tokio-retry2",
  "tokio-util",
  "tracing",
  "tracing-error",
