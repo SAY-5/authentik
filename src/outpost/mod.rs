@@ -1,18 +1,20 @@
 use std::{sync::Arc, time::Duration};
+use url::Url;
 
 use ak_client::{
     apis::{
         configuration::Configuration, outposts_api::outposts_instances_list,
-        root_api::root_config_retrieve,
     },
-    models::{Config, Outpost as OutpostModel},
+    models::Outpost as OutpostModel,
 };
 use ak_common::{Tasks, config};
 use arc_swap::ArcSwap;
 use eyre::{Error, Result, eyre};
 use tokio_retry2::{Retry, RetryError, strategy::FixedInterval};
 use tracing::{debug, error};
+use uuid::Uuid;
 
+pub(crate) mod event;
 #[cfg(feature = "proxy")]
 pub(crate) mod proxy;
 
@@ -21,17 +23,19 @@ pub(crate) trait Outpost: Send + Sync + Sized {
 
     async fn new(controller: Arc<OutpostController>) -> Result<Self>;
 
-    async fn controller(&self) -> Arc<OutpostController>;
+    fn refresh(&self) -> impl Future<Output = Result<()>> + Send;
 
-    async fn refresh(&self) -> Result<()>;
+    fn end_session(&self, event: event::EventSessionEnd) -> impl Future<Output = Result<()>> + Send;
 }
 
 #[derive(Debug)]
 pub(crate) struct OutpostController {
     api_config: Configuration,
     outpost: ArcSwap<OutpostModel>,
-    ak_host: String,
+    instance_uuid: Uuid,
+    ak_host: Url,
     ak_token: String,
+    ak_insecure: bool,
 }
 
 impl OutpostController {
@@ -73,7 +77,7 @@ impl OutpostController {
         Ok(outpost)
     }
 
-    async fn new(ak_host: String, ak_token: String) -> Result<Self> {
+    async fn new(ak_host: String, ak_token: String, ak_insecure: bool) -> Result<Self> {
         let api_config = Configuration {
             base_path: format!("{ak_host}/api/v3"),
             bearer_access_token: Some(ak_token.clone()),
@@ -99,8 +103,10 @@ impl OutpostController {
         Ok(Self {
             api_config,
             outpost: ArcSwap::from_pointee(outpost),
-            ak_host,
+            instance_uuid: Uuid::new_v4(),
+            ak_host: ak_host.parse()?,
             ak_token,
+            ak_insecure,
         })
     }
 
@@ -111,7 +117,7 @@ impl OutpostController {
     }
 }
 
-pub(crate) async fn run<O: Outpost>(_cli: O::Cli, _tasks: &mut Tasks) -> Result<()> {
+pub(crate) async fn run<O: Outpost + 'static>(_cli: O::Cli, tasks: &mut Tasks) -> Result<()> {
     let ak_host = config::get()
         .host
         .clone()
@@ -120,10 +126,15 @@ pub(crate) async fn run<O: Outpost>(_cli: O::Cli, _tasks: &mut Tasks) -> Result<
         .token
         .clone()
         .ok_or_else(|| eyre!("environment variable `AUTHENTIK_TOKEN` not set"))?;
+    let ak_insecure = config::get()
+        .insecure
+        .clone()
+        .unwrap_or(false);
 
-    let controller = Arc::new(OutpostController::new(ak_host, ak_token).await?);
+    let controller = Arc::new(OutpostController::new(ak_host, ak_token, ak_insecure).await?);
     let outpost = Arc::new(O::new(Arc::clone(&controller)).await?);
-    outpost.refresh().await?;
+
+    event::run(tasks, controller, outpost)?;
 
     Ok(())
 }

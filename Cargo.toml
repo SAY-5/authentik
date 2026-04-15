@@ -99,6 +99,10 @@ time = { version = "= 0.3.47", features = ["macros"] }
 tokio = { version = "= 1.51.1", features = ["full", "tracing"] }
 tokio-retry2 = "= 0.9.1"
 tokio-rustls = "= 0.26.4"
+tokio-tungstenite = { version = "= 0.29.0", features = [
+  "rustls-tls-webpki-roots",
+  "url",
+] }
 tokio-util = { version = "= 0.7.18", features = ["full"] }
 tower = "= 0.5.3"
 tower-http = { version = "= 0.6.8", features = ["timeout"] }
@@ -269,16 +273,22 @@ argh.workspace = true
 axum.workspace = true
 color-eyre.workspace = true
 eyre.workspace = true
+futures.workspace = true
 hyper-unix-socket.workspace = true
 hyper-util.workspace = true
 metrics.workspace = true
 metrics-exporter-prometheus.workspace = true
 nix.workspace = true
 pyo3 = { workspace = true, optional = true }
+serde.workspace = true
+serde_json.workspace = true
+serde_repr.workspace = true
 sqlx = { workspace = true, optional = true }
 tokio-retry2.workspace = true
+tokio-tungstenite.workspace = true
 tokio.workspace = true
 tracing.workspace = true
+url.workspace = true
 uuid.workspace = true
 
 [lints]

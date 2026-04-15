@@ -27,10 +27,6 @@ impl Outpost for ProxyOutpost {
         Ok(Self { controller })
     }
 
-    async fn controller(&self) -> Arc<OutpostController> {
-        Arc::clone(&self.controller)
-    }
-
     async fn refresh(&self) -> Result<()> {
         let providers =
             outposts_proxy_list(&self.controller.api_config, None, None, None, None, None)
@@ -42,6 +38,12 @@ impl Outpost for ProxyOutpost {
             );
         }
 
+        Ok(())
+    }
+
+    async fn end_session(&self, _event: super::event::EventSessionEnd) -> Result<()> {
+        // todo!()
+        warn!(?_event, "removing session");
         Ok(())
     }
 }
