@@ -58,7 +58,7 @@ class TestModels(TestCase):
         source = Source(icon="source-icons/icon.svg")
 
         self.assertEqual(
-            source.get_icon_url(request, use_cache=False),
+            source.icon_url(request, use_cache=False),
             "/files/media/public/source-icons/icon.svg?token=fresh",
         )
         manager.file_url.assert_called_once_with(

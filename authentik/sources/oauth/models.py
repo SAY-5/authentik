@@ -113,8 +113,11 @@ class OAuthSource(NonCreatableType, Source):
     def get_base_group_properties(self, **kwargs):
         return self.source_type().get_base_group_properties(source=self, **kwargs)
 
-    @property
-    def icon_themed_urls(self) -> dict[str, str] | None:
+    def icon_themed_urls(
+        self,
+        request: HttpRequest | None = None,
+        use_cache: bool = True,
+    ) -> dict[str, str] | None:
         """Get themed URLs for source icon.
 
         OAuth source types are abstract models so the DB always stores OAuthSource
@@ -122,7 +125,7 @@ class OAuthSource(NonCreatableType, Source):
         of the class-level default_icon_name (which only exists on the abstract
         subclasses used by the TypeCreate wizard).
         """
-        urls = super().icon_themed_urls
+        urls = super().icon_themed_urls(request=request, use_cache=use_cache)
         if urls:
             return urls
         try:
@@ -134,9 +137,12 @@ class OAuthSource(NonCreatableType, Source):
             return _get_default_source_icon_themed_urls(provider_type)
         return None
 
-    @property
-    def icon_url(self) -> str | None:
-        icon = super().icon_url
+    def icon_url(
+        self,
+        request: HttpRequest | None = None,
+        use_cache: bool = True,
+    ) -> str | None:
+        icon = super().icon_url(request=request, use_cache=use_cache)
         if icon:
             return icon
         try:

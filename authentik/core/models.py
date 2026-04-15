@@ -1004,8 +1004,11 @@ class Source(ManagedModel, SerializerModel, PolicyBindingModel):
     default_icon_name: str | None = None
     """Source type name used to resolve built-in themed icons (e.g. "discord")."""
 
-    @property
-    def icon_url(self) -> str | None:
+    def icon_url(
+        self,
+        request: HttpRequest | None = None,
+        use_cache: bool = True,
+    ) -> str | None:
         """Get the URL to the source icon."""
         manager = get_file_manager(FileUsage.MEDIA)
         custom_icon = None
@@ -1015,13 +1018,16 @@ class Source(ManagedModel, SerializerModel, PolicyBindingModel):
             # Abstract type instances (created via __new__) don't have field state.
             custom_icon = None
         if custom_icon:
-            return manager.file_url(custom_icon)
+            return manager.file_url(custom_icon, request, use_cache=use_cache)
         if self.default_icon_name:
             return _get_default_source_icon_url(self.default_icon_name)
         return None
 
-    @property
-    def icon_themed_urls(self) -> dict[str, str] | None:
+    def icon_themed_urls(
+        self,
+        request: HttpRequest | None = None,
+        use_cache: bool = True,
+    ) -> dict[str, str] | None:
         """Get themed URLs for source icon."""
         manager = get_file_manager(FileUsage.MEDIA)
         # If the user set a custom icon, check if it supports themes.
@@ -1032,7 +1038,7 @@ class Source(ManagedModel, SerializerModel, PolicyBindingModel):
             # Abstract type instances (created via __new__) don't have field state.
             custom_icon = None
         if custom_icon:
-            return manager.themed_urls(custom_icon)
+            return manager.themed_urls(custom_icon, request, use_cache=use_cache)
         # Fall back to built-in default icons.
         if self.default_icon_name:
             return _get_default_source_icon_themed_urls(self.default_icon_name)
@@ -1040,7 +1046,7 @@ class Source(ManagedModel, SerializerModel, PolicyBindingModel):
 
     @property
     def icon_dynamic_url(self) -> dict[str, str] | None:
-        return _build_dynamic_url_map(self.icon_url, self.icon_themed_urls)
+        return _build_dynamic_url_map(self.icon_url(), self.icon_themed_urls())
 
     def get_user_path(self) -> str:
         """Get user path, fallback to default for formatting errors"""
