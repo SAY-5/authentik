@@ -129,7 +129,7 @@ class TestProviderOAuth2OIDC(SeleniumTestCase):
                 RedirectURI(RedirectURIMatchingMode.STRICT, "http://localhost:9009/auth/callback")
             ],
             authorization_flow=authorization_flow,
-            grant_types=[GrantType.AUTHORIZATION_CODE],
+            grant_types=[GrantType.AUTHORIZATION_CODE, GrantType.REFRESH_TOKEN],
         )
         provider.property_mappings.set(
             ScopeMapping.objects.filter(
@@ -241,7 +241,7 @@ class TestProviderOAuth2OIDC(SeleniumTestCase):
             redirect_uris=[
                 RedirectURI(RedirectURIMatchingMode.STRICT, "http://localhost:9009/auth/callback")
             ],
-            grant_types=[GrantType.AUTHORIZATION_CODE],
+            grant_types=[GrantType.AUTHORIZATION_CODE, GrantType.REFRESH_TOKEN],
         )
         provider.property_mappings.set(
             ScopeMapping.objects.filter(
