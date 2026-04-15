@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use ak_common::{Arbiter, Tasks, VERSION, authentik_build_hash};
+use ak_common::{Arbiter, Tasks, VERSION, api, authentik_build_hash};
 use axum::http::{HeaderValue, header::AUTHORIZATION};
 use eyre::{Result, eyre};
 use futures::{SinkExt, StreamExt};
@@ -98,8 +98,9 @@ async fn watch_events_inner<O: Outpost>(
     outpost: Arc<O>,
     attempt: u32,
 ) -> Result<()> {
+    let server_config = api::ServerConfig::new()?;
     let ws_url = build_ws_url(
-        controller.ak_host.clone(),
+        server_config.host.parse()?,
         &controller.outpost.load().pk.to_string(),
         &controller.instance_uuid.to_string(),
         attempt,

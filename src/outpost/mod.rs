@@ -1,15 +1,13 @@
-use std::{sync::Arc, time::Duration};
+use std::sync::Arc;
 
 use ak_client::{
     apis::{configuration::Configuration, outposts_api::outposts_instances_list},
     models::Outpost as OutpostModel,
 };
-use ak_common::{Tasks, api, config};
+use ak_common::{Tasks, api};
 use arc_swap::ArcSwap;
-use eyre::{Error, Result, eyre};
-use tokio_retry2::{Retry, RetryError, strategy::FixedInterval};
-use tracing::{debug, error};
-use url::Url;
+use eyre::{Result, eyre};
+use tracing::debug;
 use uuid::Uuid;
 
 pub(crate) mod event;
@@ -32,9 +30,6 @@ pub(crate) struct OutpostController {
     api_config: Configuration,
     outpost: ArcSwap<OutpostModel>,
     instance_uuid: Uuid,
-    ak_host: Url,
-    ak_token: String,
-    ak_insecure: bool,
 }
 
 impl OutpostController {
@@ -76,7 +71,7 @@ impl OutpostController {
         Ok(outpost)
     }
 
-    async fn new(ak_host: String, ak_token: String, ak_insecure: bool) -> Result<Self> {
+    async fn new() -> Result<Self> {
         let api_config = api::make_config()?;
         let outpost = Self::get_outpost(&api_config).await?;
 
@@ -84,9 +79,6 @@ impl OutpostController {
             api_config,
             outpost: ArcSwap::from_pointee(outpost),
             instance_uuid: Uuid::new_v4(),
-            ak_host: ak_host.parse()?,
-            ak_token,
-            ak_insecure,
         })
     }
 
@@ -98,17 +90,7 @@ impl OutpostController {
 }
 
 pub(crate) async fn run<O: Outpost + 'static>(_cli: O::Cli, tasks: &mut Tasks) -> Result<()> {
-    let ak_host = config::get()
-        .host
-        .clone()
-        .ok_or_else(|| eyre!("environment variable `AUTHENTIK_HOST` not set"))?;
-    let ak_token = config::get()
-        .token
-        .clone()
-        .ok_or_else(|| eyre!("environment variable `AUTHENTIK_TOKEN` not set"))?;
-    let ak_insecure = config::get().insecure.clone().unwrap_or(false);
-
-    let controller = Arc::new(OutpostController::new(ak_host, ak_token, ak_insecure).await?);
+    let controller = Arc::new(OutpostController::new().await?);
     let outpost = Arc::new(O::new(Arc::clone(&controller)).await?);
 
     event::run(tasks, controller, outpost)?;

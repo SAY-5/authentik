@@ -65,10 +65,5 @@
         "**/playwright-report/**": true,
         "**/website/**/build": true,
         "**/client-*": true
-    },
-    "rust-analyzer": {
-        "check": {
-            "command": "check"
-        }
     }
 }
