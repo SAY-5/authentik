@@ -21,6 +21,7 @@ from authentik.policies.expression.models import ExpressionPolicy
 from authentik.policies.models import PolicyBinding
 from authentik.providers.oauth2.models import (
     ClientType,
+    GrantType,
     OAuth2Provider,
     RedirectURI,
     RedirectURIMatchingMode,
@@ -77,6 +78,7 @@ class TestProviderOAuth2OIDCImplicit(SeleniumTestCase):
             signing_key=create_test_cert(),
             redirect_uris=[RedirectURI(RedirectURIMatchingMode.STRICT, "http://localhost:9009/")],
             authorization_flow=authorization_flow,
+            grant_types=[GrantType.IMPLICIT],
         )
         provider.property_mappings.set(
             ScopeMapping.objects.filter(
@@ -128,6 +130,7 @@ class TestProviderOAuth2OIDCImplicit(SeleniumTestCase):
                 RedirectURI(RedirectURIMatchingMode.STRICT, "http://localhost:9009/implicit/")
             ],
             authorization_flow=authorization_flow,
+            grant_types=[GrantType.IMPLICIT],
         )
         provider.property_mappings.set(
             ScopeMapping.objects.filter(
@@ -199,6 +202,7 @@ class TestProviderOAuth2OIDCImplicit(SeleniumTestCase):
             redirect_uris=[
                 RedirectURI(RedirectURIMatchingMode.STRICT, "http://localhost:9009/implicit/")
             ],
+            grant_types=[GrantType.IMPLICIT],
         )
         provider.property_mappings.set(
             ScopeMapping.objects.filter(
@@ -289,6 +293,7 @@ class TestProviderOAuth2OIDCImplicit(SeleniumTestCase):
             redirect_uris=[
                 RedirectURI(RedirectURIMatchingMode.STRICT, "http://localhost:9009/implicit/")
             ],
+            grant_types=[GrantType.IMPLICIT],
         )
         provider.property_mappings.set(
             ScopeMapping.objects.filter(

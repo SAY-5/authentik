@@ -14,6 +14,7 @@ from authentik.policies.expression.models import ExpressionPolicy
 from authentik.policies.models import PolicyBinding
 from authentik.providers.oauth2.models import (
     ClientType,
+    GrantType,
     OAuth2Provider,
     RedirectURI,
     RedirectURIMatchingMode,
@@ -83,6 +84,7 @@ class TestProviderOAuth2Github(SeleniumTestCase):
                 RedirectURI(RedirectURIMatchingMode.STRICT, "http://localhost:3000/login/github")
             ],
             authorization_flow=authorization_flow,
+            grant_types=[GrantType.AUTHORIZATION_CODE],
         )
         Application.objects.create(
             name=generate_id(),
@@ -140,6 +142,7 @@ class TestProviderOAuth2Github(SeleniumTestCase):
                 RedirectURI(RedirectURIMatchingMode.STRICT, "http://localhost:3000/login/github")
             ],
             authorization_flow=authorization_flow,
+            grant_types=[GrantType.AUTHORIZATION_CODE],
         )
         app = Application.objects.create(
             name=generate_id(),
@@ -213,6 +216,7 @@ class TestProviderOAuth2Github(SeleniumTestCase):
                 RedirectURI(RedirectURIMatchingMode.STRICT, "http://localhost:3000/login/github")
             ],
             authorization_flow=authorization_flow,
+            grant_types=[GrantType.AUTHORIZATION_CODE],
         )
         app = Application.objects.create(
             name=generate_id(),

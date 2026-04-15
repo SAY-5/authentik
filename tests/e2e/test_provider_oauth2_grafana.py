@@ -21,6 +21,7 @@ from authentik.policies.expression.models import ExpressionPolicy
 from authentik.policies.models import PolicyBinding
 from authentik.providers.oauth2.models import (
     ClientType,
+    GrantType,
     OAuth2Provider,
     RedirectURI,
     RedirectURIMatchingMode,
@@ -91,6 +92,7 @@ class TestProviderOAuth2OAuth(SeleniumTestCase):
             signing_key=create_test_cert(),
             redirect_uris=[RedirectURI(RedirectURIMatchingMode.STRICT, "http://localhost:3000/")],
             authorization_flow=authorization_flow,
+            grant_types=[GrantType.AUTHORIZATION_CODE],
         )
         provider.property_mappings.set(
             ScopeMapping.objects.filter(
@@ -144,6 +146,7 @@ class TestProviderOAuth2OAuth(SeleniumTestCase):
                 )
             ],
             authorization_flow=authorization_flow,
+            grant_types=[GrantType.AUTHORIZATION_CODE],
         )
         provider.property_mappings.set(
             ScopeMapping.objects.filter(
@@ -218,6 +221,7 @@ class TestProviderOAuth2OAuth(SeleniumTestCase):
             ],
             authorization_flow=authorization_flow,
             invalidation_flow=invalidation_flow,
+            grant_types=[GrantType.AUTHORIZATION_CODE],
         )
         provider.property_mappings.set(
             ScopeMapping.objects.filter(
@@ -296,6 +300,7 @@ class TestProviderOAuth2OAuth(SeleniumTestCase):
                     RedirectURIMatchingMode.STRICT, "http://localhost:3000/login/generic_oauth"
                 )
             ],
+            grant_types=[GrantType.AUTHORIZATION_CODE],
         )
         provider.property_mappings.set(
             ScopeMapping.objects.filter(
@@ -380,6 +385,7 @@ class TestProviderOAuth2OAuth(SeleniumTestCase):
                     RedirectURIMatchingMode.STRICT, "http://localhost:3000/login/generic_oauth"
                 )
             ],
+            grant_types=[GrantType.AUTHORIZATION_CODE],
         )
         provider.property_mappings.set(
             ScopeMapping.objects.filter(
