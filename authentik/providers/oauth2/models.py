@@ -111,6 +111,11 @@ class RedirectURIMatchingMode(models.TextChoices):
     REGEX = "regex", _("Regular Expression URL matching")
 
 
+class RedirectURIType(models.TextChoices):
+    AUTHORIZATION = "authorization", _("Authorization")
+    LOGOUT = "logout", _("Logout")
+
+
 class OAuth2LogoutMethod(models.TextChoices):
     """OAuth2/OIDC Logout methods"""
 
@@ -124,6 +129,7 @@ class RedirectURI:
 
     matching_mode: RedirectURIMatchingMode
     url: str
+    redirect_uri_type: RedirectURIType = RedirectURIType.AUTHORIZATION
 
 
 class ResponseTypes(models.TextChoices):
@@ -235,7 +241,6 @@ class OAuth2Provider(WebfingerProvider, Provider):
             "Frontchannel uses iframes in your browser"
         ),
     )
-
     include_claims_in_id_token = models.BooleanField(
         default=True,
         verbose_name=_("Include claims in id_token"),
@@ -358,7 +363,12 @@ class OAuth2Provider(WebfingerProvider, Provider):
                 from_dict(
                     RedirectURI,
                     entry,
-                    config=Config(type_hooks={RedirectURIMatchingMode: RedirectURIMatchingMode}),
+                    config=Config(
+                        type_hooks={
+                            RedirectURIMatchingMode: RedirectURIMatchingMode,
+                            RedirectURIType: RedirectURIType,
+                        }
+                    ),
                 )
             )
         return uris
@@ -371,9 +381,23 @@ class OAuth2Provider(WebfingerProvider, Provider):
         self._redirect_uris = cleansed
 
     @property
+    def authorization_redirect_uris(self) -> list[RedirectURI]:
+        return [
+            uri
+            for uri in self.redirect_uris
+            if uri.redirect_uri_type == RedirectURIType.AUTHORIZATION
+        ]
+
+    @property
+    def post_logout_redirect_uris(self) -> list[RedirectURI]:
+        return [
+            uri for uri in self.redirect_uris if uri.redirect_uri_type == RedirectURIType.LOGOUT
+        ]
+
+    @property
     def launch_url(self) -> str | None:
         """Guess launch_url based on first redirect_uri"""
-        redirects = self.redirect_uris
+        redirects = self.authorization_redirect_uris
         if len(redirects) < 1:
             return None
         main_url = redirects[0].url

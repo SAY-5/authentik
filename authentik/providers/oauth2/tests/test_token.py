@@ -1,11 +1,15 @@
 """Test token view"""
 
 from base64 import b64encode
+from datetime import timedelta
 from json import dumps
+from urllib.parse import quote
 
 from django.test import RequestFactory
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.timezone import now
+from freezegun import freeze_time
 
 from authentik.blueprints.tests import apply_blueprint
 from authentik.common.oauth.constants import (
@@ -29,6 +33,7 @@ from authentik.providers.oauth2.models import (
     ScopeMapping,
 )
 from authentik.providers.oauth2.tests.utils import OAuthTestCase
+from authentik.providers.oauth2.utils import extract_client_auth
 from authentik.providers.oauth2.views.token import TokenParams
 
 
@@ -128,7 +133,7 @@ class TestToken(OAuthTestCase):
         )
         header = b64encode(f"{provider.client_id}:{provider.client_secret}".encode()).decode()
         user = create_test_admin_user()
-        token: RefreshToken = RefreshToken.objects.create(
+        token = RefreshToken.objects.create(
             provider=provider,
             user=user,
             token=generate_id(),
@@ -145,6 +150,20 @@ class TestToken(OAuthTestCase):
         )
         params = TokenParams.parse(request, provider, provider.client_id, provider.client_secret)
         self.assertEqual(params.provider, provider)
+
+    def test_extract_client_auth_basic_auth_percent_decodes(self):
+        """test percent-decoding of client credentials in Basic auth"""
+        header = b64encode(
+            f"{quote('client/id', safe='')}:{quote('secret+/==', safe='')}".encode()
+        ).decode()
+        request = self.factory.post("/", HTTP_AUTHORIZATION=f"Basic {header}")
+        self.assertEqual(extract_client_auth(request), ("client/id", "secret+/=="))
+
+    def test_extract_client_auth_basic_auth_preserves_raw_plus(self):
+        """test compatibility with clients that still send raw plus characters"""
+        header = b64encode(b"client:secret+plus").decode()
+        request = self.factory.post("/", HTTP_AUTHORIZATION=f"Basic {header}")
+        self.assertEqual(extract_client_auth(request), ("client", "secret+plus"))
 
     def test_auth_code_view(self):
         """test request param"""
@@ -172,7 +191,7 @@ class TestToken(OAuthTestCase):
             },
             HTTP_AUTHORIZATION=f"Basic {header}",
         )
-        access: AccessToken = AccessToken.objects.filter(user=user, provider=provider).first()
+        access = AccessToken.objects.filter(user=user, provider=provider).first()
         self.assertJSONEqual(
             response.content.decode(),
             {
@@ -215,7 +234,7 @@ class TestToken(OAuthTestCase):
             HTTP_AUTHORIZATION=f"Basic {header}",
         )
         self.assertEqual(response.status_code, 200)
-        access: AccessToken = AccessToken.objects.filter(user=user, provider=provider).first()
+        access = AccessToken.objects.filter(user=user, provider=provider).first()
         self.validate_jwe(access, provider)
 
     @apply_blueprint("system/providers-oauth2.yaml")
@@ -243,7 +262,7 @@ class TestToken(OAuthTestCase):
         self.app.save()
         header = b64encode(f"{provider.client_id}:{provider.client_secret}".encode()).decode()
         user = create_test_admin_user()
-        token: RefreshToken = RefreshToken.objects.create(
+        token = RefreshToken.objects.create(
             provider=provider,
             user=user,
             token=generate_id(),
@@ -263,10 +282,8 @@ class TestToken(OAuthTestCase):
         )
         self.assertEqual(response["Access-Control-Allow-Credentials"], "true")
         self.assertEqual(response["Access-Control-Allow-Origin"], "http://local.invalid")
-        access: AccessToken = AccessToken.objects.filter(user=user, provider=provider).first()
-        refresh: RefreshToken = RefreshToken.objects.filter(
-            user=user, provider=provider, revoked=False
-        ).first()
+        access = AccessToken.objects.filter(user=user, provider=provider).first()
+        refresh = RefreshToken.objects.filter(user=user, provider=provider, revoked=False).first()
         self.assertJSONEqual(
             response.content.decode(),
             {
@@ -304,7 +321,7 @@ class TestToken(OAuthTestCase):
         )
         header = b64encode(f"{provider.client_id}:{provider.client_secret}".encode()).decode()
         user = create_test_admin_user()
-        token: RefreshToken = RefreshToken.objects.create(
+        token = RefreshToken.objects.create(
             provider=provider,
             user=user,
             token=generate_id(),
@@ -322,10 +339,8 @@ class TestToken(OAuthTestCase):
             HTTP_AUTHORIZATION=f"Basic {header}",
             HTTP_ORIGIN="http://another.invalid",
         )
-        access: AccessToken = AccessToken.objects.filter(user=user, provider=provider).first()
-        refresh: RefreshToken = RefreshToken.objects.filter(
-            user=user, provider=provider, revoked=False
-        ).first()
+        access = AccessToken.objects.filter(user=user, provider=provider).first()
+        refresh = RefreshToken.objects.filter(user=user, provider=provider, revoked=False).first()
         self.assertNotIn("Access-Control-Allow-Credentials", response)
         self.assertNotIn("Access-Control-Allow-Origin", response)
         self.assertJSONEqual(
@@ -367,7 +382,7 @@ class TestToken(OAuthTestCase):
         self.app.save()
         header = b64encode(f"{provider.client_id}:{provider.client_secret}".encode()).decode()
         user = create_test_admin_user()
-        token: RefreshToken = RefreshToken.objects.create(
+        token = RefreshToken.objects.create(
             provider=provider,
             user=user,
             token=generate_id(),
@@ -385,9 +400,7 @@ class TestToken(OAuthTestCase):
             },
             HTTP_AUTHORIZATION=f"Basic {header}",
         )
-        new_token: RefreshToken = (
-            RefreshToken.objects.filter(user=user).exclude(pk=token.pk).first()
-        )
+        new_token = RefreshToken.objects.filter(user=user).exclude(pk=token.pk).first()
         # Post again with initial token -> get new refresh token
         # and revoke old one
         response = self.client.post(
@@ -415,7 +428,11 @@ class TestToken(OAuthTestCase):
 
     @apply_blueprint("system/providers-oauth2.yaml")
     def test_refresh_token_view_threshold(self):
-        """test request param"""
+        """refresh token threshold
+
+        threshold set to 1 hour, refresh token expires in 2 hours.
+        First request should not return a new refresh token, second request
+        has a fake time 1 hours in the future which should return a new access token"""
         provider = OAuth2Provider.objects.create(
             name=generate_id(),
             authorization_flow=create_test_flow(),
@@ -439,13 +456,14 @@ class TestToken(OAuthTestCase):
         self.app.save()
         header = b64encode(f"{provider.client_id}:{provider.client_secret}".encode()).decode()
         user = create_test_admin_user()
-        token: RefreshToken = RefreshToken.objects.create(
+        token = RefreshToken.objects.create(
             provider=provider,
             user=user,
             token=generate_id(),
             _id_token=dumps({}),
             auth_time=timezone.now(),
             _scope="offline_access",
+            expires=now() + timedelta(hours=2),
         )
         response = self.client.post(
             reverse("authentik_providers_oauth2:token"),
@@ -457,9 +475,7 @@ class TestToken(OAuthTestCase):
             HTTP_AUTHORIZATION=f"Basic {header}",
             HTTP_ORIGIN="http://local.invalid",
         )
-        self.assertEqual(response["Access-Control-Allow-Credentials"], "true")
-        self.assertEqual(response["Access-Control-Allow-Origin"], "http://local.invalid")
-        access: AccessToken = AccessToken.objects.filter(user=user, provider=provider).first()
+        access = AccessToken.objects.filter(user=user, provider=provider).first()
         self.assertJSONEqual(
             response.content.decode(),
             {
@@ -473,6 +489,34 @@ class TestToken(OAuthTestCase):
             },
         )
         self.validate_jwt(access, provider)
+
+        with freeze_time(now() + timedelta(hours=1, minutes=10)):
+            response = self.client.post(
+                reverse("authentik_providers_oauth2:token"),
+                data={
+                    "grant_type": GRANT_TYPE_REFRESH_TOKEN,
+                    "refresh_token": token.token,
+                    "redirect_uri": "http://local.invalid",
+                },
+                HTTP_AUTHORIZATION=f"Basic {header}",
+                HTTP_ORIGIN="http://local.invalid",
+            )
+            access = AccessToken.objects.filter(user=user, provider=provider).first()
+            refresh = RefreshToken.objects.filter(user=user, provider=provider).last()
+            self.assertJSONEqual(
+                response.content.decode(),
+                {
+                    "access_token": access.token,
+                    "token_type": TOKEN_TYPE,
+                    "expires_in": 3600,
+                    "id_token": provider.encode(
+                        access.id_token.to_dict(),
+                    ),
+                    "scope": "offline_access",
+                    "refresh_token": refresh.token,
+                },
+            )
+            self.validate_jwt(access, provider)
 
     @apply_blueprint("system/providers-oauth2.yaml")
     def test_scope_claim_override_via_property_mapping(self):
@@ -522,7 +566,7 @@ class TestToken(OAuthTestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-        access: AccessToken = AccessToken.objects.filter(user=user, provider=provider).first()
+        access = AccessToken.objects.filter(user=user, provider=provider).first()
         jwt_data = self.validate_jwt(access, provider)
 
         # The scope should be the custom value from the property mapping,

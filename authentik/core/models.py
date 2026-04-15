@@ -1,6 +1,8 @@
 """authentik core models"""
 
-from datetime import datetime, timedelta
+import re
+import traceback
+from datetime import datetime
 from enum import StrEnum
 from hashlib import sha256
 from typing import Any, Self
@@ -14,8 +16,7 @@ from django.contrib.auth.models import UserManager as DjangoUserManager
 from django.contrib.sessions.base_session import AbstractBaseSession
 from django.core.validators import validate_slug
 from django.db import models
-from django.db.models import Q, QuerySet, options
-from django.db.models.constants import LOOKUP_SEP
+from django.db.models import Manager, Q, QuerySet, options
 from django.http import HttpRequest
 from django.utils.functional import cached_property
 from django.utils.timezone import now
@@ -43,6 +44,8 @@ from authentik.lib.models import (
     DomainlessFormattedURLValidator,
     SerializerModel,
 )
+from authentik.lib.utils.inheritance import get_deepest_child
+from authentik.lib.utils.reflection import class_to_path
 from authentik.lib.utils.time import timedelta_from_string
 from authentik.policies.models import PolicyBindingModel
 from authentik.rbac.models import Role
@@ -515,7 +518,7 @@ class User(SerializerModel, AttributesMixin, AbstractUser):
     @property
     def ak_groups(self):
         """This is a proxy for a renamed, deprecated field."""
-        from authentik.events.models import Event, EventAction
+        from authentik.events.models import Event
 
         deprecation = "authentik.core.models.User.ak_groups"
         replacement = "authentik.core.models.User.groups"
@@ -528,23 +531,23 @@ class User(SerializerModel, AttributesMixin, AbstractUser):
             "default: in 30 days). See authentik logs for every will invocation of this "
             "deprecation."
         )
+        stacktrace = traceback.format_stack()
+        # The last line is this function, the next-to-last line is its caller
+        cause = stacktrace[-2] if len(stacktrace) > 1 else "Unknown, see stacktrace in logs"
+        if search := re.search(r'"(.*?)"', cause):
+            cause = f"Property mapping or Expression policy named {search.group(1)}"
+
         LOGGER.warning(
             "deprecation used",
             message=message_logger,
             deprecation=deprecation,
             replacement=replacement,
+            cause=cause,
+            stacktrace=stacktrace,
         )
-        if not Event.filter_not_expired(
-            action=EventAction.CONFIGURATION_WARNING, context__deprecation=deprecation
-        ).exists():
-            event = Event.new(
-                EventAction.CONFIGURATION_WARNING,
-                deprecation=deprecation,
-                replacement=replacement,
-                message=message_event,
-            )
-            event.expires = datetime.now() + timedelta(days=30)
-            event.save()
+        Event.log_deprecation(
+            deprecation, message=message_event, cause=cause, replacement=replacement
+        )
         return self.groups
 
     def set_password(self, raw_password, signal=True, sender=None, request=None):
@@ -789,33 +792,15 @@ class Application(SerializerModel, PolicyBindingModel):
         """Get casted provider instance. Needs Application queryset with_provider"""
         if not self.provider:
             return None
-
-        candidates = []
-        base_class = Provider
-        for subclass in base_class.objects.get_queryset()._get_subclasses_recurse(base_class):
-            parent = self.provider
-            for level in subclass.split(LOOKUP_SEP):
-                try:
-                    parent = getattr(parent, level)
-                except AttributeError:
-                    break
-            if parent in candidates:
-                continue
-            idx = subclass.count(LOOKUP_SEP)
-            if type(parent) is not base_class:
-                idx += 1
-            candidates.insert(idx, parent)
-        if not candidates:
-            return None
-        return candidates[-1]
+        return get_deepest_child(self.provider)
 
     def backchannel_provider_for[T: Provider](self, provider_type: type[T], **kwargs) -> T | None:
         """Get Backchannel provider for a specific type"""
-        providers = self.backchannel_providers.filter(
+        provider: BackchannelProvider | None = self.backchannel_providers.filter(
             **{f"{provider_type._meta.model_name}__isnull": False},
             **kwargs,
-        )
-        return getattr(providers.first(), provider_type._meta.model_name)
+        ).first()
+        return getattr(provider, provider_type._meta.model_name) if provider else None
 
     def __str__(self):
         return str(self.name)
@@ -966,21 +951,34 @@ class Source(ManagedModel, SerializerModel, PolicyBindingModel):
 
     objects = InheritanceManager()
 
+    def get_icon_url(self, request=None, use_cache: bool = True) -> str | None:
+        """Get the URL to the source icon."""
+        if not self.icon:
+            return None
+        return get_file_manager(FileUsage.MEDIA).file_url(self.icon, request, use_cache=use_cache)
+
     @property
     def icon_url(self) -> str | None:
         """Get the URL to the source icon"""
+        return self.get_icon_url()
+
+    def get_icon_themed_urls(
+        self,
+        request=None,
+        use_cache: bool = True,
+    ) -> dict[str, str] | None:
+        """Get themed URLs for icon if it contains %(theme)s."""
         if not self.icon:
             return None
-
-        return get_file_manager(FileUsage.MEDIA).file_url(self.icon)
+        return get_file_manager(FileUsage.MEDIA).themed_urls(
+            self.icon,
+            request,
+            use_cache=use_cache,
+        )
 
     @property
     def icon_themed_urls(self) -> dict[str, str] | None:
-        """Get themed URLs for icon if it contains %(theme)s"""
-        if not self.icon:
-            return None
-
-        return get_file_manager(FileUsage.MEDIA).themed_urls(self.icon)
+        return self.get_icon_themed_urls()
 
     def get_user_path(self) -> str:
         """Get user path, fallback to default for formatting errors"""
@@ -1100,11 +1098,23 @@ class GroupSourceConnection(SerializerModel, CreatedUpdatedModel):
         unique_together = (("group", "source"),)
 
 
+class ExpiringManager(Manager):
+    """Manager for expiring objects which filters out expired objects by default"""
+
+    def get_queryset(self):
+        return QuerySet(self.model, using=self._db).exclude(expires__lt=now(), expiring=True)
+
+    def including_expired(self):
+        return QuerySet(self.model, using=self._db)
+
+
 class ExpiringModel(models.Model):
     """Base Model which can expire, and is automatically cleaned up."""
 
     expires = models.DateTimeField(default=None, null=True)
     expiring = models.BooleanField(default=True)
+
+    objects = ExpiringManager()
 
     class Meta:
         abstract = True
@@ -1119,13 +1129,33 @@ class ExpiringModel(models.Model):
         default the object is deleted. This is less efficient compared
         to bulk deleting objects, but classes like Token() need to change
         values instead of being deleted."""
-        return self.delete(*args, **kwargs)
+        try:
+            return self.delete(*args, **kwargs)
+        except self.DoesNotExist:
+            # Object has already been deleted, so this should be fine
+            return None
 
     @classmethod
     def filter_not_expired(cls, **kwargs) -> QuerySet[Self]:
         """Filer for tokens which are not expired yet or are not expiring,
         and match filters in `kwargs`"""
-        for obj in cls.objects.filter(**kwargs).filter(Q(expires__lt=now(), expiring=True)):
+        from authentik.events.models import Event
+
+        deprecation_id = f"{class_to_path(cls)}.filter_not_expired"
+
+        Event.log_deprecation(
+            deprecation_id,
+            message=(
+                ".filter_not_expired() is deprecated as the default lookup now excludes "
+                "expired objects."
+            ),
+        )
+
+        for obj in (
+            cls.objects.including_expired()
+            .filter(**kwargs)
+            .filter(Q(expires__lt=now(), expiring=True))
+        ):
             obj.delete()
         return cls.objects.filter(**kwargs)
 
