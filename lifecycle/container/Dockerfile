@@ -1,13 +1,17 @@
 # syntax=docker/dockerfile:1
 
 # Stage 1: Build webui
-FROM --platform=${BUILDPLATFORM} docker.io/library/node:24-trixie-slim@sha256:45babd1b4ce0349fb12c4e24bf017b90b96d52806db32e001e3013f341bef0fe AS node-builder
+FROM --platform=${BUILDPLATFORM} docker.io/library/node:24-trixie-slim@sha256:9707cd4542f400df5078df04f9652a272429112f15202d22b5b8bdd148df494f AS node-builder
 
 ARG GIT_BUILD_HASH
 ENV GIT_BUILD_HASH=$GIT_BUILD_HASH
 ENV NODE_ENV=production
 
 WORKDIR /work/web
+
+# These files need to be copied and cannot be mounted as `npm ci` will build the client's typescript
+COPY ./packages /work/packages
+COPY ./web/packages /work/web/packages
 
 RUN --mount=type=bind,target=/work/web/package.json,src=./web/package.json \
     --mount=type=bind,target=/work/web/package-lock.json,src=./web/package-lock.json \
@@ -20,13 +24,12 @@ COPY ./package.json /work
 COPY ./web /work/web/
 # TODO: Update this after moving website to docs
 COPY ./website /work/website/
-COPY ./gen-ts-api /work/web/node_modules/@goauthentik/api
 
 RUN npm run build && \
     npm run build:sfe
 
 # Stage 2: Build go proxy
-FROM --platform=${BUILDPLATFORM} docker.io/library/golang:1.26.1-trixie@sha256:ab8c4944b04c6f97c2b5bffce471b7f3d55f2228badc55eae6cce87596d5710b AS go-builder
+FROM --platform=${BUILDPLATFORM} docker.io/library/golang:1.26.2-trixie@sha256:c0074c718b473f3827043f86532c4c0ff537e3fe7a81b8219b0d1ccfcc2c9a09 AS go-builder
 
 ARG TARGETOS
 ARG TARGETARCH
@@ -44,7 +47,6 @@ RUN --mount=type=cache,id=apt-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/v
 
 RUN --mount=type=bind,target=/go/src/goauthentik.io/go.mod,src=./go.mod \
     --mount=type=bind,target=/go/src/goauthentik.io/go.sum,src=./go.sum \
-    --mount=type=bind,target=/go/src/goauthentik.io/gen-go-api,src=./gen-go-api \
     --mount=type=cache,target=/go/pkg/mod \
     go mod download
 
@@ -56,9 +58,9 @@ COPY --from=node-builder /work/web/security.txt /go/src/goauthentik.io/web/secur
 COPY ./internal /go/src/goauthentik.io/internal
 COPY ./go.mod /go/src/goauthentik.io/go.mod
 COPY ./go.sum /go/src/goauthentik.io/go.sum
+COPY ./packages/client-go /go/src/goauthentik.io/packages/client-go
 
 RUN --mount=type=cache,sharing=locked,target=/go/pkg/mod \
-    --mount=type=bind,target=/go/src/goauthentik.io/gen-go-api,src=./gen-go-api \
     --mount=type=cache,id=go-build-$TARGETARCH$TARGETVARIANT,sharing=locked,target=/root/.cache/go-build \
     if [ "$TARGETARCH" = "arm64" ]; then export CC=aarch64-linux-gnu-gcc && export CC_FOR_TARGET=gcc-aarch64-linux-gnu; fi && \
     CGO_ENABLED=1 GOFIPS140=latest GOARM="${TARGETVARIANT#v}" \
@@ -78,9 +80,9 @@ RUN --mount=type=secret,id=GEOIPUPDATE_ACCOUNT_ID \
     /bin/sh -c "GEOIPUPDATE_LICENSE_KEY_FILE=/run/secrets/GEOIPUPDATE_LICENSE_KEY /usr/bin/entry.sh || echo 'Failed to get GeoIP database, disabling'; exit 0"
 
 # Stage 4: Download uv
-FROM ghcr.io/astral-sh/uv:0.10.8@sha256:88234bc9e09c2b2f6d176a3daf411419eb0370d450a08129257410de9cfafd2a AS uv
+FROM ghcr.io/astral-sh/uv:0.11.5@sha256:555ac94f9a22e656fc5f2ce5dfee13b04e94d099e46bb8dd3a73ec7263f2e484 AS uv
 # Stage 5: Base python image
-FROM ghcr.io/goauthentik/fips-python:3.14.3-slim-trixie-fips@sha256:38c4dd2432580d6337f3d478550e5b50ecb9b40b3d351cb622eb8f7729a8f78d AS python-base
+FROM ghcr.io/goauthentik/fips-python:3.14.3-slim-trixie-fips@sha256:bf45eb77a010d76fe6abd7ae137d1b0c44b6227cd984945042135fdf05ebf8d9 AS python-base
 
 ENV VENV_PATH="/ak-root/.venv" \
     PATH="/lifecycle:/ak-root/.venv/bin:$PATH" \
@@ -153,7 +155,6 @@ LABEL org.opencontainers.image.authors="Authentik Security Inc." \
     org.opencontainers.image.documentation="https://docs.goauthentik.io" \
     org.opencontainers.image.licenses="https://github.com/goauthentik/authentik/blob/main/LICENSE" \
     org.opencontainers.image.revision=${GIT_BUILD_HASH} \
-    org.opencontainers.image.source="https://github.com/goauthentik/authentik" \
     org.opencontainers.image.title="authentik server image" \
     org.opencontainers.image.url="https://goauthentik.io" \
     org.opencontainers.image.vendor="Authentik Security Inc." \

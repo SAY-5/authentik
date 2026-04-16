@@ -2,12 +2,13 @@ import "#elements/EmptyState";
 
 import { updateURLParams } from "#elements/router/RouteMatch";
 import { Table } from "#elements/table/Table";
+import Styles from "#elements/table/TablePage.css";
 import { SlottedTemplateResult } from "#elements/types";
 
 import { setPageDetails } from "#components/ak-page-navbar";
 
 import { msg } from "@lit/localize";
-import { css, CSSResult, html, nothing, PropertyValues, TemplateResult } from "lit";
+import { CSSResult, html, nothing, PropertyValues, TemplateResult } from "lit";
 
 import PFContent from "@patternfly/patternfly/components/Content/content.css";
 import PFPage from "@patternfly/patternfly/components/Page/page.css";
@@ -20,19 +21,7 @@ export abstract class TablePage<T extends object> extends Table<T> {
         PFPage,
         PFContent,
         PFSidebar,
-        css`
-            :host {
-                display: flex;
-            }
-
-            .pf-c-sidebar__panel {
-                --pf-c-sidebar__panel--Position: static;
-                flex: 0 1 25%;
-            }
-            .pf-c-sidebar__content {
-                flex: 1 1 75%;
-            }
-        `,
+        Styles,
     ];
 
     //#region Abstract properties
@@ -73,25 +62,25 @@ export abstract class TablePage<T extends object> extends Table<T> {
      * Render content before the sidebar.
      * @abstract
      */
-    protected renderSidebarBefore?(): TemplateResult;
+    protected renderSidebarBefore?(): SlottedTemplateResult;
 
     /**
      * Render content after the sidebar.
      * @abstract
      */
-    protected renderSidebarAfter?(): TemplateResult;
+    protected renderSidebarAfter?(): SlottedTemplateResult;
 
     /**
      * Render content before the main section.
      * @abstract
      */
-    protected renderSectionBefore?(): TemplateResult;
+    protected renderSectionBefore?(): SlottedTemplateResult;
 
     /**
      * Render content after the main section.
      * @abstract
      */
-    protected renderSectionAfter?(): TemplateResult;
+    protected renderSectionAfter?(): SlottedTemplateResult;
 
     //#endregion
 
@@ -116,7 +105,7 @@ export abstract class TablePage<T extends object> extends Table<T> {
     /**
      * Render the empty state.
      */
-    protected renderEmpty(inner?: TemplateResult): TemplateResult {
+    protected renderEmpty(inner?: TemplateResult): SlottedTemplateResult {
         return super.renderEmpty(html`
             ${inner
                 ? inner
@@ -125,7 +114,9 @@ export abstract class TablePage<T extends object> extends Table<T> {
                       <div slot="body">
                           ${this.searchEnabled ? this.renderEmptyClearSearch() : nothing}
                       </div>
-                      <div slot="primary">${this.renderObjectCreate()}</div>
+                      <div slot="primary" class="empty-state-primary">
+                          ${this.renderObjectCreate()}
+                      </div>
                   </ak-empty-state>`}
         `);
     }
@@ -147,7 +138,7 @@ export abstract class TablePage<T extends object> extends Table<T> {
         </button>`;
     }
 
-    render() {
+    protected override render(): SlottedTemplateResult {
         return html` ${this.renderSectionBefore?.()}
             <div class="pf-c-page__main-section pf-m-no-padding-mobile">
                 <div class="pf-c-sidebar pf-m-gutter">
