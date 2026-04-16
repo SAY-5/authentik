@@ -30,6 +30,7 @@ export const EventActions = {
     SourceLinked: "source_linked",
     ImpersonationStarted: "impersonation_started",
     ImpersonationEnded: "impersonation_ended",
+    UserLockdownTriggered: "user_lockdown_triggered",
     FlowExecution: "flow_execution",
     PolicyExecution: "policy_execution",
     PolicyException: "policy_exception",
