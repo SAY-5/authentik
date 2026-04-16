@@ -7,7 +7,7 @@ use ak_client::{
 use ak_common::{Tasks, api};
 use arc_swap::ArcSwap;
 use eyre::{Result, eyre};
-use tracing::debug;
+use tracing::{debug, instrument, info};
 use uuid::Uuid;
 
 pub(crate) mod event;
@@ -62,15 +62,31 @@ impl OutpostController {
         Ok(outpost)
     }
 
+    #[instrument(skip_all)]
     async fn new() -> Result<Self> {
         let api_config = api::make_config()?;
         let outpost = Self::get_outpost(&api_config).await?;
 
-        Ok(Self {
+        let controller = Self {
             api_config,
             outpost: ArcSwap::from_pointee(outpost),
             instance_uuid: Uuid::new_v4(),
-        })
+        };
+
+        info!(embedded = controller.is_embedded(), "outpost mode");
+        // TODO: reload offset
+        // info!(offset)
+
+        Ok(controller)
+    }
+
+    fn is_embedded(&self) -> bool {
+        self.outpost
+            .load()
+            .managed
+            .as_ref()
+            .and_then(|m| m.as_deref())
+            .is_some_and(|m| m == "goauthentik.io/outposts/embedded")
     }
 
     async fn refresh(&self) -> Result<()> {
@@ -80,6 +96,7 @@ impl OutpostController {
     }
 }
 
+#[instrument(skip_all)]
 pub(crate) async fn start<O: Outpost + 'static>(_cli: O::Cli, tasks: &mut Tasks) -> Result<()> {
     let controller = Arc::new(OutpostController::new().await?);
     let outpost = Arc::new(O::new(Arc::clone(&controller)).await?);

@@ -78,6 +78,7 @@ async fn handle_event<O: Outpost>(
     match event.instruction {
         EventKind::Ack | EventKind::Hello => {}
         EventKind::TriggerUpdate => {
+            // TODO: reload offset
             controller.refresh().await?;
             outpost.refresh().await?;
         }

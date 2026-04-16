@@ -3,7 +3,7 @@ use std::sync::Arc;
 use ak_client::apis::outposts_api::outposts_proxy_list;
 use argh::FromArgs;
 use eyre::Result;
-use tracing::warn;
+use tracing::{instrument, warn};
 
 use crate::outpost::{Outpost, OutpostController};
 
@@ -23,6 +23,7 @@ pub(crate) struct ProxyOutpost {
 impl Outpost for ProxyOutpost {
     type Cli = Cli;
 
+    #[instrument(skip_all)]
     async fn new(controller: Arc<OutpostController>) -> Result<Self> {
         Ok(Self { controller })
     }
