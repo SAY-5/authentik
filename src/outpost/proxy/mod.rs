@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use ak_client::apis::outposts_api::outposts_proxy_list;
+use ak_common::Tasks;
 use argh::FromArgs;
 use eyre::Result;
 use tracing::{instrument, warn};
@@ -28,6 +29,10 @@ impl Outpost for ProxyOutpost {
     #[instrument(skip_all)]
     async fn new(controller: Arc<OutpostController>) -> Result<Self> {
         Ok(Self { controller })
+    }
+
+    fn start(&self, _tasks: &mut Tasks) -> Result<()> {
+        Ok(())
     }
 
     async fn refresh(&self) -> Result<()> {

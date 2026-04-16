@@ -20,6 +20,7 @@ pub(crate) trait Outpost: Send + Sync + Sized {
 
     async fn new(controller: Arc<OutpostController>) -> Result<Self>;
 
+    fn start(&self, tasks: &mut Tasks) -> Result<()>;
     fn refresh(&self) -> impl Future<Output = Result<()>> + Send;
 
     fn end_session(&self, event: event::EventSessionEnd)
@@ -114,7 +115,8 @@ pub(crate) async fn start<O: Outpost + 'static>(_cli: O::Cli, tasks: &mut Tasks)
     let controller = Arc::new(OutpostController::new::<O>().await?);
     let outpost = Arc::new(O::new(Arc::clone(&controller)).await?);
 
-    event::start(tasks, Arc::clone(&controller), outpost)?;
+    event::start(tasks, Arc::clone(&controller), Arc::clone(&outpost))?;
+    outpost.start(tasks)?;
     controller.m_info.set(1_u8);
 
     Ok(())
