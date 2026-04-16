@@ -77,6 +77,7 @@ where
 {
     let mut page = 1;
     let mut results = Vec::with_capacity(0);
+
     loop {
         let response = fetch(page).await?;
         let next = get_pagination(&response).next;
@@ -91,5 +92,6 @@ where
             break;
         }
     }
+
     Ok(results)
 }
