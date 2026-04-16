@@ -241,7 +241,7 @@ class TokenParams:
             raise TokenError("invalid_grant")
 
     def __check_redirect_uri(self, request: HttpRequest):
-        allowed_redirect_urls = self.provider.redirect_uris
+        allowed_redirect_urls = self.provider.authorization_redirect_uris
         # At this point, no provider should have a blank redirect_uri, in case they do
         # this will check an empty array and raise an error
 
@@ -719,7 +719,7 @@ class TokenView(View):
         refresh_token_threshold = timedelta_from_string(self.provider.refresh_token_threshold)
         if (
             refresh_token_threshold.total_seconds() == 0
-            or (now - self.params.refresh_token.expires) > refresh_token_threshold
+            or (self.params.refresh_token.expires - now) < refresh_token_threshold
         ):
             refresh_token_expiry = now + timedelta_from_string(self.provider.refresh_token_validity)
             refresh_token = RefreshToken(

@@ -321,6 +321,10 @@ class Event(SerializerModel, ExpiringModel):
                 models.F("context__authorized_application"),
                 name="authentik_e_ctx_app__idx",
             ),
+            models.Index(
+                models.F("user__pk"),
+                name="authentik_e_user_pk__idx",
+            ),
         ]
 
 
@@ -456,7 +460,7 @@ class NotificationTransport(TasksModel, SerializerModel):
                 response.raise_for_status()
             except RequestException as exc:
                 raise NotificationTransportError(
-                    exc.response.text if exc.response else str(exc)
+                    exc.response.text if exc.response is not None else str(exc)
                 ) from exc
             return [
                 response.status_code,
@@ -519,7 +523,7 @@ class NotificationTransport(TasksModel, SerializerModel):
             response = get_http_session().post(self.webhook_url, json=body)
             response.raise_for_status()
         except RequestException as exc:
-            text = exc.response.text if exc.response else str(exc)
+            text = exc.response.text if exc.response is not None else str(exc)
             raise NotificationTransportError(text) from exc
         return [
             response.status_code,

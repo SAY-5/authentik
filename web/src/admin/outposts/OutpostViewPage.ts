@@ -12,6 +12,7 @@ import { DEFAULT_CONFIG } from "#common/api/config";
 import { docLink } from "#common/global";
 
 import { AKElement } from "#elements/Base";
+import { IconTokenCopyButton } from "#elements/buttons/IconTokenCopyButton";
 import { SlottedTemplateResult } from "#elements/types";
 
 import { setPageDetails } from "#components/ak-page-navbar";
@@ -27,7 +28,6 @@ import { CSSResult, PropertyValues } from "lit";
 import { html } from "lit-html";
 import { guard } from "lit-html/directives/guard.js";
 import { customElement, property } from "lit/decorators.js";
-import { ifDefined } from "lit/directives/if-defined.js";
 
 import PFBanner from "@patternfly/patternfly/components/Banner/banner.css";
 import PFButton from "@patternfly/patternfly/components/Button/button.css";
@@ -122,6 +122,9 @@ export class OutpostViewPage extends AKElement {
             const unhealthyPct = (100 / totalCount) * unhealthyCount;
 
             return html`<div class="pf-c-progress pf-m-inside">
+                <div class="pf-c-progress__description">
+                    ${msg(str`${healthyCount}/${totalCount} instances are healthy.`)}
+                </div>
                 <div
                     class="pf-c-progress__bar"
                     role="progressbar"
@@ -239,14 +242,7 @@ export class OutpostViewPage extends AKElement {
                         <label class="pf-c-form__label">
                             <span class="pf-c-form__label-text">AUTHENTIK_TOKEN</span>
                         </label>
-                        <div>
-                            <ak-token-copy-button
-                                class="pf-m-primary"
-                                identifier="${ifDefined(this.outpost?.tokenIdentifier)}"
-                            >
-                                ${msg("Click to copy token")}
-                            </ak-token-copy-button>
-                        </div>
+                        <div>${IconTokenCopyButton(this.outpost?.tokenIdentifier)}</div>
                     </div>
                     <h3>
                         ${msg(

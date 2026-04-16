@@ -74,6 +74,7 @@ rust-test:  ## Run the Rust tests
 
 test: ## Run the server tests and produce a coverage report (locally)
 	$(UV) run coverage run manage.py test --keepdb $(or $(filter-out $@,$(MAKECMDGOALS)),authentik)
+	$(UV) run coverage combine
 	$(UV) run coverage html
 	$(UV) run coverage report
 
@@ -143,8 +144,14 @@ dev-create-db:
 dev-reset: dev-drop-db dev-create-db migrate  ## Drop and restore the Authentik PostgreSQL instance to a "fresh install" state.
 
 update-test-mmdb:  ## Update test GeoIP and ASN Databases
-	curl -L https://raw.githubusercontent.com/maxmind/MaxMind-DB/refs/heads/main/test-data/GeoLite2-ASN-Test.mmdb -o ${PWD}/tests/GeoLite2-ASN-Test.mmdb
-	curl -L https://raw.githubusercontent.com/maxmind/MaxMind-DB/refs/heads/main/test-data/GeoLite2-City-Test.mmdb -o ${PWD}/tests/GeoLite2-City-Test.mmdb
+	curl \
+		-L \
+		-o ${PWD}/tests/geoip/GeoLite2-ASN-Test.mmdb \
+		https://raw.githubusercontent.com/maxmind/MaxMind-DB/refs/heads/main/test-data/GeoLite2-ASN-Test.mmdb
+	curl \
+		-L \
+		-o ${PWD}/tests/geoip/GeoLite2-City-Test.mmdb \
+		https://raw.githubusercontent.com/maxmind/MaxMind-DB/refs/heads/main/test-data/GeoLite2-City-Test.mmdb
 
 bump:  ## Bump authentik version. Usage: make bump version=20xx.xx.xx
 ifndef version
@@ -153,6 +160,7 @@ endif
 	$(eval current_version := $(shell cat ${PWD}/internal/constants/VERSION))
 	$(SED_INPLACE) 's/^version = ".*"/version = "$(version)"/' ${PWD}/pyproject.toml
 	$(SED_INPLACE) 's/^VERSION = ".*"/VERSION = "$(version)"/' ${PWD}/authentik/__init__.py
+	$(SED_INPLACE) "s/version = \"${current_version}\"/version = \"$(version)\"" ${PWD}/Cargo.toml ${PWD}/Cargo.lock
 	$(MAKE) gen-build gen-compose aws-cfn
 	$(SED_INPLACE) "s/\"${current_version}\"/\"$(version)\"/" ${PWD}/package.json ${PWD}/package-lock.json ${PWD}/web/package.json ${PWD}/web/package-lock.json
 	echo -n $(version) > ${PWD}/internal/constants/VERSION
@@ -197,10 +205,10 @@ gen-diff:  ## (Release) generate the changelog diff between the current schema a
 	npx prettier --write diff.md
 
 gen-client-go:  ## Build and install the authentik API for Golang
-	make -C "${PWD}/packages/client-go" build
+	$(UV) run make -C "${PWD}/packages/client-go" build
 
 gen-client-rust:  ## Build and install the authentik API for Rust
-	make -C "${PWD}/packages/client-rust" build version=${NPM_VERSION}
+	$(UV) run make -C "${PWD}/packages/client-rust" build version=${NPM_VERSION}
 	make lint-fix-rust
 
 gen-client-ts:  ## Build and install the authentik API for Typescript into the authentik UI Application
@@ -284,7 +292,7 @@ docs-api-build:
 	npm run --prefix website -w api build
 
 docs-api-watch:  ## Build and watch the API documentation
-	npm run --prefix website -w api build:api
+	npm run --prefix website -w api generate
 	npm run --prefix website -w api start
 
 docs-api-clean: ## Clean generated API documentation
@@ -342,6 +350,7 @@ ci-lint-clippy: ci--meta-debug
 	$(CARGO) clippy --workspace -- -D warnings
 
 ci-test: ci--meta-debug
-	$(UV) run coverage run manage.py test --keepdb authentik
+	$(UV) run coverage run manage.py test --keepdb --parallel auto authentik
+	$(UV) run coverage combine
 	$(UV) run coverage report
 	$(UV) run coverage xml

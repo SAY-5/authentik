@@ -89,11 +89,11 @@ export class AgentConnectorForm extends WithBrandConfig(ModelForm<AgentConnector
             <ak-form-group label="${msg("Authentication settings")}">
                 <div class="pf-c-form">
                     <ak-form-element-horizontal
-                        label=${msg("Authorization flow")}
+                        label=${msg("Authorization Flow")}
                         name="authorizationFlow"
                     >
                         <ak-flow-search
-                            label=${msg("Authorization flow")}
+                            label=${msg("Authorization Flow")}
                             flowType=${FlowDesignationEnum.Authorization}
                             .currentFlow=${this.instance?.authorizationFlow}
                         ></ak-flow-search>
@@ -120,7 +120,7 @@ export class AgentConnectorForm extends WithBrandConfig(ModelForm<AgentConnector
                     >
                     </ak-switch-input>
                     <ak-form-element-horizontal
-                        label=${msg("Federated OIDC Providers")}
+                        label=${msg("Federated OAuth2/OpenID Providers")}
                         name="jwtFederationProviders"
                     >
                         <ak-dual-select-dynamic-selected
