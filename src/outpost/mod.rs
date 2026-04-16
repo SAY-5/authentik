@@ -80,7 +80,7 @@ impl OutpostController {
     }
 }
 
-pub(crate) async fn run<O: Outpost + 'static>(_cli: O::Cli, tasks: &mut Tasks) -> Result<()> {
+pub(crate) async fn start<O: Outpost + 'static>(_cli: O::Cli, tasks: &mut Tasks) -> Result<()> {
     let controller = Arc::new(OutpostController::new().await?);
     let outpost = Arc::new(O::new(Arc::clone(&controller)).await?);
 

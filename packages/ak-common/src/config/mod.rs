@@ -263,7 +263,7 @@ async fn watch_config(arbiter: Arbiter) -> Result<()> {
 /// Start the configuration watcher.
 ///
 /// [`init`] must be called before this is used.
-pub fn run(tasks: &mut Tasks) -> Result<()> {
+pub fn start(tasks: &mut Tasks) -> Result<()> {
     info!("starting config file watcher");
     let arbiter = tasks.arbiter();
     tasks

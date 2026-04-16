@@ -72,9 +72,9 @@ fn main() -> Result<()> {
         .block_on(async {
             let mut tasks = Tasks::new()?;
 
-            config::run(&mut tasks)?;
+            config::start(&mut tasks)?;
 
-            let metrics = metrics::run(&mut tasks)?;
+            let metrics = metrics::start(&mut tasks)?;
 
             #[cfg(feature = "core")]
             if Mode::get() == Mode::AllInOne || Mode::get() == Mode::Worker {
@@ -84,12 +84,12 @@ fn main() -> Result<()> {
             match cli.command {
                 #[cfg(feature = "core")]
                 Command::Worker(args) => {
-                    let workers = worker::run(args, &mut tasks)?;
+                    let workers = worker::start(args, &mut tasks)?;
                     metrics.workers.store(Some(workers));
                 }
                 #[cfg(feature = "proxy")]
                 Command::Proxy(args) => {
-                    outpost::run::<outpost::proxy::ProxyOutpost>(args, &mut tasks).await?;
+                    outpost::start::<outpost::proxy::ProxyOutpost>(args, &mut tasks).await?;
                 }
             }
 
