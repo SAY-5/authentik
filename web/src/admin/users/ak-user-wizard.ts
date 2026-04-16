@@ -55,9 +55,7 @@ const DEFAULT_USER_TYPES: TypeCreate[] = [
         component: "ak-user-agent-form",
         modelName: AGENT_MODEL_NAME,
         name: msg("Agent"),
-        description: msg(
-            "Machine user owned by an internal user, with scoped application access.",
-        ),
+        description: msg("Machine user owned by an internal user, with scoped application access."),
         requiresEnterprise: true,
     },
     {
@@ -240,10 +238,7 @@ export class AKUserWizard extends CreateWizard {
     }
 
     protected override assembleFormProps(type: TypeCreate): LitPropertyRecord<UserForm | object> {
-        if (
-            type.modelName === AGENT_MODEL_NAME ||
-            type.modelName === UserTypeEnum.ServiceAccount
-        ) {
+        if (type.modelName === AGENT_MODEL_NAME || type.modelName === UserTypeEnum.ServiceAccount) {
             return {};
         }
 

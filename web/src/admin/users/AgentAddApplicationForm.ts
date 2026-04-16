@@ -37,38 +37,33 @@ export class AgentAddApplicationForm extends Form<{ app: string }> {
     protected override renderForm(): TemplateResult {
         const ownerPk = this.agent?.attributes?.[USER_ATTRIBUTE_AGENT_OWNER_PK];
 
-        return html`<ak-form-element-horizontal
-                label=${msg("Application")}
-                required
-                name="app"
+        return html`<ak-form-element-horizontal label=${msg("Application")} required name="app">
+            <ak-search-select
+                placeholder=${msg("Select an application...")}
+                .fetchObjects=${async (query?: string): Promise<Application[]> => {
+                    const args: CoreApplicationsListRequest = {
+                        ordering: "name",
+                        pageSize: 20,
+                        forUser: ownerPk ? Number(ownerPk) : undefined,
+                    };
+                    if (query) {
+                        args.search = query;
+                    }
+                    const result = await new CoreApi(DEFAULT_CONFIG).coreApplicationsList(args);
+                    return result.results;
+                }}
+                .renderElement=${(app: Application): string => {
+                    return app.name;
+                }}
+                .value=${(app: Application | undefined): string | undefined => {
+                    return app?.pk;
+                }}
+                .renderDescription=${(app: Application): TemplateResult => {
+                    return html`${app.group || msg("No group")}`;
+                }}
             >
-                <ak-search-select
-                    placeholder=${msg("Select an application...")}
-                    .fetchObjects=${async (query?: string): Promise<Application[]> => {
-                        const args: CoreApplicationsListRequest = {
-                            ordering: "name",
-                            pageSize: 20,
-                            forUser: ownerPk ? Number(ownerPk) : undefined,
-                        };
-                        if (query) {
-                            args.search = query;
-                        }
-                        const result =
-                            await new CoreApi(DEFAULT_CONFIG).coreApplicationsList(args);
-                        return result.results;
-                    }}
-                    .renderElement=${(app: Application): string => {
-                        return app.name;
-                    }}
-                    .value=${(app: Application | undefined): string | undefined => {
-                        return app?.pk;
-                    }}
-                    .renderDescription=${(app: Application): TemplateResult => {
-                        return html`${app.group || msg("No group")}`;
-                    }}
-                >
-                </ak-search-select>
-            </ak-form-element-horizontal>`;
+            </ak-search-select>
+        </ak-form-element-horizontal>`;
     }
 }
 

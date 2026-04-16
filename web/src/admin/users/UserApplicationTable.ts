@@ -69,10 +69,7 @@ export class UserApplicationTable extends Table<Application> {
         if (!this.isAgent) {
             return super.renderToolbar();
         }
-        return html`<button
-                class="pf-c-button pf-m-primary"
-                @click=${this.openAddApplicationModal}
-            >
+        return html`<button class="pf-c-button pf-m-primary" @click=${this.openAddApplicationModal}>
                 ${msg("Add Application")}
             </button>
             ${super.renderToolbar()}`;
