@@ -67,7 +67,7 @@ fn build_router(state: Arc<Metrics>) -> Router {
     )
 }
 
-pub(crate) fn run(tasks: &mut Tasks) -> Result<Arc<Metrics>> {
+pub(crate) fn start(tasks: &mut Tasks) -> Result<Arc<Metrics>> {
     let arbiter = tasks.arbiter();
     let metrics = Arc::new(Metrics::new()?);
     let router = build_router(Arc::clone(&metrics));
