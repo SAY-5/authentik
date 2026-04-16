@@ -263,7 +263,7 @@ async fn watch_config(arbiter: Arbiter) -> Result<()> {
 /// Start the configuration watcher.
 ///
 /// [`init`] must be called before this is used.
-pub fn run(tasks: &mut Tasks) -> Result<()> {
+pub fn start(tasks: &mut Tasks) -> Result<()> {
     info!("starting config file watcher");
     let arbiter = tasks.arbiter();
     tasks
@@ -400,7 +400,7 @@ mod tests {
         let arbiter = tasks.arbiter();
         let mut events_rx = arbiter.events_subscribe();
 
-        super::run(&mut tasks).expect("failed to start watcher");
+        super::start(&mut tasks).expect("failed to start watcher");
 
         assert_eq!(super::get().secret_key, "my_secret_key");
         assert_eq!(super::get().postgresql.password, "my_postgres_pass");

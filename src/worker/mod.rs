@@ -295,7 +295,7 @@ async fn watch_workers(arbiter: Arbiter, workers: Arc<Workers>) -> Result<()> {
     }
 }
 
-pub(crate) fn run(_cli: Cli, tasks: &mut Tasks) -> Result<Arc<Workers>> {
+pub(crate) fn start(_cli: Cli, tasks: &mut Tasks) -> Result<Arc<Workers>> {
     let arbiter = tasks.arbiter();
 
     let workers = Arc::new(Workers::new()?);
