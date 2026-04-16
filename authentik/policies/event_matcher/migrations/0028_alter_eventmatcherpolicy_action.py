@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("authentik_policies_event_matcher", "0026_alter_eventmatcherpolicy_action"),
+        ("authentik_policies_event_matcher", "0027_eventmatcherpolicy_query"),
     ]
 
     operations = [
