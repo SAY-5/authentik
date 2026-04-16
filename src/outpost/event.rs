@@ -1,20 +1,24 @@
-use std::sync::Arc;
+use std::{fmt::Display, sync::Arc};
 
-use ak_common::{Arbiter, Tasks, VERSION, api, authentik_build_hash};
+use ak_common::{Arbiter, Tasks, VERSION, api, arbiter, authentik_build_hash};
 use axum::http::{HeaderValue, header::AUTHORIZATION};
 use eyre::{Result, eyre};
 use futures::{SinkExt as _, StreamExt as _};
 use nix::unistd::gethostname;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
-use tokio::time::{Duration, interval, sleep};
+use time::UtcDateTime;
+use tokio::{
+    signal::unix::SignalKind,
+    time::{Duration, interval, sleep},
+};
 use tokio_tungstenite::tungstenite::{Message, client::IntoClientRequest as _};
-use tracing::{debug, info, warn};
+use tracing::{debug, info, instrument, trace, warn};
 use url::Url;
 
 use crate::outpost::{Outpost, OutpostController};
 
-#[derive(Serialize_repr, Deserialize_repr, PartialEq)]
+#[derive(Serialize_repr, Deserialize_repr, PartialEq, Debug, Clone, Copy, Eq)]
 #[repr(u8)]
 enum EventKind {
     /// Code used to acknowledge a previous message.
@@ -27,6 +31,18 @@ enum EventKind {
     ProviderSpecific = 3,
     /// Code received to identify the end of a session.
     SessionEnd = 4,
+}
+
+impl Display for EventKind {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Ack => write!(f, "Ack"),
+            Self::Hello => write!(f, "Hello"),
+            Self::TriggerUpdate => write!(f, "TriggerUpdate"),
+            Self::ProviderSpecific => write!(f, "ProviderSpecific"),
+            Self::SessionEnd => write!(f, "SessionEnd"),
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize)]
@@ -70,6 +86,7 @@ fn hello_args(instance_uuid: &str) -> serde_json::Value {
     })
 }
 
+#[instrument(skip_all)]
 async fn handle_event<O: Outpost>(
     controller: Arc<OutpostController>,
     outpost: Arc<O>,
@@ -78,15 +95,29 @@ async fn handle_event<O: Outpost>(
     match event.instruction {
         EventKind::Ack | EventKind::Hello => {}
         EventKind::TriggerUpdate => {
-            // TODO: reload offset
+            info!("received update trigger, refreshing outpost");
+            sleep(controller.reload_offset).await;
             controller.refresh().await?;
+            debug!("outpost controller has been refreshed");
             outpost.refresh().await?;
+            debug!("outpost has been refreshed");
+            #[expect(
+                clippy::as_conversions,
+                clippy::cast_precision_loss,
+                reason = "This is fine, we'll never get big values here."
+            )]
+            controller
+                .m_last_update
+                .set(UtcDateTime::now().unix_timestamp() as f64);
         }
         EventKind::SessionEnd => {
             let event: EventSessionEnd = serde_json::from_value(event.args)?;
             outpost.end_session(event).await?;
         }
-        #[expect(clippy::unimplemented, reason = "this is only relevant for the RAC provider")]
+        #[expect(
+            clippy::unimplemented,
+            reason = "this is only relevant for the RAC provider"
+        )]
         EventKind::ProviderSpecific => unimplemented!(),
     }
     Ok(())
@@ -106,6 +137,7 @@ async fn watch_events_inner<O: Outpost>(
         attempt,
     )?;
 
+    debug!(url = %ws_url, "connecting to websocket");
     let mut request = ws_url.into_client_request()?;
     let token = controller
         .api_config
@@ -121,21 +153,71 @@ async fn watch_events_inner<O: Outpost>(
     let (mut ws_write, mut ws_read) = ws_stream.split();
 
     info!(
-        outpost = controller.outpost.load().name,
-        "Connected to WebSocket"
+        outpost = %controller.outpost.load().pk,
+        "connected to websocket"
     );
+    controller.m_connection.set(1_u8);
 
-    let mut heartbeat = interval(Duration::from_secs(10));
+    let get_refresh_interval = || {
+        let mut interval = controller.outpost.load().refresh_interval_s;
+        // Ensure timer interval is not negative or 0.
+        // If it is, we default to 5 minutes.
+        if interval <= 0_i32 {
+            interval = 60_i32 * 5_i32;
+        }
+        // Clamp interval to be at least 30 seconds.
+        if interval < 30_i32 {
+            interval = 30_i32;
+        }
+        // infallible because we bound it to be positive above
+        Duration::from_secs(interval.try_into().expect("infallible"))
+    };
+    let mut refresh_interval = interval(get_refresh_interval());
+    let mut heartbeat_interval = interval(Duration::from_secs(10));
+
+    let mut events_rx = arbiter.events_subscribe();
 
     loop {
         tokio::select! {
-            _ = heartbeat.tick() => {
+            _ = refresh_interval.tick() => {
+                info!("refreshing outpost on interval");
+                if let Err(err) = handle_event(
+                    Arc::clone(&controller),
+                    Arc::clone(&outpost),
+                    Event {
+                        instruction: EventKind::TriggerUpdate,
+                        args: serde_json::Value::Null
+                    }
+                ).await {
+                    warn!(?err, "failed to refresh");
+                }
+                refresh_interval = interval(get_refresh_interval());
+                // Since we re-create the interval, we need to make it tick instantly to avoid
+                // ending up in a never-ending tick-loop.
+                refresh_interval.tick().await;
+            },
+            _ = heartbeat_interval.tick() => {
                 let ping = Event {
                     instruction: EventKind::Hello,
                     args: hello_args(&controller.instance_uuid.to_string()),
                 };
                 ws_write.send(Message::text(serde_json::to_string(&ping)?)).await?;
-                debug!("Sent WebSocket hello (heartbeat)");
+                trace!("sent websocket hello (heartbeat)");
+            },
+            Ok(arbiter::Event::Signal(signal)) = events_rx.recv() => {
+                if signal == SignalKind::user_defined1() {
+                    info!("refreshing outpost on signal");
+                    if let Err(err) = handle_event(
+                        Arc::clone(&controller),
+                        Arc::clone(&outpost),
+                        Event {
+                            instruction: EventKind::TriggerUpdate,
+                            args: serde_json::Value::Null
+                        }
+                    ).await {
+                        warn!(?err, "failed to refresh");
+                    }
+                }
             },
             msg = ws_read.next() => {
                 let Some(msg) = msg else {
@@ -145,11 +227,16 @@ async fn watch_events_inner<O: Outpost>(
                 match msg {
                     Message::Text(text) => {
                         let Ok(event): Result<Event, _> = serde_json::from_str(&text) else {
-                            warn!(data = text.as_str(), "Failed to parse event");
+                            warn!(data = text.as_str(), "failed to parse event");
                             continue;
                         };
-                        if let Err(err) = handle_event(Arc::clone(&controller), Arc::clone(&outpost), event).await {
-                            warn!(?err, "Failed to handle event");
+                        trace!(event = %event.instruction, "received websocket event");
+                        if let Err(err) = handle_event(
+                            Arc::clone(&controller),
+                            Arc::clone(&outpost),
+                            event,
+                        ).await {
+                            warn!(?err, "failed to handle event");
                         }
                     },
                     Message::Ping(data) => {
@@ -180,13 +267,19 @@ async fn watch_events<O: Outpost>(
     loop {
         tokio::select! {
             () = arbiter.shutdown() => break,
-            res = watch_events_inner(arbiter.clone(), Arc::clone(&controller), Arc::clone(&outpost), attempt) => {
+            res = watch_events_inner(
+                arbiter.clone(),
+                Arc::clone(&controller),
+                Arc::clone(&outpost),
+                attempt
+            ) => {
+                controller.m_connection.set(0_u8);
                 match res {
-                    Ok(()) => debug!("WebSocket disconnected cleanly"),
-                    Err(err) => warn!(?err, attempt, "WebSocket error"),
+                    Ok(()) => debug!("websocket disconnected cleanly"),
+                    Err(err) => warn!(?err, attempt, "websocket error"),
                 }
 
-                info!(delay = backoff.as_secs(), "Reconnecting WebSocket in {}s...", backoff.as_secs());
+                info!(attempt, delay = backoff.as_secs(), "reconnecting websocket in {}s...", backoff.as_secs());
 
                 tokio::select! {
                     () = arbiter.shutdown() => break,
@@ -204,7 +297,7 @@ async fn watch_events<O: Outpost>(
     Ok(())
 }
 
-pub(crate) fn run<O: Outpost + 'static>(
+pub(crate) fn start<O: Outpost + 'static>(
     tasks: &mut Tasks,
     controller: Arc<OutpostController>,
     outpost: Arc<O>,

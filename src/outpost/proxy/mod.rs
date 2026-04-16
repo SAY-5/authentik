@@ -23,6 +23,8 @@ pub(crate) struct ProxyOutpost {
 impl Outpost for ProxyOutpost {
     type Cli = Cli;
 
+    const OUTPOST_TYPE: &'static str = "proxy";
+
     #[instrument(skip_all)]
     async fn new(controller: Arc<OutpostController>) -> Result<Self> {
         Ok(Self { controller })
@@ -35,7 +37,7 @@ impl Outpost for ProxyOutpost {
                 .results;
         if providers.is_empty() {
             warn!(
-                "No providers assigned to this outpost, check outpost configuration in authentik"
+                "no providers assigned to this outpost, check outpost configuration in authentik"
             );
         }
 
