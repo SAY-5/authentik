@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
 use ak_client::apis::outposts_api::outposts_proxy_list;
-use ak_common::Tasks;
+use ak_common::{Tasks, api::fetch_all};
 use argh::FromArgs;
 use eyre::Result;
-use tracing::{instrument, warn};
+use tracing::{debug, error, instrument, warn};
 
 use crate::outpost::{Outpost, OutpostController};
 
@@ -35,14 +35,39 @@ impl Outpost for ProxyOutpost {
         Ok(())
     }
 
+    #[instrument(skip_all)]
     async fn refresh(&self) -> Result<()> {
-        let providers =
-            outposts_proxy_list(&self.controller.api_config, None, None, None, None, None)
-                .await?
-                .results;
-        if providers.is_empty() {
+        let providers = fetch_all(
+            |page| {
+                outposts_proxy_list(
+                    &self.controller.api_config,
+                    None,
+                    None,
+                    Some(page),
+                    Some(100),
+                    None,
+                )
+            },
+            |r| &r.pagination,
+            |r| r.results,
+        )
+        .await
+        .map_err(|err| {
+            error!(?err, "failed to fetch providers");
+            err
+        })?;
+        if providers.is_empty() && !self.controller.is_embedded() {
             warn!(
                 "no providers assigned to this outpost, check outpost configuration in authentik"
+            );
+        }
+
+        for provider in providers {
+            debug!(
+                name = provider.name,
+                external_host = provider.external_host,
+                assigned_to_app = provider.assigned_application_name,
+                "provider details"
             );
         }
 
