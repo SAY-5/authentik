@@ -47,12 +47,6 @@ pub enum PromptTypeEnum {
     Hidden,
     #[serde(rename = "static")]
     Static,
-    #[serde(rename = "alert_info")]
-    AlertInfo,
-    #[serde(rename = "alert_warning")]
-    AlertWarning,
-    #[serde(rename = "alert_danger")]
-    AlertDanger,
     #[serde(rename = "ak-locale")]
     AkLocale,
 }
@@ -77,9 +71,6 @@ impl std::fmt::Display for PromptTypeEnum {
             Self::Separator => write!(f, "separator"),
             Self::Hidden => write!(f, "hidden"),
             Self::Static => write!(f, "static"),
-            Self::AlertInfo => write!(f, "alert_info"),
-            Self::AlertWarning => write!(f, "alert_warning"),
-            Self::AlertDanger => write!(f, "alert_danger"),
             Self::AkLocale => write!(f, "ak-locale"),
         }
     }
