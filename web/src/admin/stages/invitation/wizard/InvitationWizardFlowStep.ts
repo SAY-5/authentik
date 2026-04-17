@@ -1,5 +1,6 @@
 import "#components/ak-switch-input";
 import "#elements/forms/HorizontalFormElement";
+import "#elements/forms/SearchSelect/index";
 
 import type { InvitationWizardState } from "./types";
 
@@ -167,30 +168,31 @@ export class InvitationWizardFlowStep extends WizardPage {
 
     renderExistingFlowSelector(): TemplateResult {
         return html`
-            <div class="pf-c-form__group">
-                ${this.enrollmentFlows.map(
-                    (flow) => html`
-                        <div class="pf-c-radio">
-                            <input
-                                class="pf-c-radio__input"
-                                type="radio"
-                                name="existing-flow"
-                                id="flow-${flow.slug}"
-                                ?checked=${this.selectedFlowSlug === flow.slug}
-                                @change=${() => {
-                                    this.selectedFlowSlug = flow.slug;
-                                    this.selectedFlowPk = flow.pk;
-                                    this.validate();
-                                }}
-                            />
-                            <label class="pf-c-radio__label" for="flow-${flow.slug}">
-                                ${flow.name}
-                            </label>
-                            <span class="pf-c-radio__description">${flow.slug}</span>
-                        </div>
-                    `,
-                )}
-            </div>
+            <ak-form-element-horizontal label=${msg("Enrollment flow")} required>
+                <ak-search-select
+                    .fetchObjects=${async (query?: string): Promise<EnrollmentFlow[]> => {
+                        if (!query) return this.enrollmentFlows;
+                        const needle = query.toLowerCase();
+                        return this.enrollmentFlows.filter(
+                            (flow) =>
+                                flow.name.toLowerCase().includes(needle) ||
+                                flow.slug.toLowerCase().includes(needle),
+                        );
+                    }}
+                    .renderElement=${(flow: EnrollmentFlow): string => flow.name}
+                    .renderDescription=${(flow: EnrollmentFlow): TemplateResult =>
+                        html`${flow.slug}`}
+                    .value=${(flow: EnrollmentFlow | undefined): string | undefined => flow?.pk}
+                    .selected=${(flow: EnrollmentFlow): boolean =>
+                        flow.pk === this.selectedFlowPk}
+                    @ak-change=${(ev: CustomEvent<{ value: EnrollmentFlow | null }>) => {
+                        const flow = ev.detail.value;
+                        this.selectedFlowSlug = flow?.slug;
+                        this.selectedFlowPk = flow?.pk;
+                        this.validate();
+                    }}
+                ></ak-search-select>
+            </ak-form-element-horizontal>
         `;
     }
 
@@ -316,7 +318,7 @@ export class InvitationWizardFlowStep extends WizardPage {
                                   }}
                               />
                               <label class="pf-c-radio__label" for="flow-mode-create">
-                                  ${msg("Create new enrollment flow")}
+                                  ${msg("Create new enrollment flow and invitation stage")}
                               </label>
                           </div>
                       </div>
