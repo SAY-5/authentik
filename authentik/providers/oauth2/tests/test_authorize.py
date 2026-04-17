@@ -5,6 +5,7 @@ from urllib.parse import parse_qs, urlparse
 
 from django.test import RequestFactory
 from django.urls import reverse
+from django.utils import translation
 from django.utils.timezone import now
 
 from authentik.blueprints.tests import apply_blueprint
@@ -393,7 +394,7 @@ class TestAuthorize(OAuthTestCase):
                     "nonce": generate_id(),
                 },
             )
-            token: AccessToken = AccessToken.objects.filter(user=user).first()
+            token = AccessToken.objects.filter(user=user).first()
             expires = timedelta_from_string(provider.access_token_validity).total_seconds()
             self.assertEqual(
                 response.url,
@@ -465,7 +466,7 @@ class TestAuthorize(OAuthTestCase):
                 },
             )
             self.assertEqual(response.status_code, 302)
-            token: AccessToken = AccessToken.objects.filter(user=user).first()
+            token = AccessToken.objects.filter(user=user).first()
             expires = timedelta_from_string(provider.access_token_validity).total_seconds()
             jwt = self.validate_jwe(token, provider)
             self.assertEqual(jwt["amr"], ["pwd"])
@@ -564,7 +565,7 @@ class TestAuthorize(OAuthTestCase):
         response = self.client.get(
             reverse("authentik_api:flow-executor", kwargs={"flow_slug": flow.slug}),
         )
-        token: AccessToken = AccessToken.objects.filter(user=user).first()
+        token = AccessToken.objects.filter(user=user).first()
         self.assertIsNotNone(token)
         self.assertJSONEqual(
             response.content.decode(),
@@ -690,18 +691,21 @@ class TestAuthorize(OAuthTestCase):
         Application.objects.create(name="app", slug="app", provider=provider)
         state = generate_id()
         self.client.logout()
-        response = self.client.get(
-            reverse("authentik_providers_oauth2:authorize"),
-            data={
-                "response_type": "code",
-                "client_id": "test",
-                "state": state,
-                "redirect_uri": "foo://localhost",
-                "ui_locales": "invalid fr",
-            },
-        )
-        parsed = parse_qs(urlparse(response.url).query)
-        self.assertEqual(parsed["locale"], ["fr"])
+        try:
+            response = self.client.get(
+                reverse("authentik_providers_oauth2:authorize"),
+                data={
+                    "response_type": "code",
+                    "client_id": "test",
+                    "state": state,
+                    "redirect_uri": "foo://localhost",
+                    "ui_locales": "invalid fr",
+                },
+            )
+            parsed = parse_qs(urlparse(response.url).query)
+            self.assertEqual(parsed["locale"], ["fr"])
+        finally:
+            translation.deactivate()
 
     @apply_blueprint("default/flow-default-authentication-flow.yaml")
     def test_ui_locales_invalid(self):
