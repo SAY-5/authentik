@@ -19,6 +19,7 @@ import { SlottedTemplateResult } from "#elements/types";
 import { setPageDetails } from "#components/ak-page-navbar";
 
 import { InvitationForm } from "#admin/stages/invitation/InvitationForm";
+import { InvitationWizard } from "#admin/stages/invitation/wizard/InvitationWizard";
 
 import { FlowDesignationEnum, Invitation, ModelEnum, StagesApi } from "@goauthentik/api";
 
@@ -141,8 +142,8 @@ export class InvitationListPage extends TablePage<Invitation> {
 
     protected override renderObjectCreate(): SlottedTemplateResult {
         return html`
-            <ak-invitation-wizard></ak-invitation-wizard>
-            ${ModalInvokerButton(InvitationForm)}
+            ${ModalInvokerButton(InvitationWizard)}
+            ${ModalInvokerButton(InvitationForm, null, { kind: "secondary" })}
         `;
     }
 

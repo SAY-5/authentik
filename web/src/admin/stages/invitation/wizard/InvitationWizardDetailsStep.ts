@@ -5,28 +5,32 @@ import "#elements/forms/HorizontalFormElement";
 import type { InvitationWizardState } from "./types";
 
 import { DEFAULT_CONFIG } from "#common/api/config";
+import {
+    parseAPIResponseError,
+    pluckErrorDetail,
+    pluckFallbackFieldErrors,
+} from "#common/errors/network";
+import { AKRefreshEvent } from "#common/events";
 import { dateTimeLocal } from "#common/temporal";
 
-import type { WizardAction } from "#elements/wizard/Wizard";
 import { WizardPage } from "#elements/wizard/WizardPage";
 
 import { FlowDesignationEnum, FlowsApi, StagesApi } from "@goauthentik/api";
 
 import YAML from "yaml";
 
-import { msg } from "@lit/localize";
-import { CSSResult, html, TemplateResult } from "lit";
+import { msg, str } from "@lit/localize";
+import { CSSResult, html, nothing, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
+import PFAlert from "@patternfly/patternfly/components/Alert/alert.css";
 import PFForm from "@patternfly/patternfly/components/Form/form.css";
 import PFFormControl from "@patternfly/patternfly/components/FormControl/form-control.css";
 import PFBase from "@patternfly/patternfly/patternfly-base.css";
 
 @customElement("ak-invitation-wizard-details-step")
 export class InvitationWizardDetailsStep extends WizardPage {
-    static styles: CSSResult[] = [PFBase, PFForm, PFFormControl];
-
-    label = msg("Invitation Details");
+    static styles: CSSResult[] = [PFBase, PFForm, PFFormControl, PFAlert];
 
     @state()
     invitationName = "";
@@ -40,9 +44,25 @@ export class InvitationWizardDetailsStep extends WizardPage {
     @state()
     singleUse = true;
 
+    @state()
+    errorTitle: string | null = null;
+
+    @state()
+    errorDetail: string | null = null;
+
     activeCallback = async (): Promise<void> => {
-        this.host.isValid = this.invitationName.length > 0;
+        this.host.valid = this.invitationName.length > 0;
     };
+
+    async #fail(step: string, err: unknown): Promise<false> {
+        const parsed = await parseAPIResponseError(err);
+        const fieldErrors = pluckFallbackFieldErrors(parsed);
+        this.errorTitle = msg(str`${step} failed`);
+        this.errorDetail =
+            fieldErrors.length > 0 ? fieldErrors.join(" ") : pluckErrorDetail(parsed);
+        this.logger.error("Invitation wizard step failed", { step, error: err });
+        return false;
+    }
 
     validate(): void {
         let validYaml = true;
@@ -51,7 +71,7 @@ export class InvitationWizardDetailsStep extends WizardPage {
         } catch {
             validYaml = false;
         }
-        this.host.isValid =
+        this.host.valid =
             this.invitationName.length > 0 && this.invitationExpires.length > 0 && validYaml;
     }
 
@@ -65,92 +85,84 @@ export class InvitationWizardDetailsStep extends WizardPage {
             return false;
         }
 
-        const wizardState = this.host.state as InvitationWizardState;
+        const wizardState = this.host.state as unknown as InvitationWizardState;
         wizardState.invitationName = this.invitationName;
         wizardState.invitationExpires = this.invitationExpires;
         wizardState.invitationFixedData = fixedData;
         wizardState.invitationSingleUse = this.singleUse;
 
-        const actions: WizardAction[] = [];
+        this.errorTitle = null;
+        this.errorDetail = null;
 
         if (wizardState.needsStage) {
-            actions.push({
-                displayName: msg("Create invitation stage"),
-                run: async () => {
-                    const stage = await new StagesApi(DEFAULT_CONFIG).stagesInvitationStagesCreate({
-                        invitationStageRequest: {
-                            name: wizardState.newStageName!,
-                            continueFlowWithoutInvitation:
-                                wizardState.continueFlowWithoutInvitation,
-                        },
-                    });
-                    wizardState.createdStagePk = stage.pk;
-                    return true;
-                },
-            });
+            try {
+                const stage = await new StagesApi(DEFAULT_CONFIG).stagesInvitationStagesCreate({
+                    invitationStageRequest: {
+                        name: wizardState.newStageName!,
+                        continueFlowWithoutInvitation: wizardState.continueFlowWithoutInvitation,
+                    },
+                });
+                wizardState.createdStagePk = stage.pk;
+                wizardState.needsStage = false;
+            } catch (err) {
+                return this.#fail(msg("Creating invitation stage"), err);
+            }
         }
 
         if (wizardState.needsFlow) {
-            actions.push({
-                displayName: msg("Create enrollment flow"),
-                run: async () => {
-                    const flow = await new FlowsApi(DEFAULT_CONFIG).flowsInstancesCreate({
-                        flowRequest: {
-                            name: wizardState.newFlowName!,
-                            slug: wizardState.newFlowSlug!,
-                            title: wizardState.newFlowName!,
-                            designation: FlowDesignationEnum.Enrollment,
-                        },
-                    });
-                    wizardState.createdFlowPk = flow.pk;
-                    wizardState.createdFlowSlug = flow.slug;
-                    return true;
-                },
-            });
+            try {
+                const flow = await new FlowsApi(DEFAULT_CONFIG).flowsInstancesCreate({
+                    flowRequest: {
+                        name: wizardState.newFlowName!,
+                        slug: wizardState.newFlowSlug!,
+                        title: wizardState.newFlowName!,
+                        designation: FlowDesignationEnum.Enrollment,
+                    },
+                });
+                wizardState.createdFlowPk = flow.pk;
+                wizardState.createdFlowSlug = flow.slug;
+                wizardState.needsFlow = false;
+            } catch (err) {
+                return this.#fail(msg("Creating enrollment flow"), err);
+            }
         }
 
         if (wizardState.needsBinding) {
-            actions.push({
-                displayName: msg("Bind stage to flow"),
-                run: async () => {
-                    const target = wizardState.createdFlowPk!;
-                    const stage = wizardState.createdStagePk!;
-                    await new FlowsApi(DEFAULT_CONFIG).flowsBindingsCreate({
-                        flowStageBindingRequest: {
-                            target,
-                            stage,
-                            order: 0,
-                        },
-                    });
-                    return true;
-                },
-            });
-        }
-
-        actions.push({
-            displayName: msg("Create invitation"),
-            run: async () => {
-                const flowPk = wizardState.createdFlowPk || wizardState.selectedFlowPk || undefined;
-
-                const invitation = await new StagesApi(
-                    DEFAULT_CONFIG,
-                ).stagesInvitationInvitationsCreate({
-                    invitationRequest: {
-                        name: wizardState.invitationName!,
-                        expires: wizardState.invitationExpires
-                            ? new Date(wizardState.invitationExpires)
-                            : undefined,
-                        fixedData: wizardState.invitationFixedData,
-                        singleUse: wizardState.invitationSingleUse,
-                        flow: flowPk || null,
+            try {
+                await new FlowsApi(DEFAULT_CONFIG).flowsBindingsCreate({
+                    flowStageBindingRequest: {
+                        target: wizardState.createdFlowPk!,
+                        stage: wizardState.createdStagePk!,
+                        order: 0,
                     },
                 });
-                wizardState.createdInvitationPk = invitation.pk;
-                return true;
-            },
-        });
+                wizardState.needsBinding = false;
+            } catch (err) {
+                return this.#fail(msg("Binding stage to flow"), err);
+            }
+        }
 
-        this.host.actions = actions;
+        try {
+            const flowPk = wizardState.createdFlowPk || wizardState.selectedFlowPk || undefined;
+            const invitation = await new StagesApi(
+                DEFAULT_CONFIG,
+            ).stagesInvitationInvitationsCreate({
+                invitationRequest: {
+                    name: wizardState.invitationName!,
+                    expires: wizardState.invitationExpires
+                        ? new Date(wizardState.invitationExpires)
+                        : undefined,
+                    fixedData: wizardState.invitationFixedData,
+                    singleUse: wizardState.invitationSingleUse,
+                    flow: flowPk || null,
+                },
+            });
+            wizardState.createdInvitationPk = invitation.pk;
+        } catch (err) {
+            return this.#fail(msg("Creating invitation"), err);
+        }
+
+        this.dispatchEvent(new AKRefreshEvent());
         return true;
     };
 
@@ -159,16 +171,31 @@ export class InvitationWizardDetailsStep extends WizardPage {
         this.invitationExpires = dateTimeLocal(new Date(Date.now() + 48 * 60 * 60 * 1000));
         this.fixedDataRaw = "{}";
         this.singleUse = true;
+        this.errorTitle = null;
+        this.errorDetail = null;
     }
 
     render(): TemplateResult {
-        const wizardState = this.host.state as InvitationWizardState;
+        const wizardState = this.host.state as unknown as InvitationWizardState;
         const flowDisplay =
             wizardState.flowMode === "existing"
                 ? wizardState.selectedFlowSlug
                 : wizardState.newFlowSlug;
 
         return html`<form class="pf-c-form pf-m-horizontal">
+            ${this.errorTitle
+                ? html`<div class="pf-c-alert pf-m-danger pf-m-inline" role="alert">
+                      <div class="pf-c-alert__icon">
+                          <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+                      </div>
+                      <h4 class="pf-c-alert__title">${this.errorTitle}</h4>
+                      ${this.errorDetail
+                          ? html`<div class="pf-c-alert__description">
+                                <p>${this.errorDetail}</p>
+                            </div>`
+                          : nothing}
+                  </div>`
+                : nothing}
             <ak-form-element-horizontal label=${msg("Name")} required>
                 <input
                     type="text"

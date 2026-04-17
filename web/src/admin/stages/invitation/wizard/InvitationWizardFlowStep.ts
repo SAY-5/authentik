@@ -35,8 +35,6 @@ interface EnrollmentFlow {
 export class InvitationWizardFlowStep extends WizardPage {
     static styles: CSSResult[] = [PFBase, PFForm, PFFormControl, PFButton, PFRadio, PFAlert];
 
-    label = msg("Enrollment Flow");
-
     @state()
     enrollmentFlows: EnrollmentFlow[] = [];
 
@@ -65,7 +63,7 @@ export class InvitationWizardFlowStep extends WizardPage {
     continueFlowWithoutInvitation = true;
 
     activeCallback = async (): Promise<void> => {
-        this.host.isValid = false;
+        this.host.valid = false;
         this.loading = true;
 
         try {
@@ -101,7 +99,7 @@ export class InvitationWizardFlowStep extends WizardPage {
                 this.flowMode = "existing";
                 this.selectedFlowSlug = this.enrollmentFlows[0].slug;
                 this.selectedFlowPk = this.enrollmentFlows[0].pk;
-                this.host.isValid = true;
+                this.host.valid = true;
             }
         } catch {
             this.enrollmentFlows = [];
@@ -113,9 +111,9 @@ export class InvitationWizardFlowStep extends WizardPage {
 
     validate(): void {
         if (this.flowMode === "existing") {
-            this.host.isValid = !!this.selectedFlowSlug;
+            this.host.valid = !!this.selectedFlowSlug;
         } else {
-            this.host.isValid =
+            this.host.valid =
                 this.newFlowName.length > 0 &&
                 this.newFlowSlug.length > 0 &&
                 this.newStageName.length > 0;
@@ -123,7 +121,7 @@ export class InvitationWizardFlowStep extends WizardPage {
     }
 
     nextCallback = async (): Promise<boolean> => {
-        const state = this.host.state as InvitationWizardState;
+        const state = this.host.state as unknown as InvitationWizardState;
 
         state.flowMode = this.flowMode;
 
