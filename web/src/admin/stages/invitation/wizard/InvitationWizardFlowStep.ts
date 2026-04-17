@@ -183,8 +183,7 @@ export class InvitationWizardFlowStep extends WizardPage {
                     .renderDescription=${(flow: EnrollmentFlow): TemplateResult =>
                         html`${flow.slug}`}
                     .value=${(flow: EnrollmentFlow | undefined): string | undefined => flow?.pk}
-                    .selected=${(flow: EnrollmentFlow): boolean =>
-                        flow.pk === this.selectedFlowPk}
+                    .selected=${(flow: EnrollmentFlow): boolean => flow.pk === this.selectedFlowPk}
                     @ak-change=${(ev: CustomEvent<{ value: EnrollmentFlow | null }>) => {
                         const flow = ev.detail.value;
                         this.selectedFlowSlug = flow?.slug;
