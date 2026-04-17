@@ -193,6 +193,11 @@ export class InvitationWizardFlowStep extends WizardPage {
                     }}
                     style="display: block; width: 100%;"
                 ></ak-search-select>
+                <p class="pf-c-form__helper-text">
+                    ${msg(
+                        "Only enrollment flows that have an invitation stage bound to them are listed here.",
+                    )}
+                </p>
             </ak-form-element-horizontal>
         `;
     }
