@@ -191,6 +191,7 @@ export class InvitationWizardFlowStep extends WizardPage {
                         this.selectedFlowPk = flow?.pk;
                         this.validate();
                     }}
+                    style="display: block; width: 100%;"
                 ></ak-search-select>
             </ak-form-element-horizontal>
         `;
@@ -281,7 +282,7 @@ export class InvitationWizardFlowStep extends WizardPage {
                       ${this.renderCreateForm()}
                   `
                 : html`
-                      <div class="pf-c-form__group">
+                      <ak-form-element-horizontal label=${msg("Flow source")} required>
                           <div class="pf-c-radio">
                               <input
                                   class="pf-c-radio__input"
@@ -321,7 +322,7 @@ export class InvitationWizardFlowStep extends WizardPage {
                                   ${msg("Create new enrollment flow and invitation stage")}
                               </label>
                           </div>
-                      </div>
+                      </ak-form-element-horizontal>
 
                       ${this.flowMode === "existing"
                           ? this.renderExistingFlowSelector()
