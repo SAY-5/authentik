@@ -75,9 +75,12 @@ entries:
 - attrs:
     expression: |
       # This policy ensures that the setup flow can only be
-      # executed when the admin user doesn''t have a password set
+      # executed when the admin user doesn''t have a password set.
+      # On a brand new deployment the user may not exist yet, in
+      # which case ak_user_by returns None; treat that the same as
+      # "no usable password" so the initial setup flow is reachable.
       akadmin = ak_user_by(username="akadmin")
-      return not akadmin.has_usable_password()
+      return akadmin is None or not akadmin.has_usable_password()
   id: policy-default-oobe-password-usable
   identifiers:
     name: default-oobe-password-usable
