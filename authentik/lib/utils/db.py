@@ -14,7 +14,9 @@ def chunked_queryset[T: Model](queryset: QuerySet[T], chunk_size: int = 1_000) -
     def get_chunks(qs: QuerySet) -> Generator[QuerySet[T]]:
         qs = qs.order_by("pk")
         pks = qs.values_list("pk", flat=True)
-        start_pk = pks[0]
+        start_pk = pks.first()
+        if start_pk is None:
+            return
         while True:
             try:
                 end_pk = pks.filter(pk__gte=start_pk)[chunk_size]
