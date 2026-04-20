@@ -52,12 +52,21 @@ def ldap_sync_password(sender, user: User, password: str, **_):
         changer.change_password(user, password)
     except LDAPOperationResult as exc:
         LOGGER.warning("failed to set LDAP password", exc=exc)
+        # Some LDAP servers (notably Active Directory) include NUL bytes in
+        # the result detail string. Postgres rejects NUL bytes inside JSON
+        # text, so saving the Event row fails with
+        #     unsupported Unicode escape sequence ... \u0000 cannot be
+        #     converted to text
+        # which turns an already-failed password change into an uncaught
+        # 500 for the user. Strip NULs before handing the message to the
+        # ORM.
+        message = (
+            "Failed to change password in LDAP source due to remote error: "
+            f"{exc.result}, {exc.message}, {exc.description}"
+        ).replace("\x00", "")
         Event.new(
             EventAction.CONFIGURATION_ERROR,
-            message=(
-                "Failed to change password in LDAP source due to remote error: "
-                f"{exc.result}, {exc.message}, {exc.description}"
-            ),
+            message=message,
             source=source,
         ).set_user(user).save()
         raise ValidationError("Failed to set password") from exc
