@@ -95,15 +95,12 @@ class OAuthSourceSerializer(SourceSerializer):
             # and later str() into the authorize URL as "['plain', 'S256']".
             if not attrs.get("pkce"):
                 supported_methods = config.get("code_challenge_methods_supported") or []
+                attrs["pkce"] = PKCEMethod.NONE
                 if isinstance(supported_methods, list):
                     if PKCEMethod.S256 in supported_methods:
                         attrs["pkce"] = PKCEMethod.S256
                     elif PKCEMethod.PLAIN in supported_methods:
                         attrs["pkce"] = PKCEMethod.PLAIN
-                    else:
-                        attrs["pkce"] = PKCEMethod.NONE
-                else:
-                    attrs["pkce"] = PKCEMethod.NONE
             inferred_oidc_jwks_url = config.get("jwks_uri", "")
 
         # Prefer user-entered URL to inferred URL to default URL
