@@ -151,14 +151,10 @@ class UserLoginStageView(ChallengeStageView):
             PLAN_CONTEXT_AUTHENTICATION_BACKEND, BACKEND_INBUILT
         )
         user: User = self.executor.plan.context[PLAN_CONTEXT_PENDING_USER]
-        # The identification stage plants an unsaved User (pk is None) in
-        # PLAN_CONTEXT_PENDING_USER to normalise timing against make_password()
-        # when the supplied identifier is unknown. Previously that dummy user
-        # reached is_known_device (which does User-filtered ORM lookups) and
-        # the user_logged_in signal handlers, both of which rely on a saved
-        # instance and fail with:
-        #     ValueError: Model instances passed to related filters must be saved.
-        # Catch the unsaved user here and surface stage_invalid instead of a 500.
+        # This should realistically never happen, as even though the identification stage returns a fake user, any kind of authentication
+        # would fail due to the user not existing
+        # and as such this is very much just a fallback for a misconfiguration
+        # to prevent an exception
         if user.pk is None:
             self.logger.debug("pending user is not saved, refusing to log in")
             return self.executor.stage_invalid()
