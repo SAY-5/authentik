@@ -28,7 +28,7 @@ class DeviceView(View):
 
     client_id: str
     provider: OAuth2Provider
-    scopes: list[str] = []
+    scopes: set[str] = []
 
     def parse_request(self):
         """Parse incoming request"""
@@ -44,22 +44,21 @@ class DeviceView(View):
             raise DeviceCodeError("invalid_client") from None
         self.provider = provider
         self.client_id = client_id
-        # Only record scopes the provider is actually configured to issue.
-        # Without this filter, a caller can put any scope string (including
-        # offline_access) on the device authorization request, it ends up
-        # verbatim on the DeviceToken, and the token exchange later reads
-        # `SCOPE_OFFLINE_ACCESS in device_code.scope` straight from that
-        # untrusted payload. The other grant types clip their scope against
-        # the provider's ScopeMapping set in TokenParams.__check_scopes,
-        # but the device authorization endpoint runs before TokenParams is
-        # ever constructed, so clip here to match.
-        requested_scopes = {s for s in self.request.POST.get("scope", "").split(" ") if s}
-        allowed_scope_names = set(
+
+        scopes_to_check = set(self.request.POST.get("scope", "").split())
+        default_scope_names = set(
             ScopeMapping.objects.filter(provider__in=[self.provider]).values_list(
                 "scope_name", flat=True
             )
         )
-        self.scopes = sorted(requested_scopes & allowed_scope_names)
+        self.scopes = scopes_to_check
+        if not scopes_to_check.issubset(default_scope_names):
+            LOGGER.info(
+                "Application requested scopes not configured, setting to overlap",
+                scope_allowed=default_scope_names,
+                scope_given=self.scopes,
+            )
+            self.scopes = self.scopes.intersection(default_scope_names)
 
     def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         throttle = AnonRateThrottle()
