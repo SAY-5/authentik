@@ -52,12 +52,6 @@ export const PasswordManagerPrefill: {
     totp?: string;
 } = {};
 
-// Build a disjunction-style list formatter bound to whatever locale is
-// active at call time, so `Email or Username` gets localized to
-// `Courriel ou Nom d'utilisateur` / `E-Mail oder Anmeldename` instead of
-// leaking the hardcoded English connector when the user-facing label
-// renders. Module-level `new Intl.ListFormat("default", ...)` would bind
-// once to the browser's default locale instead.
 export const orListFormatter = (): Intl.ListFormat =>
     new Intl.ListFormat(getLocale(), {
         style: "short",
