@@ -168,12 +168,7 @@ class TokenParams:
         # Confidential clients MUST authenticate to the token endpoint per
         # RFC 6749 §2.3.1. The device code grant (RFC 8628 §3.4) inherits
         # that requirement - the device_code alone is not a substitute for
-        # client credentials, since a victim who completes authorization
-        # for an attacker-generated device_code would otherwise let the
-        # attacker trade that code for an access token without ever proving
-        # ownership of the client. Keycloak and Okta both enforce
-        # client_secret on the device token exchange for confidential
-        # clients; match that.
+        # client credentials.
         if self.grant_type in [
             GRANT_TYPE_AUTHORIZATION_CODE,
             GRANT_TYPE_REFRESH_TOKEN,
