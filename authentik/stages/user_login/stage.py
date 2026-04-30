@@ -151,10 +151,10 @@ class UserLoginStageView(ChallengeStageView):
             PLAN_CONTEXT_AUTHENTICATION_BACKEND, BACKEND_INBUILT
         )
         user: User = self.executor.plan.context[PLAN_CONTEXT_PENDING_USER]
-        # This should realistically never happen, as even though the identification stage returns a fake user, any kind of authentication
-        # would fail due to the user not existing
-        # and as such this is very much just a fallback for a misconfiguration
-        # to prevent an exception
+        # This should realistically never happen: even though the
+        # identification stage returns a fake user, any kind of authentication
+        # would fail because the user doesn't exist. This is just a fallback
+        # for a misconfiguration to prevent an exception.
         if user.pk is None:
             self.logger.debug("pending user is not saved, refusing to log in")
             return self.executor.stage_invalid()
